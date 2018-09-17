@@ -1,8 +1,8 @@
 # <a id="a_top">JDBC：Java数据库连接</a>
 [Java 10 API](https://docs.oracle.com/javase/10/docs/api/overview-summary.html)<br/>
-[JDBC-百度百科](https://baike.baidu.com/item/jdbc)
-[Java数据库连接](https://baike.baidu.com/item/Java%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5)
-[JDBC API主要位于JDK中的java.sql包中](https://docs.oracle.com/javase/10/docs/api/java.sql-summary.html)
+[JDBC-百度百科](https://baike.baidu.com/item/jdbc)<br/>
+[Java数据库连接](https://baike.baidu.com/item/Java%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5)<br/>
+[JDBC API主要位于JDK中的java.sql包中](https://docs.oracle.com/javase/10/docs/api/java.sql-summary.html)<br/>
 [mysql:mysql-connector-java:8.0.12](https://search.maven.org/artifact/mysql/mysql-connector-java/8.0.12/jar)<br/>
 
 ---
@@ -13,7 +13,7 @@
 
 ---
 ### <a id="a_jdbc">一、JDBC：Java数据库连接：</a> <a href="#">last</a> <a href="#">next</a>
-[JDBC原理]()
+[JDBC数据库驱动模型](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/01_JDBCPModel.png)<br/>
 一、定义：
 ```
 JDBC：

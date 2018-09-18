@@ -273,86 +273,6 @@ The driveris automatically registered via the SPI and manual loading of the driv
 ```
 
 三、获取数据库连接(会话)：
-[java.sql.DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html)
-```
-  管理一组 JDBC 驱动程序的基本服务。
-  注：DataSource 接口是JDBC 2.0 API中的新增内容，它提供了连接到数据源的另一种方法。使用 DataSource 对象是连接到数据源的首选方法。 
-作为初始化的一部分，DriverManager 类会尝试加载在 "jdbc.drivers" 系统属性中引用的驱动程序类。这允许用户定制由他们的应用程序使用的 JDBC Driver。
-例如，在 ~/.hotjava/properties 文件中，用户可以指定： 
-jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
-  DriverManager 类的方法getConnection和getDrivers已经得到提高以支持Java Standard Edition Service Provider机制。 
-  在调用getConnection方法时，DriverManager会试着从初始化时加载的那些驱动程序以及使用与当前applet或应用程序相同的类加载器显式加载的那些驱动程序中查找合适的驱动程序。 
-  从Java 2 SDK标准版本1.3版开始，只有当已授予适当权限时设置日志流。通常这将使用工具PolicyTool完成，该工具可用于授予permission java.sql.SQLPermission "setLog"权限
-
-方法说明：
-static void deregisterDriver(Driver driver) 
-  从 DriverManager 的列表中删除一个驱动程序。applet 只能注销取自其自身的类加载器的驱动程序
-static Stream<Driver> drivers()
-   使用当前调用者可以访问的所有当前加载的JDBC驱动程序检索Stream
-static Connection getConnection(String url) 
-  试图建立到给定数据库 URL 的连接。 
-static Connection getConnection(String url, Properties info) 
-  试图建立到给定数据库 URL 的连接。 
-static Connection getConnection(String url, String user, String password) 
-  试图建立到给定数据库 URL 的连接。 
-static Driver getDriver(String url) 
-  试图查找能理解给定 URL 的驱动程序。
-static Enumeration<Driver> getDrivers() 
-  检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举。 
-static int getLoginTimeout() 
-  获取驱动程序试图登录到某一数据库时可以等待的最长时间，以秒为单位。 
-static PrintStream getLogStream() 
-  已过时。检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream
-static PrintWriter getLogWriter() 
-  获取日志 writer。 
-static void println(String message) 
-  将一条消息打印到当前 JDBC 日志流中。
-static void registerDriver(Driver driver) 
-  向 DriverManager 注册给定驱动程序。 
-static void registerDriver(Driver driver, DriverAction da)
-  注册给定的驱动程序DriverManager。
-static void setLoginTimeout(int seconds) 
-  设置驱动程序试图连接到某一数据库时将等待的最长时间，以秒为单位。 
-static void setLogStream(PrintStream out) 
-  已过时。设置由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream 
-static void setLogWriter(PrintWriter out) 
-  设置由 DriverManager 和所有驱动程序使用的日志/追踪 PrintWriter 对象。 
-```
-[java.sql.Connection](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)  
-[UDT：互联网数据传输协议](https://baike.baidu.com/item/UDT)
-```
-  与特定数据库的连接（会话）。在连接上下文中执行SQL语句并返回结果。 
-  Connection 对象的数据库能够提供描述其表、所支持的SQL语法、存储过程、此连接功能等等的信息。此信息是使用 getMetaData 方法获得的。 
-  注：在配置Connection时，JDBC应用程序应该使用适当的Connection方法，比如setAutoCommit或 setTransactionIsolation。
-在有可用的JDBC方法时，应用程序不能直接调用SQL命令更改连接的配置。默认情况下，Connection对象处于自动提交模式下，
-这意味着它在执行每个语句后都会自动提交更改。如果禁用了自动提交模式，那么要提交更改就必须显式调用 commit 方法；否则无法保存数据库更改。 
-  
-  使用JDBC 2.1核心API创建的新Connection对象有一个与之关联的最初为空的类型映射。用户可以为此类型映射中的
-UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一种互联网数据传输协议]输入一个自定义映射关系。
-在使用ResultSet.getObject 方法从数据源中获取UDT时，getObject方法将检查该连接的类型映射是否有对应该UDT的条目。如果有，
-那么getObject方法将该UDT映射到所指示的类。如果没有条目，则使用标准映射关系映射该UDT。 
-  
-  用户可以创建一个新的类型映射，该映射是一个 java.util.Map 对象，可在其中创建一个条目，并将该条目传递给可以执行自定义映射关系的 java.sql 方法。
-在这种情况下，该方法将使用给定的类型映射，而不是与连接关联的映射。 
-```
-字段说明：  
-<table border="1">
-<tr><td>修饰符和类型</td><td>领域</td><td>说明</td></tr>
-<tr><td>static int</td><td>TRANSACTION_NONE</td><td>一个常量，指示不支持事务。</td></tr>
-<tr><td>static int</td><td>TRANSACTION_READ_COMMITTED</td><td>一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取。</td></tr>
-<tr><td>static int</td><td>TRANSACTION_READ_UNCOMMITTED</td><td>一个常量，表示可以发生脏读，不可重复读和幻像读。</td></tr>
-<tr><td>static int</td><td>TRANSACTION_REPEATABLE_READ</td><td>一个常量，表示防止脏读和不可重复读; 可以发生幻像读取。</td></tr>
-<tr><td>static int</td><td>TRANSACTION_SERIALIZABLE</td><td>一个常量，表示禁止脏读，不可重复读和幻像读。</td></tr>
-</table>>
-
-  修饰符和类型  | 领域  | 说明
-  ------------- | -------------
-  static int | TRANSACTION_NONE | 一个常量，指示不支持事务。
-  static int | TRANSACTION_READ_COMMITTED | 一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取。
-  static int | TRANSACTION_READ_UNCOMMITTED | 一个常量，表示可以发生脏读，不可重复读和幻像读。
-  static int | TRANSACTION_REPEATABLE_READ | 一个常量，表示防止脏读和不可重复读; 可以发生幻像读取。
-  static int | TRANSACTION_SERIALIZABLE | 一个常量，表示禁止脏读，不可重复读和幻像读。
-
 ```
 3.1、使用DriverManager.getConnection()方法获取数据库连接：
 Connection connection = DriverManager.getConnection("jdbcUrl", "username", "password");
@@ -444,6 +364,127 @@ public class DriverMain {
     }
 }
 ```
+四、[java.sql.DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html)  
+4.1、描述：
+```
+  管理一组 JDBC 驱动程序的基本服务。
+  注：DataSource 接口是JDBC 2.0 API中的新增内容，它提供了连接到数据源的另一种方法。使用 DataSource 对象是连接到数据源的首选方法。 
+作为初始化的一部分，DriverManager 类会尝试加载在 "jdbc.drivers" 系统属性中引用的驱动程序类。这允许用户定制由他们的应用程序使用的 JDBC Driver。
+例如，在 ~/.hotjava/properties 文件中，用户可以指定： 
+jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
+  
+  DriverManager 类的方法getConnection和getDrivers已经得到提高以支持Java Standard Edition Service Provider机制。 
+ 
+  在调用getConnection方法时，DriverManager会试着从初始化时加载的那些驱动程序以及使用与当前applet或应用程序相同的类加载器显式加载的那些驱动程序中查找合适的驱动程序。 
+  
+  从Java 2 SDK标准版本1.3版开始，只有当已授予适当权限时设置日志流。通常这将使用工具PolicyTool完成，该工具可用于授予permission java.sql.SQLPermission "setLog"权限
+```
+
+4.2、方法说明：
+<table border="1">
+<tr><td>返回类型</td><td>方法</td><td>说明</td></tr>
+<tr><td>static void</td><td>deregisterDriver(Driver driver)</td><td>从已DriverManager注册的驱动程序列表中删除指定的驱动程序。</td></tr>
+<tr><td>static Connection</td><td>getConnection(String url)</td><td>尝试建立与给定数据库URL的连接。</td></tr>
+<tr><td>static Connection</td><td>getConnection(String url, Properties info)</td><td>尝试建立与给定数据库URL的连接。</td></tr>
+<tr><td>static Connection</td><td>getConnection(String url, String user, String password)</td><td>尝试建立与给定数据库URL的连接。</td></tr>
+<tr><td>static Driver</td><td>getDriver(String url)</td><td>尝试查找理解给定URL的驱动程序。</td></tr>
+<tr><td>static Enumeration<Driver></td><td>getDrivers()</td><td>检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举。</td></tr>
+<tr><td>static int</td><td>getLoginTimeout()</td><td>获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）。</td></tr>
+<tr><td>static PrintStream</td><td>getLogStream()</td><td>已过时。 使用 getLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream 。</td></tr>
+<tr><td>static PrintWriter</td><td>getLogWriter()</td><td>检索日志编写器。</td></tr>
+<tr><td>static void</td><td>println(String message)</td><td>将消息打印到当前JDBC日志流。</td></tr>
+<tr><td>static void</td><td>registerDriver(Driver driver)</td><td>注册给定的驱动程序DriverManager。</td></tr>
+<tr><td>static void</td><td>registerDriver(Driver driver, DriverAction da)</td><td>注册给定的驱动程序DriverManager。</td></tr>
+<tr><td>static void</td><td>setLoginTimeout(int seconds)</td><td>设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）。</td></tr>
+<tr><td>static void</td><td>setLogStream(PrintStream out)</td><td>已过时。使用 setLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream 。</td></tr>
+<tr><td>static void</td><td>setLogWriter(PrintWriter out)</td><td>设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager。</td></tr>
+</table>
+
+五、[java.sql.Connection](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)  
+[UDT：互联网数据传输协议](https://baike.baidu.com/item/UDT)  
+5.1、描述：
+```
+  与特定数据库的连接（会话）。在连接上下文中执行SQL语句并返回结果。 
+  
+  Connection 对象的数据库能够提供描述其表、所支持的SQL语法、存储过程、此连接功能等等的信息。此信息是使用 getMetaData 方法获得的。 
+  注：在配置Connection时，JDBC应用程序应该使用适当的Connection方法，比如setAutoCommit或 setTransactionIsolation。
+在有可用的JDBC方法时，应用程序不能直接调用SQL命令更改连接的配置。默认情况下，Connection对象处于自动提交模式下，
+这意味着它在执行每个语句后都会自动提交更改。如果禁用了自动提交模式，那么要提交更改就必须显式调用 commit 方法；否则无法保存数据库更改。 
+  
+  使用JDBC 2.1核心API创建的新Connection对象有一个与之关联的最初为空的类型映射。用户可以为此类型映射中的
+UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一种互联网数据传输协议]输入一个自定义映射关系。
+在使用ResultSet.getObject 方法从数据源中获取UDT时，getObject方法将检查该连接的类型映射是否有对应该UDT的条目。如果有，
+那么getObject方法将该UDT映射到所指示的类。如果没有条目，则使用标准映射关系映射该UDT。 
+  
+  用户可以创建一个新的类型映射，该映射是一个 java.util.Map 对象，可在其中创建一个条目，并将该条目传递给可以执行自定义映射关系的 java.sql 方法。
+在这种情况下，该方法将使用给定的类型映射，而不是与连接关联的映射。 
+```
+5.2、字段说明：  
+<table border="1">
+<tr><td>数据类型</td><td>字段</td><td>说明</td></tr>
+<tr><td>static int</td><td>TRANSACTION_NONE</td><td>一个常量，指示不支持事务。</td></tr>
+<tr><td>static int</td><td>TRANSACTION_READ_COMMITTED</td><td>一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取。</td></tr>
+<tr><td>static int</td><td>TRANSACTION_READ_UNCOMMITTED</td><td>一个常量，表示可以发生脏读，不可重复读和幻像读。</td></tr>
+<tr><td>static int</td><td>TRANSACTION_REPEATABLE_READ</td><td>一个常量，表示防止脏读和不可重复读; 可以发生幻像读取。</td></tr>
+<tr><td>static int</td><td>TRANSACTION_SERIALIZABLE</td><td>一个常量，表示禁止脏读，不可重复读和幻像读。</td></tr>
+</table>
+
+5.3、方法说明：
+<table border="1">
+<tr><td>返回类型</td><td>方法</td><td>说明</td></tr>
+<tr><td>void</td><td>abort(Executor executor)</td><td>终止打开的连接。</td></tr>
+<tr><td>void</td><td>clearWarnings()</td><td>清除为此Connection对象报告的所有警告。</td></tr>
+<tr><td>void</td><td>close()</td><td>立即释放此Connection对象的数据库和JDBC资源，而不是等待它们自动释放。</td></tr>
+<tr><td>void</td><td>commit()</td><td>使自上次提交/回滚以来所做的所有更改成为永久更改，并释放此Connection对象当前持有的所有数据库锁。</td></tr>
+<tr><td>Array</td><td>createArrayOf(String typeName, Object[] elements)</td><td>用于创建Array对象的工厂方法。</td></tr>
+<tr><td>Blob</td><td>createBlob()</td><td>构造一个实现Blob接口的对象。</td></tr>
+<tr><td>Clob</td><td>createClob()</td><td>构造一个实现Clob接口的对象。</td></tr>
+<tr><td>NClob</td><td>createNClob()</td><td>构造一个实现NClob接口的对象。</td></tr>
+<tr><td>SQLXML</td><td>createSQLXML()</td><td>构造一个实现SQLXML接口的对象。</td></tr>
+<tr><td>Statement</td><td>createStatement()</td><td>创建Statement用于将SQL语句发送到数据库的对象。</td></tr>
+<tr><td>Statement</td><td>createStatement(int resultSetType, int resultSetConcurrency)</td><td>创建一个Statement将生成 ResultSet具有给定类型和并发性的对象的对象。</td></tr>
+<tr><td>Statement</td><td>createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)</td><td>创建一个Statement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的 对象。</td></tr>
+<tr><td>Struct</td><td>createStruct(String typeName, Object[] attributes)</td><td>用于创建Struct对象的工厂方法。</td></tr>
+<tr><td>boolean</td><td>getAutoCommit()</td><td>检索此Connection 对象的当前自动提交模式。</td></tr>
+<tr><td>String</td><td>getCatalog()</td><td>检索此Connection对象的当前目录名称。</td></tr>
+<tr><td>Properties</td><td>getClientInfo()</td><td>返回一个列表，其中包含驱动程序支持的每个客户端信息属性的名称和当前值。</td></tr>
+<tr><td>String</td><td>getClientInfo(String name)</td><td>返回name指定的客户端信息属性的值。</td></tr>
+<tr><td>int</td><td>getHoldability()</td><td>检索ResultSet使用此Connection对象创建的对象的当前可保存性。</td></tr>
+<tr><td>DatabaseMetaData</td><td>getMetaData()</td><td>检索DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的 对象。</td></tr>
+<tr><td>int</td><td>getNetworkTimeout()</td><td>检索驱动程序等待数据库请求完成的毫秒数。</td></tr>
+<tr><td>String</td><td>getSchema()</td><td>检索此Connection对象的当前架构名称。</td></tr>
+<tr><td>int</td><td>getTransactionIsolation()</td><td>检索此Connection对象的当前事务隔离级别。</td></tr>
+<tr><td>Map<String,Class<?>></td><td>getTypeMap()</td><td>检索Map与此Connection对象关联的 对象。</td></tr>
+<tr><td>SQLWarning</td><td>getWarnings()</td><td>检索此Connection对象上的调用报告的第一个警告 。</td></tr>
+<tr><td>boolean</td><td>isClosed()</td><td>检索此Connection对象是否已关闭。</td></tr>
+<tr><td>boolean</td><td>isReadOnly()</td><td>检索此Connection 对象是否处于只读模式。</td></tr>
+<tr><td>boolean</td><td>isValid(int timeout)</td><td>如果连接尚未关闭且仍然有效，则返回true。</td></tr>
+<tr><td>String</td><td>nativeSQL(String sql)</td><td>将给定的SQL语句转换为系统的本机SQL语法。</td></tr>
+<tr><td>CallableStatement</td><td>prepareCall(String sql)</td><td>创建一个CallableStatement用于调用数据库存储过程的对象。</td></tr>
+<tr><td>CallableStatement</td><td>prepareCall(String sql, int resultSetType, int resultSetConcurrency)</td><td>创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象。</td></tr>
+<tr><td>CallableStatement</td><td>prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)</td><td>创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象。</td></tr>
+<tr><td>PreparedStatement</td><td>prepareStatement(String sql)</td><td>创建PreparedStatement用于将参数化SQL语句发送到数据库的对象。</td></tr>
+<tr><td>PreparedStatement</td><td>prepareStatement(String sql, int autoGeneratedKeys)</td><td>创建一个PreparedStatement能够检索自动生成的密钥的默认对象。</td></tr>
+<tr><td>PreparedStatement</td><td>prepareStatement(String sql, int[] columnIndexes)</td><td>创建一个PreparedStatement能够返回给定数组指定的自动生成的键的默认对象。</td></tr>
+<tr><td>PreparedStatement</td><td>prepareStatement(String sql, int resultSetType, int resultSetConcurrency)</td><td>创建一个PreparedStatement将生成 ResultSet具有给定类型和并发性的对象的对象。</td></tr>
+<tr><td>PreparedStatement</td><td>prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)</td><td>创建一个PreparedStatement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的 对象。</td></tr>
+<tr><td>PreparedStatement</td><td>prepareStatement(String sql, String[] columnNames)</td><td>创建一个PreparedStatement能够返回给定数组指定的自动生成的键的默认对象。</td></tr>
+<tr><td>void</td><td>releaseSavepoint(Savepoint savepoint)</td><td>从当前事务中删除指定的Savepoint 和后续的Savepoint对象。</td></tr>
+<tr><td>void</td><td>rollback()</td><td>撤消当前事务中所做的所有更改，并释放此Connection对象当前持有的所有数据库锁。</td></tr>
+<tr><td>void</td><td>rollback(Savepoint savepoint)</td><td>取消Savepoint设置给定对象后所做的所有更改。</td></tr>
+<tr><td>void</td><td>setAutoCommit(boolean autoCommit)</td><td>将此连接的自动提交模式设置为给定状态。</td></tr>
+<tr><td>void</td><td>setCatalog(String catalog)</td><td>设置给定的目录名称，以便选择要Connection在其中工作的此对象的数据库的子空间。</td></tr>
+<tr><td>void</td><td>setClientInfo(Properties properties)</td><td>设置连接的客户端信息属性的值。</td></tr>
+<tr><td>void</td><td>setClientInfo(String name, String value)</td><td>将name指定的客户端信息属性的值设置为value指定的值。</td></tr>
+<tr><td>void</td><td>setHoldability(int holdability)</td><td>将ResultSet使用此Connection对象创建的对象的默认可保存性更改为给定的可保持性。</td></tr>
+<tr><td>void</td><td>setNetworkTimeout(Executor executor, int milliseconds)</td><td>设置Connection从Connection 遗嘱中创建的最大句点或对象，等待数据库回复任何一个请求。</td></tr>
+<tr><td>void</td><td>setReadOnly(boolean readOnly)</td><td>将此连接置于只读模式，作为驱动程序的提示以启用数据库优化。</td></tr>
+<tr><td>Savepoint</td><td>setSavepoint()</td><td>在当前事务中创建一个未命名的保存点，并返回Savepoint表示它的新对象。</td></tr>
+<tr><td>Savepoint</td><td>setSavepoint(String name)</td><td>在当前事务中创建具有给定名称的保存点，并返回Savepoint表示它的新对象。</td></tr>
+<tr><td>void</td><td>setSchema(String schema)</td><td>设置要访问的给定模式名称。</td></tr>
+<tr><td>void</td><td>setTransactionIsolation(int level)</td><td>尝试将此Connection对象的事务隔离级别更改为 给定的对象。</td></tr>
+<tr><td>void</td><td>setTypeMap(Map<String,Class<?>> map)</td><td>将给定TypeMap对象安装为此Connection对象的类型映射。</td></tr>
+</table>
 
 
 ---

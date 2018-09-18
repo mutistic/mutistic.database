@@ -381,24 +381,24 @@ jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
 ```
 
 4.2、方法说明：
-<table style="white-space:nowrap!important; font-size:14px!important">
-<tr><td>返回类型</td><td>方法</td><td>说明</td></tr>
-<tr><td>static void</td><td>deregisterDriver(Driver driver)</td><td>从已DriverManager注册的驱动程序列表中删除指定的驱动程序。</td></tr>
-<tr><td>static Connection</td><td>getConnection(String url)</td><td>尝试建立与给定数据库URL的连接。</td></tr>
-<tr><td>static Connection</td><td>getConnection(String url, Properties info)</td><td>尝试建立与给定数据库URL的连接。</td></tr>
-<tr><td>static Connection</td><td>getConnection(String url, String user, String password)</td><td>尝试建立与给定数据库URL的连接。</td></tr>
-<tr><td>static Driver</td><td>getDriver(String url)</td><td>尝试查找理解给定URL的驱动程序。</td></tr>
-<tr><td>static Enumeration<Driver></td><td>getDrivers()</td><td>检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举。</td></tr>
-<tr><td>static int</td><td>getLoginTimeout()</td><td>获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）。</td></tr>
-<tr><td>static PrintStream</td><td>getLogStream()</td><td>已过时。 使用 getLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream 。</td></tr>
-<tr><td>static PrintWriter</td><td>getLogWriter()</td><td>检索日志编写器。</td></tr>
-<tr><td>static void</td><td>println(String message)</td><td>将消息打印到当前JDBC日志流。</td></tr>
-<tr><td>static void</td><td>registerDriver(Driver driver)</td><td>注册给定的驱动程序DriverManager。</td></tr>
-<tr><td>static void</td><td>registerDriver(Driver driver, DriverAction da)</td><td>注册给定的驱动程序DriverManager。</td></tr>
-<tr><td>static void</td><td>setLoginTimeout(int seconds)</td><td>设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）。</td></tr>
-<tr><td>static void</td><td>setLogStream(PrintStream out)</td><td>已过时。使用 setLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream 。</td></tr>
-<tr><td>static void</td><td>setLogWriter(PrintWriter out)</td><td>设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager。</td></tr>
-</table>
+
+|返回类型|方法|说明|
+|---|---|---
+|static void|deregisterDriver(Driver driver)|从已DriverManager注册的驱动程序列表中删除指定的驱动程序|
+|static Connection|getConnection(String url)|尝试建立与给定数据库URL的连接|
+|static Connection|getConnection(String url, Properties info)|尝试建立与给定数据库URL的连接|
+|static Connection|getConnection(String url, String user, String password)|尝试建立与给定数据库URL的连接|
+|static Driver|getDriver(String url)|尝试查找理解给定URL的驱动程序|
+|static Enumeration<Driver>|getDrivers()|检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举|
+|static int|getLoginTimeout()|获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）|
+|static PrintStream|getLogStream()|已过时。 使用 getLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream |
+|static PrintWriter|getLogWriter()|检索日志编写器|
+|static void|println(String message)|将消息打印到当前JDBC日志流|
+|static void|registerDriver(Driver driver)|注册给定的驱动程序DriverManager|
+|static void|registerDriver(Driver driver, DriverAction da)|注册给定的驱动程序DriverManager|
+|static void|setLoginTimeout(int seconds)|设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）|
+|static void|setLogStream(PrintStream out)|已过时。使用 setLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream |
+|static void|setLogWriter(PrintWriter out)|设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager|
 
 五、[java.sql.Connection](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)  
 [UDT：互联网数据传输协议](https://baike.baidu.com/item/UDT)  

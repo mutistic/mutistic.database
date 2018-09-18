@@ -58,12 +58,12 @@ public class DriverMain {
 			int index = 0;
 			for (DriverPropertyInfo driverPropertyInfo : driverPropertyInfos) {
 				index++;
-				PrintUtil.two("7."+index+".驱动程序的属性信息：DriverPropertyInfo", driverPropertyInfo);
+				PrintUtil.two("  7."+index+".驱动程序的属性信息：DriverPropertyInfo", driverPropertyInfo);
 				PrintUtil.three("DriverPropertyInfo.name：属性的名称", driverPropertyInfo.name);
 				PrintUtil.three("DriverPropertyInfo.required：是否在Driver.connect期间必须为此属性提供一个值", driverPropertyInfo.required);
 				PrintUtil.three("DriverPropertyInfo.value：value 字段通过综合为 getPropertyInfo 方法提供的信息、Java 环境和驱动程序提供的默认值来指定当前属性值", driverPropertyInfo.value);
 				PrintUtil.three("DriverPropertyInfo.choices：可以从特定值集中选择字段的值：", driverPropertyInfo.choices == null ? null : Arrays.asList(driverPropertyInfo.choices));
-				PrintUtil.three("DriverPropertyInfo.description：属性的名称",driverPropertyInfo.description); 
+				PrintUtil.three("DriverPropertyInfo.description：属性的简要描述",driverPropertyInfo.description); 
 			}
 		} catch (SQLException e) {
 			PrintUtil.err("演示 java.sql.Driver：数据库驱动，打印异常堆栈信息：");

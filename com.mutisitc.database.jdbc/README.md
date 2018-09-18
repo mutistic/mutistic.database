@@ -439,6 +439,18 @@ public class StepMain {
     }
 }
 ```
+输出验证：
+```
+JDBC连接数据库步骤
+0.创建Connection数据库连接引用
+1.通过Class.forName()加载Driver驱动类：com.mysql.cj.jdbc.Driver【class com.mysql.cj.jdbc.Driver】
+2.通过DriverManager.getConnection()，获取数据库连接Connection【com.mysql.cj.jdbc.ConnectionImpl@6f79caec】
+3.通过Connection.createStatement()连接，创建Statement对象【com.mysql.cj.jdbc.StatementImpl@2d6a9952】
+4.通过Statement.executeQuery()，执行查询SQL，获取查询结果集ResultSet对象【com.mysql.cj.jdbc.result.ResultSetImpl@2b80d80f】
+5.通过ResultSet结果集，获取数据列信息【bookId=111, title=222,author=333remark=444,createrTime=2018-09-18】
+6.通过Statement.close()【关闭Statement对象，释放资源】
+7.通过Connection.close()【关闭数据库连接，释放资源】
+```
 
 ### <a id="a_driver">三、java.sql.Driver：数据库驱动：</a> <a href="#a_step">last</a> <a href="#a_manager">next</a>
 [java.sql.Driver](https://docs.oracle.com/javase/8/docs/api/java/sql/Driver.html)  
@@ -572,6 +584,36 @@ public class DriverMain {
 		}
 	}
 }
+```
+输出验证：
+```
+java.sql.Driver：数据库驱动：
+0.Mysql数据库连接信息：
+  JDBC URL【jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8】
+  userName【root】
+  password【root】
+1.通过DriverManager.getDriver()：获取到的数据库驱动【Driver=com.mysql.cj.jdbc.Driver@6d6f6e28】
+2.Driver.isacceptsURL()：获取驱动程序是否认为它可以打开与给定URL的连接：获取结果【isacceptsURL=true】
+3.使用Driver获取数据库连接【Driver.connect(String url, Properties info)】
+  3.1.配置Properties属性，至少包含user和password信息【class java.util.Properties={user=root, password=root}】
+  3.2.Driver.connect()：尝试与给定的URL建立数据库连接【Connection=com.mysql.cj.jdbc.ConnectionImpl@6f79caec】
+4.通过Driver.getMajorVersion()：获取驱动程序的主要版本号【MajorVersion=8】
+5.通过Driver.getMinorVersion()：获取驱动程序的次要版本号【MinorVersion=0】
+6.通过Driver.jdbcCompliant()：报告此驱动程序是否为真正的JDBC Compliant驱动程序【jdbcCompliant=false】
+7.通过Driver.getPropertyInfo()：获取有关此驱动程序的可能属性的信息【DriverPropertyInfo=[java.sql.DriverPropertyInfo@22a71081, ...]】
+  7.1.驱动程序的属性信息：DriverPropertyInfo【java.sql.DriverPropertyInfo@22a71081】
+  DriverPropertyInfo.name：属性的名称【HOST】
+  DriverPropertyInfo.required：是否在Driver.connect期间必须为此属性提供一个值【true】
+  DriverPropertyInfo.value：value 字段通过综合为 getPropertyInfo 方法提供的信息、Java 环境和驱动程序提供的默认值来指定当前属性值【127.0.0.1】
+  DriverPropertyInfo.choices：可以从特定值集中选择字段的值：
+  DriverPropertyInfo.description：属性的名称【Hostname of MySQL Server】
+  7.2.驱动程序的属性信息：DriverPropertyInfo【java.sql.DriverPropertyInfo@3930015a】
+  DriverPropertyInfo.name：属性的名称【PORT】
+  DriverPropertyInfo.required：是否在Driver.connect期间必须为此属性提供一个值【false】
+  DriverPropertyInfo.value：value 字段通过综合为 getPropertyInfo 方法提供的信息、Java 环境和驱动程序提供的默认值来指定当前属性值【3306】
+  DriverPropertyInfo.choices：可以从特定值集中选择字段的值：
+  DriverPropertyInfo.description：属性的名称【Port number of MySQL Server】
+  7.xxxx...
 ```
 
 

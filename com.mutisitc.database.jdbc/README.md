@@ -334,8 +334,8 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
   
   用户可以创建一个新的类型映射，该映射是一个 java.util.Map 对象，可在其中创建一个条目，并将该条目传递给可以执行自定义映射关系的 java.sql 方法。
 在这种情况下，该方法将使用给定的类型映射，而不是与连接关联的映射。 
-
-字段说明：
+```
+字段说明：  
 修饰符和类型 | 领域 | 说明 
 - | :-: | -: 
 static int | TRANSACTION_NONE | 一个常量，指示不支持事务。
@@ -343,7 +343,6 @@ static int | TRANSACTION_READ_COMMITTED | 一个常量，表示防止脏读; �
 static int | TRANSACTION_READ_UNCOMMITTED | 一个常量，表示可以发生脏读，不可重复读和幻像读。
 static int | TRANSACTION_REPEATABLE_READ | 一个常量，表示防止脏读和不可重复读; 可以发生幻像读取。
 static int | TRANSACTION_SERIALIZABLE | 一个常量，表示禁止脏读，不可重复读和幻像读。
-```
 
 ```
 3.1、使用DriverManager.getConnection()方法获取数据库连接：

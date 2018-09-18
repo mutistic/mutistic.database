@@ -381,7 +381,7 @@ jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
 ```
 
 4.2、方法说明：
-<table border="1">
+<table style="white-space:nowrap, font-size:14px">
 <tr><td>返回类型</td><td>方法</td><td>说明</td></tr>
 <tr><td>static void</td><td>deregisterDriver(Driver driver)</td><td>从已DriverManager注册的驱动程序列表中删除指定的驱动程序。</td></tr>
 <tr><td>static Connection</td><td>getConnection(String url)</td><td>尝试建立与给定数据库URL的连接。</td></tr>
@@ -420,7 +420,7 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 在这种情况下，该方法将使用给定的类型映射，而不是与连接关联的映射。 
 ```
 5.2、字段说明：  
-<table border="1">
+<table style="white-space:nowrap, font-size:14px">
 <tr><td>数据类型</td><td>字段</td><td>说明</td></tr>
 <tr><td>static int</td><td>TRANSACTION_NONE</td><td>一个常量，指示不支持事务。</td></tr>
 <tr><td>static int</td><td>TRANSACTION_READ_COMMITTED</td><td>一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取。</td></tr>
@@ -430,7 +430,7 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 </table>
 
 5.3、方法说明：
-<table border="1">
+<table style="white-space:nowrap, font-size:14px">
 <tr><td>返回类型</td><td>方法</td><td>说明</td></tr>
 <tr><td>void</td><td>abort(Executor executor)</td><td>终止打开的连接。</td></tr>
 <tr><td>void</td><td>clearWarnings()</td><td>清除为此Connection对象报告的所有警告。</td></tr>

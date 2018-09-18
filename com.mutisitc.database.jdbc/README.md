@@ -7,6 +7,10 @@
 [Search Maven](https://search.maven.org/search?q=search)  
 [mysql:mysql-connector-java:8.0.12](https://search.maven.org/artifact/mysql/mysql-connector-java/8.0.12/jar)  
 
+|Author|Mutistic|
+|---|---|
+|E-mail|mutistic@qq.com|
+
 ---
 ### <a id="a_catalogue">目录</a>：
 1. <a href="#a_jdbc">JDBC：Java数据库连接</a>

@@ -381,7 +381,7 @@ jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
 ```
 
 4.2、方法说明：
-<table style="white-space:nowrap, font-size:14px">
+<table style="white-space:nowrap!important; font-size:14px!important">
 <tr><td>返回类型</td><td>方法</td><td>说明</td></tr>
 <tr><td>static void</td><td>deregisterDriver(Driver driver)</td><td>从已DriverManager注册的驱动程序列表中删除指定的驱动程序。</td></tr>
 <tr><td>static Connection</td><td>getConnection(String url)</td><td>尝试建立与给定数据库URL的连接。</td></tr>

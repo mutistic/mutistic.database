@@ -7,7 +7,7 @@
 [Search Maven](https://search.maven.org/search?q=search)  
 [mysql:mysql-connector-java:8.0.12](https://search.maven.org/artifact/mysql/mysql-connector-java/8.0.12/jar)  
 
-联系：  
+联系：<br/> 
 |Author|Mutistic|
 |---|---|
 |E-mail|mutistic@qq.com|

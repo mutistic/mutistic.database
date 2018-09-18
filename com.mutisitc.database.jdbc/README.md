@@ -94,34 +94,34 @@ JDBC 可做三件事：与数据库建立连接、发送 操作数据库的语�
 任务被选定后，应用程序将给出提示及空白供填写执行选定任务所需的信息。所需信息输入应用程序将自动调用所需的SQL命令。
 在这样一种程序的协助下，即使用户根本不懂SQL的语法，也可以执行数据库任务
 ```
-4.3、从SQL到Java数据类型映射的JDBC规范：
-SQL类型 | Java类型 |
---- | --- |
-CHAR | java.lang.String |
-VARCHAR | java.lang.String |
-LONGVARCHAR | java.lang.String |
-NUMERIC | java.math.BigDecimal |
-DECIMAL | java.math.BigDecimal |
-BIT | boolean |
-TINYINT | byte |
-SMALLINT | short |
-INTEGER | int |
-BIGINT | long |
-REAL | float |
-FLOAT | double |
-DOUBLE | double |
-BINARY | byte[] |
-VARBINARY | byte[] |
-LONGVARBINARY | byte[] |
-DATE | java.sql.Date |
-TIME | java.sql.Time |
-TIMESTAMP | java.sql.Timestamp |
-BLOB | java.sql.Blob |
-CLOB | java.sql.Clob |
-Array | java.sql.Array |
-REF | java.sql.Ref |
-Struct | java.sql.Struct |
-Struct | java.sql.Struct |
+4.3、从SQL到Java数据类型映射的JDBC规范：  
+|SQL类型 | Java类型 |
+|--- | --- |
+|CHAR | java.lang.String |
+|VARCHAR | java.lang.String |
+|LONGVARCHAR | java.lang.String |
+|NUMERIC | java.math.BigDecimal |
+|DECIMAL | java.math.BigDecimal |
+|BIT | boolean |
+|TINYINT | byte |
+|SMALLINT | short |
+|INTEGER | int |
+|BIGINT | long |
+|REAL | float |
+|FLOAT | double |
+|DOUBLE | double |
+|BINARY | byte[] |
+|VARBINARY | byte[] |
+|LONGVARBINARY | byte[] |
+|DATE | java.sql.Date |
+|TIME | java.sql.Time |
+|TIMESTAMP | java.sql.Timestamp |
+|BLOB | java.sql.Blob |
+|CLOB | java.sql.Clob |
+|Array | java.sql.Array |
+|REF | java.sql.Ref |
+|Struct | java.sql.Struct |
+|Struct | java.sql.Struct |
 ```
 注意：这种类型匹配不是强制性标准，特定的JDBC厂商可能会改变这种类型匹配。
 例如Oracle中的DATE类型是包含时分秒，而java.sql.Date仅仅支持年月日
@@ -352,7 +352,7 @@ public class DriverMain {
   在加载某一 Driver类时，它应该创建自己的实例并向 DriverManager 注册该实例。这意味着用户可以通过调用以下程序加载和注册一个驱动程序 
   Class.forName("foo.bah.Driver")
 ```
-4.2、方法说明：
+4.2、方法说明：  
 | 返回类型 | 方法 | 说明 |
 | --- | --- | --- |
 | boolean | acceptsURL(String url) | 检索驱动程序是否认为它可以打开与给定URL的连接 |
@@ -379,7 +379,7 @@ jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
   从Java 2 SDK标准版本1.3版开始，只有当已授予适当权限时设置日志流。通常这将使用工具PolicyTool完成，该工具可用于授予permission java.sql.SQLPermission "setLog"权限
 ```
 
-5.2、方法说明：
+5.2、方法说明：  
 | 返回类型 | 方法 | 说明 |
 | --- | --- | --- |
 | static void | deregisterDriver(Driver driver) | 从已DriverManager注册的驱动程序列表中删除指定的驱动程序 |
@@ -418,15 +418,16 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 在这种情况下，该方法将使用给定的类型映射，而不是与连接关联的映射。 
 ```
 6.2、字段说明：  
-| 数据类型 | 方法 | 说明 |
-| --- | --- | ---
-| static int | TRANSACTION_NONE | 一个常量，指示不支持事务 |
-| static int | TRANSACTION_READ_COMMITTED | 一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取 |
-| static int | TRANSACTION_READ_UNCOMMITTED | 一个常量，表示可以发生脏读，不可重复读和幻像读 |
-| static int | TRANSACTION_REPEATABLE_READ | 一个常量，表示防止脏读和不可重复读; 可以发生幻像读取 |
-| static int | TRANSACTION_SERIALIZABLE | 一个常量，表示禁止脏读，不可重复读和幻像读 |
+|数据类型|方法|说明|
+|---|---|---|
+|static int|TRANSACTION_NONE|一个常量，指示不支持事务|
+|static int|TRANSACTION_NONE|一个常量，指示不支持事务|
+|static int|TRANSACTION_READ_COMMITTED|一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取|
+|static int|TRANSACTION_READ_UNCOMMITTED|一个常量，表示可以发生脏读，不可重复读和幻像读|
+|static int|TRANSACTION_REPEATABLE_READ|一个常量，表示防止脏读和不可重复读; 可以发生幻像读取|
+|static int|TRANSACTION_SERIALIZABLE|一个常量，表示禁止脏读，不可重复读和幻像读|
 
-6.3、方法说明：
+6.3、方法说明：  
  | 返回类型 | 方法 | 说明 | 
 | --- | --- | --- | 
 | void | abort(Executor executor) | 终止打开的连接 |

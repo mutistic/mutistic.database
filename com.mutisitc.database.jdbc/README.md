@@ -7,15 +7,18 @@
 [Search Maven](https://search.maven.org/search?q=search)  
 [mysql:mysql-connector-java:8.0.12](https://search.maven.org/artifact/mysql/mysql-connector-java/8.0.12/jar)  
 
-
-|Author|Mutistic|
+|作者|Mutistic|
 |---|---|
-|E-mail|mutistic@qq.com|
+|邮箱|mutistic@qq.com|
 
 ---
 ### <a id="a_catalogue">目录</a>：
 1. <a href="#a_jdbc">JDBC：Java数据库连接</a>
 2. <a href="#a_step">JDBC连接数据库步骤</a>
+3. <a href="#a_driver">java.sql.Driver：数据库驱动</a>
+4. <a href="#a_manager">java.sql.DriverManager：驱动管理</a>
+5. <a href="#a_connection">java.sql.Connection：数据库连接</a>
+
 99. <a href="#a_down">down</a>
 
 ---
@@ -204,9 +207,9 @@ JDBC也正迅速成为Java数据库访问的标准
 ```
 
 ---
-### <a id="a_step">二、JDBC连接数据库步骤：</a> <a href="#a_jdbc">last</a> <a href="#">next</a>
+### <a id="a_step">二、JDBC连接数据库步骤：</a> <a href="#a_jdbc">last</a> <a href="#a_dirver">next</a>
 [mysql:mysql-connector-java:8.0.12](https://search.maven.org/artifact/mysql/mysql-connector-java/8.0.12/jar)  
-一、配置数据库驱动（以Mysql数据库为例）：  
+一、配置数据库驱动（以Mysql数据库创建一张表为例）：  
 ```
 1、项目直接依赖mysql相关包：
   可以从Maven中央仓库下载mysql相关包，这里选用最新版本：mysql:mysql-connector-java:8.0.12
@@ -222,7 +225,7 @@ JDBC也正迅速成为Java数据库访问的标准
   </dependency>
 ```
 
-二、 加载方式：
+二、 装载驱动程序：  
 ```
 1、普通Java项目：
   使用Class.forName()加载驱动类：
@@ -252,22 +255,62 @@ The driveris automatically registered via the SPI and manual loading of the driv
   spring.datasource.password=root
 ```
 
-三、获取数据库连接(会话)：
+三、建立连接(会话)：
+[URL：统一资源定位符](https://baike.baidu.com/item/%E7%BB%9F%E4%B8%80%E8%B5%84%E6%BA%90%E5%AE%9A%E4%BD%8D%E7%AC%A6)
 ```
-3.1、使用DriverManager.getConnection()方法获取数据库连接：
-Connection connection = DriverManager.getConnection("jdbcUrl", "username", "password");
+3.1、与数据库建立连接的标准方法是调用DriverManager.getConnection方法。
+  该方法接受含有某个URL的字符串。DriverManager类（即所谓的JDBC管理层）将尝试找到可与那个URL所代表的数据库进行连接的驱动程序。
+DriverManager类存有已注册的Driver类的清单。当调用方法getConnection时，它将检查清单中的每个驱动程序，
+直到找到可与URL中指定的数据库进行连接的驱动程序为止。Driver的方法connect使用这个URL来建立实际的连接。
+  用户可绕过JDBC管理层直接调用Driver方法。这在以下特殊情况下将很有用：当两个驱动器可同时连接到数据库中，
+而用户需要明确地选用其中特定的驱动器。但一般情况下，让DriverManager类处理打开连接这种事将更为简单
+  
+  使用DriverManager.getConnection()方法获取数据库连接：
+  Connection connection = DriverManager.getConnection("jdbcUrl", "username", "password");
 
 3.2、使用完毕需要关闭数据库连接:
 connection.close();
 
-3.3、Mysql数据列的链接地址格式：
+3.3、普通URL：
+  URL[统一资源定位符]提供在Internet上定位资源所需的信息。
+  可将其想象为一个地址。URL的第一部份指定了访问信息所用的协议，后面总是跟着冒号。常用的协议有"ftp[文件传输协议]"和"http[超文本传输协议]"。
+如果协议是"file"，表示资源是在某个本地文件系统上而非在Internet上（下例用于表示我们所描述的部分；它并非URL的组成部分）。
+
+  URL的其余部份（冒号后面的）给出了数据资源所处位置的有关信息。如果协议是file，则URL的其余部份是文件的路径。对于ftp和http协议，
+URL的其余部份标识了主机并可选地给出某个更详尽的地址路径。
+
+3.4、JDBC URL：
+  JDBC URL提供了一种标识数据库的方法，可以使相应的驱动程序能识别该数据库并与之建立连接。
+  实际上，驱动程序编程员将决定用什么JDBC URL来标识特定的驱动程序。
+用户不必关心如何来形成JDBC URL；他们只须使用与所用的驱动程序一起提供的URL即可。JDBC的作用是提供某些约定，驱动程序编程员在构造他们的JDBC URL时应该遵循这些约定。
+  由于JDBC URL要与各种不同的驱动程序一起使用，因此这些约定应非常灵活。首先，它们应允许不同的驱动程序使用不同的方案来命名数据库。
+例如，odbc子协议允许（但并不是要求）URL含有属性值。
+
+其次，JDBC URL应允许驱动程序编程员将一切所需的信息编入其中。这样就可以让要与给定数据库对话的applet打开数据库连接，而无须要求用户去做任何系统管理工作。
+
+最后，JDBC URL应允许某种程度的间接性。也就是说，JDBC URL可指向逻辑主机或数据库名，而这种逻辑主机或数据库名将由网络命名系统动态地转换为实际的名称。
+这可以使系统管理员不必将特定主机声明为JDBC名称的一部份。网络命名服务（例如DNS、NIS和DCE）有多种，而对于使用哪种命名服务并无限制。 JDBC URL的标准语法如下所示。
+它由三部分组成，各部分间用冒号分隔，JDBC URL的三个部分可分解如下：
+  jdbc协议：JDBC URL中的协议总是jdbc。
+
+  <子协议>：驱动程序名或数据库连接机制（这种机制可由一个或多个驱动程序支持）的名称。子协议名的典型示例是"odbc"，
+  该名称是为用于指定ODBC风格的数据资源名称的URL专门保留的。例如，为了通过JDBC-ODBC桥来访问某个数据库，可以用如下所示的URL：jdbc:odbc:book。本例中，
+子协议为"odbc"，子名称"book"是本地ODBC数据资源。如果要用网络命名服务（这样JDBC URL中的数据库名称不必是实际名称），则命名服务可以作为子协议。
+
+  <子名称>：一种标识数据库的方法。子名称可以依不同的子协议而变化。它还可以有子名称的子名称（含有驱动程序编程员所选的任何内部语法）。
+使用子名称的目的是为定位数据库提供足够的信息。前例中，因为ODBC将提供其余部份的信息，因此用"book"就已足够。
+然而，位于远程服务器上的数据库需要更多的信息。例如，如果数据库是通过Internet来访问的，则在JDBC URL中应将网络地址作为子名称的一部份包括进去，
+且必须遵循如下所示的标准URL命名约定：//主机名:端口/子协议
+
+
+3.5、Mysql数据库的链接地址格式：
   jdbc:mysql://IP地址:端口号/数据库名称
   jdbc协议：JDBU URL中的协议总是 jdbc
   子协议：驱动程序或数据列链接机制（这种机制可由一个或多个驱动程序支持）的名称，如mysql，oracle
   子名称：一种标识数据库的方法。必须遵循“//主机名:端口/子协议”的标准URL命名约定，mysql默认端口为3306
 如：//localhost:3306/study           //127.0.0.1:3306/study
 
-3.4、获取数据库连接完整示例：
+3.6、获取数据库连接完整示例：
 Connection connection = null;
 try {
      connection = DriverManager.getConnection(
@@ -301,29 +344,81 @@ to use a more specifc time zone value if you want to utilize time zone support.
   eg：jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8
 ```
 
-DriverMain.java：
+四、发送SQL语句：
+```
+  4.1、创建Statement对象：
+  Statement对象用于把SQL语句发送到DBMS。使用一个活跃的Connection连接的来创建Statement对象的实例
+  Statement statement = connection.createStatement();
+
+  4.2、执行语句：
+  使用 executeUpdate 方法是因为在createTableCoffees中的SQL语句是DDL（数据定义语言）语句。
+创建表，改变表，删除表都是DDL语句的，要用executeUpdate方法来执行。可以从它的名字里看出，方法executeUpdate也被用于执行更新表SQL语句。
+实际上，相对于创建表来说，executeUpdate 用于更新表的操作更多，因为表只需要创建一次，但经常被更新。
+被使用最多的执行SQL语句的方法是executeQuery。这个方法被用来执行SELECT语句，它几乎是使用最多的SQL语句
+  statement.executeQuery("SELECT bookId,title,author,remark,createrTime FROM book");
+
+  4.3、获取查询的数据：
+  ResultSet rs = statement.executeQuery("SELECT bookId,title,author,remark,createrTime FROM book");
+  while (rs.next()) {
+     Long bookId = rs.getLong("bookId");
+     String title = rs.getString("title");
+     String author = rs.getString("author");
+     String remark = rs.getString("remark");
+     Date createrTime = rs.getDate("createrTime");
+  }
+
+  4.4、关闭Statement对象：
+  Statement对象将由Java垃圾收集程序自动关闭。而作为一种好的编程风格，应在不需要Statement对象时显式地关闭它们。
+这将立即释放DBMS资源，有助于避免潜在的内存问题。
+  statement.close();
+```
+
+StepMain.java：
 ```Java
 package com.mutisitc.step;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import com.mutisitc.utils.PrintUtil;
 /**
- * JDBC连接数据库步骤
+ * DBC连接数据库步骤
  */
-public class DriverMain {
+public class StepMain {
     public static void main(String[] args) {
         PrintUtil.one("JDBC连接数据库步骤");
         
         Connection connection = null;
+        PrintUtil.two("0.创建Connection数据库连接引用", connection);
+        
         try {
             Class<?> driver = Class.forName("com.mysql.cj.jdbc.Driver");
-            PrintUtil.two("加载Driver驱动类", driver);
-            
+            PrintUtil.two("1.通过Class.forName()加载Driver驱动类：com.mysql.cj.jdbc.Driver", driver);
+
             connection = DriverManager.getConnection(
                     "jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8", "root", "root");
-            PrintUtil.two("DriverManager链接数据库获取Connection", connection);
+            PrintUtil.two("2.通过DriverManager.getConnection()，获取数据库连接Connection", connection);
 
+            Statement statement = connection.createStatement();
+            PrintUtil.two("3.通过Connection.createStatement()连接，创建Statement对象", statement);
+            
+            ResultSet rs = statement.executeQuery("SELECT bookId,title,author,remark,createrTime FROM book");
+            PrintUtil.two("4.通过Statement.executeQuery()，执行查询SQL，获取查询结果集ResultSet对象", rs);
+            
+            PrintUtil.println();
+            while (rs.next()) {
+                Long bookId = rs.getLong("bookId");
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String remark = rs.getString("remark");
+                Date createrTime = rs.getDate("createrTime");
+                PrintUtil.three("5.通过ResultSet结果集，获取数据列信息", "bookId="+bookId+", title="+title+
+                        ",author="+author+"remark="+remark+",createrTime="+createrTime);
+            }
+            statement.close();
+            PrintUtil.two("6.通过Statement.close()","关闭Statement对象，释放资源");
         } catch (ClassNotFoundException e) {
             PrintUtil.err("Class.forName()加载Dirver驱动类出现异常，打印异常堆栈信息：");
             e.printStackTrace();
@@ -334,7 +429,7 @@ public class DriverMain {
             if (null != connection) {
                 try {
                     connection.close();
-                    PrintUtil.two("Connection.close()", "成功关闭连接");
+                    PrintUtil.two("7.通过Connection.close()","关闭数据库连接，释放资源");
                 } catch (SQLException e) {
                     PrintUtil.err("Connection.close()关闭连接出现异常，打印异常堆栈信息：");
                     e.printStackTrace();
@@ -345,8 +440,9 @@ public class DriverMain {
 }
 ```
 
-四、[java.sql.Driver](https://docs.oracle.com/javase/8/docs/api/java/sql/Driver.html)  
-4.1、描述：
+### <a id="a_driver">三、java.sql.Driver：数据库驱动：</a> <a href="#a_step">last</a> <a href="#a_manager">next</a>
+[java.sql.Driver](https://docs.oracle.com/javase/8/docs/api/java/sql/Driver.html)  
+一、描述：
 ```
   每个驱动程序类必须实现的接口。 
   Java SQL 框架允许多个数据库驱动程序。 
@@ -358,7 +454,27 @@ public class DriverMain {
   在加载某一 Driver类时，它应该创建自己的实例并向 DriverManager 注册该实例。这意味着用户可以通过调用以下程序加载和注册一个驱动程序 
   Class.forName("foo.bah.Driver")
 ```
-4.2、方法说明：
+二、理解：
+```
+  加载Driver类，然后自动在DriverManager中注册的方式有两种：
+  2.1、调用方法Class.forName：
+  这将显式地加载驱动程序类。由于这与外部设置无关，因此推荐使用这种加载驱动程序的方法。如果加载Mysql驱动类com.mysql.cj.jdbc.Driver：
+  Class.forName("com.mysql.cj.jdbc.Driver")。
+
+如果将com.mysql.cj.jdbc.Driver编写为加载时创建实例，并调用以该实例为参数的DriverManager.registerDriver()，
+则它在DriverManager的驱动程序列表中，并可用于创建连接。
+
+  2.2、将驱动程序添加到Java.lang.System的属性jdbc.drivers中：
+  这是一个由DriverManager类加载的驱动程序类名的列表，由冒号分隔：初始化DriverManager类时，它搜索系统属性jdbc.drivers，
+如果用户已输入了一个或多个驱动程序，则DriverManager类将试图加载它们。以下代码说明程序员如何在~/.hotJava/properties
+中输入三个驱动程序类（启动时，HotJava将ivers=com.mysql.cj.jdbc.Driver;xxx.xxx.Driver;xxx.xxx.Driver)
+对DriverManager方法的第一次调用将自动加载这些驱动程序类。
+
+  注意：加载驱动程序的第二种方法需要持久的预设环境。如果对这一点不能保证，则调用方法Class.forName显式地加载每个驱动程序就显得更为安全。
+这也是引入特定驱动程序的方法，因为一旦DriverManager类被初始化，它将不再检查jdbc.drivers属性列表
+```
+
+三、方法说明：
 
 |返回类型|方法|说明|
 |---|---|---|
@@ -370,8 +486,98 @@ public class DriverMain {
 |DriverPropertyInfo[]|getPropertyInfo(String url, Properties info)|获取有关此驱动程序的可能属性的信息|
 |boolean|jdbcCompliant()|报告此驱动程序是否为真正的JDBC Compliant驱动程序|
 
-五、[java.sql.DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html)   
-5.1、描述：
+四、[java.sql.DriverPropertyInfo](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverPropertyInfo.html)
+4.1、描述：
+```
+用于建立连接的驱动程序属性。只有那些需要通过 getDriverProperties 方法与 Driver 交互来发现并提供用于连接的属性的高级编程人员，
+才需要对类 DriverPropertyInfo 感兴趣。 
+```
+
+4.2、方法说明：
+
+|返回类型|方法|说明|
+|---|---|---|
+|String[]|choices|如果DriverPropertyInfo.value可以从特定值集中选择字段的值，则可以是值的数组;否则为null|
+|String|description|属性的简要描述，可能为 null|
+|String|name|属性的名称|
+|boolean|required|如果在 Driver.connect 期间必须为此属性提供一个值，则 required 字段为 true，否则为 false|
+|String|value|value 字段通过综合为 getPropertyInfo 方法提供的信息、Java 环境和驱动程序提供的默认值来指定当前属性值|
+
+DriverMain.java：
+```Java
+package com.mutisitc.driver;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.DriverPropertyInfo;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Properties;
+import com.mutisitc.utils.PrintUtil;
+/**
+ * java.sql.Driver：数据库驱动
+ */
+public class DriverMain {
+	public static void main(String[] args) {
+		PrintUtil.one("java.sql.Driver：数据库驱动：");
+		try {
+			String jdbcURL = "jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8";
+			String userName = "root";
+			String password = "root";
+			PrintUtil.three("0.Mysql数据库连接信息：", null);
+			PrintUtil.three("JDBC URL", jdbcURL);
+			PrintUtil.three("userName", userName);
+			PrintUtil.three("password", password);
+			
+			Driver driver = DriverManager.getDriver(jdbcURL);
+			PrintUtil.two("1.通过DriverManager.getDriver()：获取到的数据库驱动", "Driver="+driver);
+			
+			boolean isacceptsURL = driver.acceptsURL(jdbcURL);
+			PrintUtil.two("2.Driver.isacceptsURL()：获取驱动程序是否认为它可以打开与给定URL的连接：获取结果", "isacceptsURL="+isacceptsURL);
+			
+			PrintUtil.two("3.使用Driver获取数据库连接", "Driver.connect(String url, Properties info)");
+			Properties properties = new Properties();
+			properties.put("user", userName); 
+			properties.put("password", password);
+			PrintUtil.three("3.1.配置Properties属性，至少包含user和password信息", properties.getClass()+"="+properties);
+			
+			Connection connection = driver.connect(jdbcURL, properties);
+			PrintUtil.three("3.2.Driver.connect()：尝试与给定的URL建立数据库连接", "Connection="+connection);
+			connection.close();
+			
+			int majorVersion = driver.getMajorVersion();
+			PrintUtil.two("4.通过Driver.getMajorVersion()：获取驱动程序的主要版本号", "MajorVersion="+majorVersion);
+			
+			int minorVersion = driver.getMinorVersion();
+			PrintUtil.two("5.通过Driver.getMinorVersion()：获取驱动程序的次要版本号", "MinorVersion="+minorVersion);
+			
+			boolean jdbcCompliant = driver.jdbcCompliant();
+			PrintUtil.two("6.通过Driver.jdbcCompliant()：报告此驱动程序是否为真正的JDBC Compliant驱动程序", "jdbcCompliant="+jdbcCompliant);
+			
+			DriverPropertyInfo[] driverPropertyInfos = driver.getPropertyInfo(jdbcURL, properties);
+			PrintUtil.two("7.通过Driver.getPropertyInfo()：获取有关此驱动程序的可能属性的信息", "DriverPropertyInfo="+Arrays.asList(driverPropertyInfos));
+			int index = 0;
+			for (DriverPropertyInfo driverPropertyInfo : driverPropertyInfos) {
+				index++;
+				PrintUtil.two("7."+index+".驱动程序的属性信息：DriverPropertyInfo", driverPropertyInfo);
+				PrintUtil.three("DriverPropertyInfo.name：属性的名称", driverPropertyInfo.name);
+				PrintUtil.three("DriverPropertyInfo.required：是否在Driver.connect期间必须为此属性提供一个值", driverPropertyInfo.required);
+				PrintUtil.three("DriverPropertyInfo.value：value 字段通过综合为 getPropertyInfo 方法提供的信息、Java 环境和驱动程序提供的默认值来指定当前属性值", driverPropertyInfo.value);
+				PrintUtil.three("DriverPropertyInfo.choices：可以从特定值集中选择字段的值：", driverPropertyInfo.choices == null ? null : Arrays.asList(driverPropertyInfo.choices));
+				PrintUtil.three("DriverPropertyInfo.description：属性的名称",driverPropertyInfo.description); 
+			}
+		} catch (SQLException e) {
+			PrintUtil.err("演示 java.sql.Driver：数据库驱动，打印异常堆栈信息：");
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+
+### <a id="a_manager">四、java.sql.DriverManager：驱动管理：</a> <a href="#a_driver">last</a> <a href="#a_connection">next</a>
+[java.sql.DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html)   
+一、描述：
 ```
   管理一组 JDBC 驱动程序的基本服务。
   注：DataSource 接口是JDBC 2.0 API中的新增内容，它提供了连接到数据源的另一种方法。使用 DataSource 对象是连接到数据源的首选方法。 
@@ -385,8 +591,28 @@ jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
   
   从Java 2 SDK标准版本1.3版开始，只有当已授予适当权限时设置日志流。通常这将使用工具PolicyTool完成，该工具可用于授予permission java.sql.SQLPermission "setLog"权限
 ```
+二、理解：
+```
+  DriverManager 类是 JDBC 的管理层，作用于用户和驱动程序之间。它跟踪可用的驱动程序，并在数据库和相应驱动程序之间建立连接。
+另外，DriverManager类也处理诸如驱动程序登录时间限制及登录和跟踪消息的显示等事务。 　
 
-5.2、方法说明：
+  对于简单的应用程序，一般程序员需要在此类中直接使用的唯一方法是DriverManager.getConnection。正如名称所示，该方法将建立与数据库的连接。
+JDBC允许用户调用DriverManager的方法getDriver、getDrivers和registerDriver及Driver的方法connect。但多数情况下，让DriverManager类管理建立连接的细节为上策
+
+  由于安全方面的原因，JDBC管理层将跟踪哪个类加载器提供哪个驱动程序。这样，当DriverManager类打开连接时，
+它仅使用本地文件系统或与发出连接请求的代码相同的类加载器提供的驱动程序
+
+  加载Driver类并在DriverManager类中注册后，它们即可用来与数据库建立连接。当调用DriverManager.getConnection方法发出连接请求时，
+DriverManager将检查每个驱动程序，查看它是否可以建立连接
+
+  有时可能有多个JDBC驱动程序可以与给定的URL连接。例如，与给定远程数据库连接时，可以使用JDBC-ODBC桥驱动程序、JDBC到通用网络协议驱动程序或数据库厂商提供的驱动程序。
+在这种情况下测试驱动程序的顺序至关重要，因为DriverManager将使用它所找到的第一个可以成功连接到给定URL的驱动程序。
+  首先DriverManager试图按注册的顺序使用每个驱动程序（jdbc.drivers中列出的驱动程序总是先注册）。它将跳过代码不可信任的驱动程序，
+除非加载它们的源与试图打开连接的代码的源相同。它通过轮流在每个驱动程序上调用方法Driver.connect，并向它们传递用户开始传递给方法
+DriverManager.getConnection的URL来对驱动程序进行测试，然后连接第一个认出该URL的驱动程序。这种方法初看起来效率不高，
+但由于不可能同时加载数十个驱动程序，因此每次连接实际只需几个过程调用和字符串比较
+```
+三、方法说明：
 
 |返回类型|方法|说明|
 |---|---|---|
@@ -397,7 +623,7 @@ jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
 |static Driver|getDriver(String url)|尝试查找理解给定URL的驱动程序|
 |static Enumeration<Driver>|getDrivers()|检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举|
 |static int|getLoginTimeout()|获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）|
-|static PrintStream|getLogStream()|~~已过时~~。使用 getLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream|
+|static PrintStream|getLogStream()|~~已过时~~。使用 getLogWriter，检索由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream|
 |static PrintWriter|getLogWriter()|检索日志编写器|
 |static void|println(String message)|将消息打印到当前JDBC日志流|
 |static void|registerDriver(Driver driver)|注册给定的驱动程序DriverManager|
@@ -406,9 +632,10 @@ jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
 |static void|setLogStream(PrintStream out)|~~已过时。~~使用 setLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream|
 |static void|setLogWriter(PrintWriter out)|设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager|
 
-六、[java.sql.Connection](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)  
+### <a id="a_connection">五、java.sql.Connection：数据库连接：</a> <a href="#a_manager">last</a> <a href="#">next</a>
+[java.sql.Connection](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)  
 [UDT：互联网数据传输协议](https://baike.baidu.com/item/UDT)  
-6.1、描述：
+一、描述：
 ```
   与特定数据库的连接（会话）。在连接上下文中执行SQL语句并返回结果。 
   
@@ -425,7 +652,7 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
   用户可以创建一个新的类型映射，该映射是一个 java.util.Map 对象，可在其中创建一个条目，并将该条目传递给可以执行自定义映射关系的 java.sql 方法。
 在这种情况下，该方法将使用给定的类型映射，而不是与连接关联的映射。 
 ```
-6.2、字段说明：
+二、字段说明：
 
 |数据类型|方法|说明|
 |---|---|---|
@@ -436,7 +663,7 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 |static int|TRANSACTION_REPEATABLE_READ|一个常量，表示防止脏读和不可重复读; 可以发生幻像读取|
 |static int|TRANSACTION_SERIALIZABLE|一个常量，表示禁止脏读，不可重复读和幻像读|
 
-6.3、方法说明：
+三、方法说明：
 
 |返回类型|方法|说明|
 |---|---|---|
@@ -451,14 +678,14 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 |SQLXML|createSQLXML()|构造一个实现SQLXML接口的对象|
 |Statement|createStatement()|创建Statement用于将SQL语句发送到数据库的对象|
 |Statement|createStatement(int resultSetType, int resultSetConcurrency)|创建一个Statement将生成 ResultSet具有给定类型和并发性的对象的对象|
-|Statement|createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)|创建一个Statement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的 对象|
+|Statement|createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)|创建一个Statement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的对象|
 |Struct|createStruct(String typeName, Object[] attributes)|用于创建Struct对象的工厂方法|
 |boolean|getAutoCommit()|检索此Connection 对象的当前自动提交模式|
 |String|getCatalog()|检索此Connection对象的当前目录名称|
 |Properties|getClientInfo()|返回一个列表，其中包含驱动程序支持的每个客户端信息属性的名称和当前值|
 |String|getClientInfo(String name)|返回name指定的客户端信息属性的值|
 |int|getHoldability()|检索ResultSet使用此Connection对象创建的对象的当前可保存性|
-|DatabaseMetaData|getMetaData()|检索DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的 对象|
+|DatabaseMetaData|getMetaData()|检索DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的对象|
 |int|getNetworkTimeout()|检索驱动程序等待数据库请求完成的毫秒数|
 |String|getSchema()|检索此Connection对象的当前架构名称|
 |int|getTransactionIsolation()|检索此Connection对象的当前事务隔离级别|

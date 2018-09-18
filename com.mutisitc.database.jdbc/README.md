@@ -1,7 +1,7 @@
 # <a id="a_top">JDBC：Java数据库连接</a>
 [Java 8-API](https://docs.oracle.com/javase/8/docs/api/overview-summary.html)  
 [Java 10-API](https://docs.oracle.com/javase/10/docs/api/overview-summary.html)  
-[JDBC-百度百科](https://baike.baidu.com/item/jdbc)  
+[JDBC](https://baike.baidu.com/item/jdbc)  
 [Java数据库连接](https://baike.baidu.com/item/Java%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5)  
 [JDBC-API](https://docs.oracle.com/javase/10/docs/api/java.sql-summary.html)  
 [Search Maven](https://search.maven.org/search?q=search)  
@@ -15,7 +15,7 @@
 
 ---
 ### <a id="a_jdbc">一、JDBC：Java数据库连接：</a> <a href="#a_catalogue">last</a> <a href="#a_step">next</a>
-[JDBC数据库驱动模型](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/01_JDBCPModel.png)
+[JDBC数据库驱动模型](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/01_JDBCPModel.png)  
 一、定义：
 ```
 JDBC：
@@ -95,38 +95,37 @@ JDBC 可做三件事：与数据库建立连接、发送 操作数据库的语�
 在这样一种程序的协助下，即使用户根本不懂SQL的语法，也可以执行数据库任务
 ```
 4.3、从SQL到Java数据类型映射的JDBC规范：
-|SQL类型|Java类型|
-|---|---|
-|CHAR|java.lang.String|
-|VARCHAR|java.lang.String|
-|LONGVARCHAR|java.lang.String|
-|NUMERIC|java.math.BigDecimal|
-|DECIMAL|java.math.BigDecimal|
-|BIT|boolean|
-|TINYINT|byte|
-|SMALLINT|short|
-|INTEGER|int|
-|BIGINT|long|
-|REAL|float|
-|FLOAT|double|
-|DOUBLE|double|
-|BINARY|byte[]|
-|VARBINARY|byte[]|
-|LONGVARBINARY|byte[]|
-|DATE|java.sql.Date|
-|TIME|java.sql.Time|
-|TIMESTAMP|java.sql.Timestamp|
-|BLOB|java.sql.Blob|
-|CLOB|java.sql.Clob|
-|Array|java.sql.Array|
-|REF|java.sql.Ref|
-|Struct|java.sql.Struct|
-|Struct|java.sql.Struct|
+SQL类型 | Java类型 |
+--- | --- |
+CHAR | java.lang.String |
+VARCHAR | java.lang.String |
+LONGVARCHAR | java.lang.String |
+NUMERIC | java.math.BigDecimal |
+DECIMAL | java.math.BigDecimal |
+BIT | boolean |
+TINYINT | byte |
+SMALLINT | short |
+INTEGER | int |
+BIGINT | long |
+REAL | float |
+FLOAT | double |
+DOUBLE | double |
+BINARY | byte[] |
+VARBINARY | byte[] |
+LONGVARBINARY | byte[] |
+DATE | java.sql.Date |
+TIME | java.sql.Time |
+TIMESTAMP | java.sql.Timestamp |
+BLOB | java.sql.Blob |
+CLOB | java.sql.Clob |
+Array | java.sql.Array |
+REF | java.sql.Ref |
+Struct | java.sql.Struct |
+Struct | java.sql.Struct |
 ```
 注意：这种类型匹配不是强制性标准，特定的JDBC厂商可能会改变这种类型匹配。
 例如Oracle中的DATE类型是包含时分秒，而java.sql.Date仅仅支持年月日
 ```
-
 
 五、程序类型：  
 [ODBC：开放数据库互连](https://baike.baidu.com/item/%E5%BC%80%E6%94%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%92%E8%BF%9E/10418782)  
@@ -340,7 +339,7 @@ public class DriverMain {
 }
 ```
 
-四、[java.sql.Driver](https://docs.oracle.com/javase/8/docs/api/java/sql/Driver.html)
+四、[java.sql.Driver](https://docs.oracle.com/javase/8/docs/api/java/sql/Driver.html)  
 4.1、描述：
 ```
   每个驱动程序类必须实现的接口。 
@@ -354,17 +353,17 @@ public class DriverMain {
   Class.forName("foo.bah.Driver")
 ```
 4.2、方法说明：
-|返回类型|方法|说明|
-|---|---|---|
-|boolean|acceptsURL(String url)|检索驱动程序是否认为它可以打开与给定URL的连接|
-|Connection|connect(String url, Properties info)|尝试与给定的URL建立数据库连接|
-|int|getMajorVersion()|检索驱动程序的主要版本号|
-|int|getMinorVersion()|获取驱动程序的次要版本号|
-|Logger|getParentLogger()|返回此驱动程序使用的所有记录器的父记录器|
-|DriverPropertyInfo[]|getPropertyInfo(String url, Properties info)|获取有关此驱动程序的可能属性的信息|
-|boolean|jdbcCompliant()|报告此驱动程序是否为真正的JDBC Compliant驱动程序|
+| 返回类型 | 方法 | 说明 |
+| --- | --- | --- |
+| boolean | acceptsURL(String url) | 检索驱动程序是否认为它可以打开与给定URL的连接 |
+| Connection | connect(String url, Properties info) | 尝试与给定的URL建立数据库连接 |
+| int | getMajorVersion() | 检索驱动程序的主要版本号 |
+| int | getMinorVersion() | 获取驱动程序的次要版本号 |
+| Logger | getParentLogger() | 返回此驱动程序使用的所有记录器的父记录器 |
+| DriverPropertyInfo[] | getPropertyInfo(String url, Properties info) | 获取有关此驱动程序的可能属性的信息 |
+| boolean | jdbcCompliant() | 报告此驱动程序是否为真正的JDBC Compliant驱动程序 |
 
-五、[java.sql.DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html)  
+五、[java.sql.DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html)   
 5.1、描述：
 ```
   管理一组 JDBC 驱动程序的基本服务。
@@ -381,23 +380,23 @@ jdbc.drivers=foo.bah.Driver:wombat.sql.Driver:bad.taste.ourDriver
 ```
 
 5.2、方法说明：
-|返回类型|方法|说明|
-|---|---|---|
-|static void|deregisterDriver(Driver driver)|从已DriverManager注册的驱动程序列表中删除指定的驱动程序|
-|static Connection|getConnection(String url)|尝试建立与给定数据库URL的连接|
-|static Connection|getConnection(String url, Properties info)|尝试建立与给定数据库URL的连接|
-|static Connection|getConnection(String url, String user, String password)|尝试建立与给定数据库URL的连接|
-|static Driver|getDriver(String url)|尝试查找理解给定URL的驱动程序|
-|static Enumeration<Driver>|getDrivers()|检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举|
-|static int|getLoginTimeout()|获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）|
-|static PrintStream|getLogStream()|~~已过时~~。使用 getLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream|
-|static PrintWriter|getLogWriter()|检索日志编写器|
-|static void|println(String message)|将消息打印到当前JDBC日志流|
-|static void|registerDriver(Driver driver)|注册给定的驱动程序DriverManager|
-|static void|registerDriver(Driver driver, DriverAction da)|注册给定的驱动程序DriverManager|
-|static void|setLoginTimeout(int seconds)|设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）|
-|static void|setLogStream(PrintStream out)|~~已过时。~~使用 setLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream|
-|static void|setLogWriter(PrintWriter out)|设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager|
+| 返回类型 | 方法 | 说明 |
+| --- | --- | --- |
+| static void | deregisterDriver(Driver driver) | 从已DriverManager注册的驱动程序列表中删除指定的驱动程序 |
+| static Connection | getConnection(String url) | 尝试建立与给定数据库URL的连接 |
+| static Connection | getConnection(String url, Properties info) | 尝试建立与给定数据库URL的连接 |
+| static Connection | getConnection(String url, String user, String password) | 尝试建立与给定数据库URL的连接 |
+| static Driver | getDriver(String url) | 尝试查找理解给定URL的驱动程序 |
+| static Enumeration<Driver> | getDrivers() | 检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举 |
+| static int | getLoginTimeout() | 获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位） |
+| static PrintStream | getLogStream() | ~~已过时~~。使用 getLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream |
+| static PrintWriter | getLogWriter() | 检索日志编写器 |
+| static void | println(String message) | 将消息打印到当前JDBC日志流 |
+| static void | registerDriver(Driver driver) | 注册给定的驱动程序DriverManager |
+| static void | registerDriver(Driver driver, DriverAction da) | 注册给定的驱动程序DriverManager |
+| static void | setLoginTimeout(int seconds) | 设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位） |
+| static void | setLogStream(PrintStream out) | ~~已过时。~~使用 setLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream |
+| static void | setLogWriter(PrintWriter out) | 设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager |
 
 六、[java.sql.Connection](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)  
 [UDT：互联网数据传输协议](https://baike.baidu.com/item/UDT)  
@@ -419,69 +418,69 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 在这种情况下，该方法将使用给定的类型映射，而不是与连接关联的映射。 
 ```
 6.2、字段说明：  
-|数据类型|方法|说明|
-|---|---|---|
-|static int|TRANSACTION_NONE|一个常量，指示不支持事务|
-|static int|TRANSACTION_READ_COMMITTED|一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取|
-|static int|TRANSACTION_READ_UNCOMMITTED|一个常量，表示可以发生脏读，不可重复读和幻像读|
-|static int|TRANSACTION_REPEATABLE_READ|一个常量，表示防止脏读和不可重复读; 可以发生幻像读取|
-|static int|TRANSACTION_SERIALIZABLE|一个常量，表示禁止脏读，不可重复读和幻像读|
+| 数据类型 | 方法 | 说明 |
+| --- | --- | ---
+| static int | TRANSACTION_NONE | 一个常量，指示不支持事务 |
+| static int | TRANSACTION_READ_COMMITTED | 一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取 |
+| static int | TRANSACTION_READ_UNCOMMITTED | 一个常量，表示可以发生脏读，不可重复读和幻像读 |
+| static int | TRANSACTION_REPEATABLE_READ | 一个常量，表示防止脏读和不可重复读; 可以发生幻像读取 |
+| static int | TRANSACTION_SERIALIZABLE | 一个常量，表示禁止脏读，不可重复读和幻像读 |
 
 6.3、方法说明：
-|返回类型|方法|说明|
-|---|---|---|
-|void|abort(Executor executor)|终止打开的连接|
-|void|clearWarnings()|清除为此Connection对象报告的所有警告|
-|void|close()|立即释放此Connection对象的数据库和JDBC资源，而不是等待它们自动释放|
-|void|commit()|使自上次提交/回滚以来所做的所有更改成为永久更改，并释放此Connection对象当前持有的所有数据库锁|
-|Array|createArrayOf(String typeName, Object[] elements)|用于创建Array对象的工厂方法|
-|Blob|createBlob()|构造一个实现Blob接口的对象|
-|Clob|createClob()|构造一个实现Clob接口的对象|
-|NClob|createNClob()|构造一个实现NClob接口的对象|
-|SQLXML|createSQLXML()|构造一个实现SQLXML接口的对象|
-|Statement|createStatement()|创建Statement用于将SQL语句发送到数据库的对象|
-|Statement|createStatement(int resultSetType, int resultSetConcurrency)|创建一个Statement将生成 ResultSet具有给定类型和并发性的对象的对象|
-|Statement|createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)|创建一个Statement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的 对象|
-|Struct|createStruct(String typeName, Object[] attributes)|用于创建Struct对象的工厂方法|
-|boolean|getAutoCommit()|检索此Connection 对象的当前自动提交模式|
-|String|getCatalog()|检索此Connection对象的当前目录名称|
-|Properties|getClientInfo()|返回一个列表，其中包含驱动程序支持的每个客户端信息属性的名称和当前值|
-|String|getClientInfo(String name)|返回name指定的客户端信息属性的值|
-|int|getHoldability()|检索ResultSet使用此Connection对象创建的对象的当前可保存性|
-|DatabaseMetaData|getMetaData()|检索DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的 对象|
-|int|getNetworkTimeout()|检索驱动程序等待数据库请求完成的毫秒数|
-|String|getSchema()|检索此Connection对象的当前架构名称|
-|int|getTransactionIsolation()|检索此Connection对象的当前事务隔离级别|
-|Map<String,Class<?>>|getTypeMap()|检索Map与此Connection对象关联的 对象|
-|SQLWarning|getWarnings()|检索此Connection对象上的调用报告的第一个警告 |
-|boolean|isClosed()|检索此Connection对象是否已关闭|
-|boolean|isReadOnly()|检索此Connection 对象是否处于只读模式|
-|boolean|isValid(int timeout)|如果连接尚未关闭且仍然有效，则返回true|
-|String|nativeSQL(String sql)|将给定的SQL语句转换为系统的本机SQL语法|
-|CallableStatement|prepareCall(String sql)|创建一个CallableStatement用于调用数据库存储过程的对象|
-|CallableStatement|prepareCall(String sql, int resultSetType, int resultSetConcurrency)|创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象|
-|CallableStatement|prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)|创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象|
-|PreparedStatement|prepareStatement(String sql)|创建PreparedStatement用于将参数化SQL语句发送到数据库的对象|
-|PreparedStatement|prepareStatement(String sql, int autoGeneratedKeys)|创建一个PreparedStatement能够检索自动生成的密钥的默认对象|
-|PreparedStatement|prepareStatement(String sql, int[] columnIndexes)|创建一个PreparedStatement能够返回给定数组指定的自动生成的键的默认对象|
-|PreparedStatement|prepareStatement(String sql, int resultSetType, int resultSetConcurrency)|创建一个PreparedStatement将生成 ResultSet具有给定类型和并发性的对象的对象|
-|PreparedStatement|prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)|创建一个PreparedStatement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的 对象|
-|PreparedStatement|prepareStatement(String sql, String[] columnNames)|创建一个PreparedStatement能够返回给定数组指定的自动生成的键的默认对象|
-|void|releaseSavepoint(Savepoint savepoint)|从当前事务中删除指定的Savepoint 和后续的Savepoint对象|
-|void|rollback()|撤消当前事务中所做的所有更改，并释放此Connection对象当前持有的所有数据库锁|
-|void|rollback(Savepoint savepoint)|取消Savepoint设置给定对象后所做的所有更改|
-|void|setAutoCommit(boolean autoCommit)|将此连接的自动提交模式设置为给定状态|
-|void|setCatalog(String catalog)|设置给定的目录名称，以便选择要Connection在其中工作的此对象的数据库的子空间|
-|void|setClientInfo(Properties properties)|设置连接的客户端信息属性的值|
-|void|setClientInfo(String name, String value)|将name指定的客户端信息属性的值设置为value指定的值|
-|void|setHoldability(int holdability)|将ResultSet使用此Connection对象创建的对象的默认可保存性更改为给定的可保持性|
-|void|setNetworkTimeout(Executor executor, int milliseconds)|设置Connection从Connection 遗嘱中创建的最大句点或对象，等待数据库回复任何一个请求|
-|void|setReadOnly(boolean readOnly)|将此连接置于只读模式，作为驱动程序的提示以启用数据库优化|
-|Savepoint|setSavepoint()|在当前事务中创建一个未命名的保存点，并返回Savepoint表示它的新对象|
-|Savepoint|setSavepoint(String name)|在当前事务中创建具有给定名称的保存点，并返回Savepoint表示它的新对象|
-|void|setSchema(String schema)|设置要访问的给定模式名称|
-|void|setTransactionIsolation(int level)|尝试将此Connection对象的事务隔离级别更改为 给定的对象|
-|void|setTypeMap(Map<String,Class<?>> map)|将给定TypeMap对象安装为此Connection对象的类型映射|
+ | 返回类型 | 方法 | 说明 | 
+| --- | --- | --- | 
+| void | abort(Executor executor) | 终止打开的连接 |
+| void | clearWarnings() | 清除为此Connection对象报告的所有警告 |
+| void | close() | 立即释放此Connection对象的数据库和JDBC资源，而不是等待它们自动释放 |
+| void | commit() | 使自上次提交/回滚以来所做的所有更改成为永久更改，并释放此Connection对象当前持有的所有数据库锁 |
+| Array | createArrayOf(String typeName, Object[] elements) | 用于创建Array对象的工厂方法 |
+| Blob | createBlob() | 构造一个实现Blob接口的对象 |
+| Clob | createClob() | 构造一个实现Clob接口的对象 |
+| NClob | createNClob() | 构造一个实现NClob接口的对象 |
+| SQLXML | createSQLXML() | 构造一个实现SQLXML接口的对象 |
+| Statement | createStatement() | 创建Statement用于将SQL语句发送到数据库的对象 |
+| Statement | createStatement(int resultSetType, int resultSetConcurrency) | 创建一个Statement将生成 ResultSet具有给定类型和并发性的对象的对象 |
+| Statement | createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) | 创建一个Statement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的 对象 |
+| Struct | createStruct(String typeName, Object[] attributes) | 用于创建Struct对象的工厂方法 |
+| boolean | getAutoCommit() | 检索此Connection 对象的当前自动提交模式 |
+| String | getCatalog() | 检索此Connection对象的当前目录名称 |
+| Properties | getClientInfo() | 返回一个列表，其中包含驱动程序支持的每个客户端信息属性的名称和当前值 |
+| String | getClientInfo(String name) | 返回name指定的客户端信息属性的值 |
+| int | getHoldability() | 检索ResultSet使用此Connection对象创建的对象的当前可保存性 |
+| DatabaseMetaData | getMetaData() | 检索DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的 对象 |
+| int | getNetworkTimeout() | 检索驱动程序等待数据库请求完成的毫秒数 |
+| String | getSchema() | 检索此Connection对象的当前架构名称 |
+| int | getTransactionIsolation() | 检索此Connection对象的当前事务隔离级别 |
+| Map<String,Class<?>> | getTypeMap() | 检索Map与此Connection对象关联的 对象 |
+| SQLWarning | getWarnings() | 检索此Connection对象上的调用报告的第一个警告  |
+| boolean | isClosed() | 检索此Connection对象是否已关闭 |
+| boolean | isReadOnly() | 检索此Connection 对象是否处于只读模式 |
+| boolean | isValid(int timeout) | 如果连接尚未关闭且仍然有效，则返回true |
+| String | nativeSQL(String sql) | 将给定的SQL语句转换为系统的本机SQL语法 |
+| CallableStatement | prepareCall(String sql) | 创建一个CallableStatement用于调用数据库存储过程的对象 |
+| CallableStatement | prepareCall(String sql, int resultSetType, int resultSetConcurrency) | 创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象 |
+| CallableStatement | prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) | 创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象 |
+| PreparedStatement | prepareStatement(String sql) | 创建PreparedStatement用于将参数化SQL语句发送到数据库的对象 |
+| PreparedStatement | prepareStatement(String sql, int autoGeneratedKeys) | 创建一个PreparedStatement能够检索自动生成的密钥的默认对象 |
+| PreparedStatement | prepareStatement(String sql, int[] columnIndexes) | 创建一个PreparedStatement能够返回给定数组指定的自动生成的键的默认对象 |
+| PreparedStatement | prepareStatement(String sql, int resultSetType, int resultSetConcurrency) | 创建一个PreparedStatement将生成 ResultSet具有给定类型和并发性的对象的对象 |
+| PreparedStatement | prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) | 创建一个PreparedStatement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的 对象 |
+| PreparedStatement | prepareStatement(String sql, String[] columnNames) | 创建一个PreparedStatement能够返回给定数组指定的自动生成的键的默认对象 |
+| void | releaseSavepoint(Savepoint savepoint) | 从当前事务中删除指定的Savepoint 和后续的Savepoint对象 |
+| void | rollback() | 撤消当前事务中所做的所有更改，并释放此Connection对象当前持有的所有数据库锁 |
+| void | rollback(Savepoint savepoint) | 取消Savepoint设置给定对象后所做的所有更改 |
+| void | setAutoCommit(boolean autoCommit) | 将此连接的自动提交模式设置为给定状态 |
+| void | setCatalog(String catalog) | 设置给定的目录名称，以便选择要Connection在其中工作的此对象的数据库的子空间 |
+| void | setClientInfo(Properties properties) | 设置连接的客户端信息属性的值 |
+| void | setClientInfo(String name, String value) | 将name指定的客户端信息属性的值设置为value指定的值 |
+| void | setHoldability(int holdability) | 将ResultSet使用此Connection对象创建的对象的默认可保存性更改为给定的可保持性 |
+| void | setNetworkTimeout(Executor executor, int milliseconds) | 设置Connection从Connection 遗嘱中创建的最大句点或对象，等待数据库回复任何一个请求 |
+| void | setReadOnly(boolean readOnly) | 将此连接置于只读模式，作为驱动程序的提示以启用数据库优化 |
+| Savepoint | setSavepoint() | 在当前事务中创建一个未命名的保存点，并返回Savepoint表示它的新对象 |
+| Savepoint | setSavepoint(String name) | 在当前事务中创建具有给定名称的保存点，并返回Savepoint表示它的新对象 |
+| void | setSchema(String schema) | 设置要访问的给定模式名称 |
+| void | setTransactionIsolation(int level) | 尝试将此Connection对象的事务隔离级别更改为 给定的对象 |
+| void | setTypeMap(Map<String,Class<?>> map) | 将给定TypeMap对象安装为此Connection对象的类型映射 |
 
 
 ---

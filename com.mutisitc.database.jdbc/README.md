@@ -752,7 +752,7 @@ public class DriverManagerMain {
 			PrintStream printStream = DriverManager.getLogStream();
 			PrintUtil.two("9.DriverManager.getLogStream()：已过时，检索由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream", "PrintStream="+printStream);
 			
-			File file = new File("src/com/mutisitc/drivermanager/logStream.log");
+			File file = new File("src/com/mutisitc/drivermanager/logStream.txt");
 			PrintUtil.two("10.加载文件", "File="+file);
 			
 			PrintStream newPrintStream = new PrintStream(file);
@@ -806,14 +806,14 @@ The driver is automatically registered via the SPI and manual loading of the dri
 7.DriverManager.getLoginTimeout()：获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）【loginTimeout=0】
 8.DriverManager.setLoginTimeout(int seconds)：设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）【loginTimeout=10000】
 9.DriverManager.getLogStream()：已过时，检索由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream【PrintStream=null】
-10.加载文件【File=src\com\mutisitc\drivermanager\logStream.log】
+10.加载文件【File=src\com\mutisitc\drivermanager\logStream.txt】
   10.1.通过DriverManager.setLogStream(PrintStream out)：已过时，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream【PrintStream=java.io.PrintStream@50675690】
 11.通过DriverManager.getLogStream()：检索日志编写器【PrintWriter=java.io.PrintWriter@31b7dea0】
-12.加载文件【File=src\com\mutisitc\drivermanager\logStream.log】
+12.加载文件【File=src\com\mutisitc\drivermanager\logStream.txt】
   12.1.通过DriverManager.setLogWriter(PrintWriter out)：设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager【PrintWriter=java.io.PrintWriter@3ac42916】
 13.DriverManager.println(String message)：将消息打印到当前JDBC日志流【Message=测试打印数据】
 
-logStream.log：
+logStream.txt：
 测试打印数据
 ```
 

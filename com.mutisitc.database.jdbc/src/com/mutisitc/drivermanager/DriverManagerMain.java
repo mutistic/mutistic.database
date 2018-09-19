@@ -74,7 +74,7 @@ public class DriverManagerMain {
 			PrintStream printStream = DriverManager.getLogStream();
 			PrintUtil.two("9.DriverManager.getLogStream()：已过时，检索由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream", "PrintStream="+printStream);
 			
-			File file = new File("src/com/mutisitc/drivermanager/logStream.log");
+			File file = new File("src/com/mutisitc/drivermanager/logStream.txt");
 			PrintUtil.two("10.加载文件", "File="+file);
 			
 			PrintStream newPrintStream = new PrintStream(file);

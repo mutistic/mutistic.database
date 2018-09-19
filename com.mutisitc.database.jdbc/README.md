@@ -817,7 +817,6 @@ logStream.txt：
 测试打印数据
 ```
 
-
 ### <a id="a_connection">五、java.sql.Connection：数据库连接：</a> <a href="#a_manager">last</a> <a href="#">next</a>
 [java.sql.Connection](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)  
 [UDT：互联网数据传输协议](https://baike.baidu.com/item/UDT)  
@@ -842,7 +841,6 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 
 |数据类型|方法|说明|
 |---|---|---|
-|static int|TRANSACTION_NONE|一个常量，指示不支持事务|
 |static int|TRANSACTION_NONE|一个常量，指示不支持事务|
 |static int|TRANSACTION_READ_COMMITTED|一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取|
 |static int|TRANSACTION_READ_UNCOMMITTED|一个常量，表示可以发生脏读，不可重复读和幻像读|

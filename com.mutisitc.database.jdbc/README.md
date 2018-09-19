@@ -487,6 +487,7 @@ JDBC连接数据库步骤
 ```
 
 三、方法说明：
+[java.util.Properties](https://docs.oracle.com/javase/8/docs/api/java/util/Properties.html)
 
 |返回类型|方法|说明|
 |---|---|---|
@@ -501,8 +502,8 @@ JDBC连接数据库步骤
 四、[java.sql.DriverPropertyInfo](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverPropertyInfo.html)
 4.1、描述：
 ```
-用于建立连接的驱动程序属性。只有那些需要通过 getDriverProperties 方法与 Driver 交互来发现并提供用于连接的属性的高级编程人员，
-才需要对类 DriverPropertyInfo 感兴趣。 
+用于建立连接的驱动程序属性。只有那些需要通过getDriverProperties方法与Driver交互来发现
+并提供用于连接的属性的高级编程人员，才需要对类DriverPropertyInfo感兴趣。 
 ```
 
 4.2、方法说明：
@@ -654,7 +655,12 @@ DriverManager将检查每个驱动程序，查看它是否可以建立连接
 DriverManager.getConnection的URL来对驱动程序进行测试，然后连接第一个认出该URL的驱动程序。这种方法初看起来效率不高，
 但由于不可能同时加载数十个驱动程序，因此每次连接实际只需几个过程调用和字符串比较
 ```
-三、方法说明：
+三、方法说明：  
+[java.sql.DriverAction](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverAction.html)  
+[java.util.Enumeration](https://docs.oracle.com/javase/8/docs/api/java/util/Enumeration.html)  
+[java.io.File](https://docs.oracle.com/javase/8/docs/api/java/io/File.html)  
+[java.io.PrintStream](https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html)  
+[java.io.PrintWriter](https://docs.oracle.com/javase/8/docs/api/java/io/PrintWriter.html)
 
 |返回类型|方法|说明|
 |---|---|---|
@@ -673,6 +679,144 @@ DriverManager.getConnection的URL来对驱动程序进行测试，然后连接�
 |static void|setLoginTimeout(int seconds)|设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）|
 |static void|setLogStream(PrintStream out)|~~已过时。~~使用 setLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream|
 |static void|setLogWriter(PrintWriter out)|设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager|
+
+DriverManagerMain.java：
+```Java
+package com.mutisitc.drivermanager;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Properties;
+import com.mutisitc.utils.PrintUtil;
+/**
+ * java.sql.DriverManager：驱动管理
+ */
+public class DriverManagerMain {
+	public static void main(String[] args) {
+		PrintUtil.one("java.sql.DriverManager：驱动管理：");
+		try {
+			String jdbcURL = "jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8";
+			String userName = "root";
+			String password = "root";
+			PrintUtil.two("0.Mysql数据库连接信息：", null);
+			PrintUtil.three("0.1.JDBC URL", jdbcURL);
+			PrintUtil.three("0.2.userName", userName);
+			PrintUtil.three("0.3.password", password);
+			
+			PrintUtil.two("1.使用DriverManager.getConnection()获取数据库连接", "DriverManager.getConnection(String url, Properties info)");
+			Properties properties = new Properties();
+			properties.put("user", userName); 
+			properties.put("password", password);
+			PrintUtil.three("1.1.配置Properties属性，至少包含user和password信息", properties.getClass()+"="+properties);
+			
+			Connection connection = DriverManager.getConnection(jdbcURL, properties);
+			PrintUtil.three("1.2.DriverManager.getConnection(String url, Properties info)：尝试建立与给定数据库URL的连接", "Connection="+connection);
+			connection.close();
+			
+			Connection connection2 = DriverManager.getConnection(jdbcURL, userName, password);
+			PrintUtil.two("2.DriverManager.getConnection(String url, String user, String password)：尝试建立与给定数据库URL的连接", "Connection="+connection2);
+			connection2.close();
+			
+			Driver driver = DriverManager.getDriver(jdbcURL);
+			PrintUtil.two("3.DriverManager.getDriver()：获取到的数据库驱动", "Driver="+driver);
+			
+			com.mysql.jdbc.Driver dirver2 = new com.mysql.jdbc.Driver();
+			DriverManager.registerDriver(dirver2);
+			PrintUtil.two("4.DriverManager.registerDriver(Driver driver)：注册给定的驱动程序DriverManager", "Driver="+dirver2);
+			
+			Enumeration<Driver> driverEnums = DriverManager.getDrivers();
+			PrintUtil.two("5.DriverManager.getDrivers()：检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举", "Enumeration<Driver>="+driverEnums);
+			int index = 0;
+			while(driverEnums.hasMoreElements()) {
+				index++;
+				Driver driverTemp = driverEnums.nextElement();
+				PrintUtil.three("5."+index+".当前加载的JDBC驱动程序", "Driver="+driverTemp);
+			}
+			
+			DriverManager.deregisterDriver(dirver2);
+			PrintUtil.two("6.DriverManager.deregisterDriver(Driver driver)：从已DriverManager注册的驱动程序列表中删除指定的驱动程序", "Driver="+dirver2);
+			
+			int loginTimeout = DriverManager.getLoginTimeout();
+			PrintUtil.two("7.DriverManager.getLoginTimeout()：获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）", "loginTimeout="+loginTimeout);
+			
+			loginTimeout = 10000;
+			DriverManager.setLoginTimeout(loginTimeout);
+			PrintUtil.two("8.DriverManager.setLoginTimeout(int seconds)：设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）", "loginTimeout="+loginTimeout);
+			
+			PrintStream printStream = DriverManager.getLogStream();
+			PrintUtil.two("9.DriverManager.getLogStream()：已过时，检索由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream", "PrintStream="+printStream);
+			
+			File file = new File("src/com/mutisitc/drivermanager/logStream.log");
+			PrintUtil.two("10.加载文件", "File="+file);
+			
+			PrintStream newPrintStream = new PrintStream(file);
+			DriverManager.setLogStream(newPrintStream);
+			PrintUtil.three("10.1.通过DriverManager.setLogStream(PrintStream out)：已过时，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream", "PrintStream="+newPrintStream);
+			
+			PrintWriter printWriter = DriverManager.getLogWriter();
+			PrintUtil.two("11.通过DriverManager.getLogStream()：检索日志编写器", "PrintWriter="+printWriter);
+			
+			PrintUtil.two("12.加载文件", "File="+file);
+			PrintWriter newPrintWriter = new PrintWriter(file);
+			DriverManager.setLogWriter(newPrintWriter);
+			PrintUtil.three("12.1.通过DriverManager.setLogWriter(PrintWriter out)：设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager", "PrintWriter="+newPrintWriter);
+		
+			String message = "测试打印数据";
+			DriverManager.println(message);
+			PrintUtil.two("13.DriverManager.println(String message)：将消息打印到当前JDBC日志流", "Message="+message);
+			
+		} catch (SQLException e) {
+			PrintUtil.err("演示 java.sql.DriverManager：驱动管理出现异常，打印异常堆栈信息：");
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			PrintUtil.err("加载文件路径出现异常，打印异常堆栈信息：");
+			e.printStackTrace();
+		}
+	}
+}
+```
+输出验证：
+```
+Console：
+java.sql.DriverManager：驱动管理：
+0.Mysql数据库连接信息：
+  0.1.JDBC URL【jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8】
+  0.2.userName【root】
+  0.3.password【root】
+1.使用DriverManager.getConnection()获取数据库连接【DriverManager.getConnection(String url, Properties info)】
+  1.1.配置Properties属性，至少包含user和password信息【class java.util.Properties={user=root, password=root}】
+  1.2.DriverManager.getConnection(String url, Properties info)：尝试建立与给定数据库URL的连接【Connection=com.mysql.cj.jdbc.ConnectionImpl@5d3411d】
+2.DriverManager.getConnection(String url, String user, String password)：尝试建立与给定数据库URL的连接【Connection=com.mysql.cj.jdbc.ConnectionImpl@763d9750】
+3.DriverManager.getDriver()：获取到的数据库驱动【Driver=com.mysql.cj.jdbc.Driver@45ee12a7】
+
+Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. 
+The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+4.DriverManager.registerDriver(Driver driver)：注册给定的驱动程序DriverManager【Driver=com.mysql.jdbc.Driver@d70c109】
+
+5.DriverManager.getDrivers()：检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举【Enumeration<Driver>=java.util.Vector$1@17ed40e0】
+  5.1.当前加载的JDBC驱动程序【Driver=com.mysql.cj.jdbc.Driver@45ee12a7】
+  5.2.当前加载的JDBC驱动程序【Driver=com.mysql.jdbc.Driver@d70c109】
+6.DriverManager.deregisterDriver(Driver driver)：从已DriverManager注册的驱动程序列表中删除指定的驱动程序【Driver=com.mysql.jdbc.Driver@d70c109】
+7.DriverManager.getLoginTimeout()：获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）【loginTimeout=0】
+8.DriverManager.setLoginTimeout(int seconds)：设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）【loginTimeout=10000】
+9.DriverManager.getLogStream()：已过时，检索由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream【PrintStream=null】
+10.加载文件【File=src\com\mutisitc\drivermanager\logStream.log】
+  10.1.通过DriverManager.setLogStream(PrintStream out)：已过时，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream【PrintStream=java.io.PrintStream@50675690】
+11.通过DriverManager.getLogStream()：检索日志编写器【PrintWriter=java.io.PrintWriter@31b7dea0】
+12.加载文件【File=src\com\mutisitc\drivermanager\logStream.log】
+  12.1.通过DriverManager.setLogWriter(PrintWriter out)：设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager【PrintWriter=java.io.PrintWriter@3ac42916】
+13.DriverManager.println(String message)：将消息打印到当前JDBC日志流【Message=测试打印数据】
+
+logStream.log：
+测试打印数据
+```
+
 
 ### <a id="a_connection">五、java.sql.Connection：数据库连接：</a> <a href="#a_manager">last</a> <a href="#">next</a>
 [java.sql.Connection](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)  

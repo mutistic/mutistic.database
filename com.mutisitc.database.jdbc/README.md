@@ -908,11 +908,26 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 四、其他：  
 [java.sql.ResultSet](https://docs.oracle.com/javase/8/docs/api/java/sql/ResultSet.html)
 ```
-一些方法参数中sql，resultSetType, resultSetConcurrency, resultSetHoldability：
- sql - 一个 String 对象，它是将被发送到数据库的 SQL 语句，可以包含一个或多个 '?' IN 参数
- resultSetType - 结果集类型，它是 ResultSet.TYPE_FORWARD_ONLY、ResultSet.TYPE_SCROLL_INSENSITIVE 或 ResultSet.TYPE_SCROLL_SENSITIVE 之一
- resultSetConcurrency - 并发类型，它是 ResultSet.CONCUR_READ_ONLY 或 ResultSet.CONCUR_UPDATABLE 之一
- resultSetHoldability - 以下 ResultSet 常量之一：ResultSet.HOLD_CURSORS_OVER_COMMIT 或 ResultSet.CLOSE_CURSORS_AT_COMMIT 
+4.1、一些方法参数中sql，resultSetType, resultSetConcurrency, resultSetHoldability：
+  sql - 一个 String 对象，它是将被发送到数据库的 SQL 语句，可以包含一个或多个 '?' IN 参数
+  resultSetType - 结果集类型，它是 ResultSet.TYPE_FORWARD_ONLY、ResultSet.TYPE_SCROLL_INSENSITIVE 或 ResultSet.TYPE_SCROLL_SENSITIVE 之一
+  resultSetConcurrency - 并发类型，它是 ResultSet.CONCUR_READ_ONLY 或 ResultSet.CONCUR_UPDATABLE 之一
+  resultSetHoldability - 以下 ResultSet 常量之一：ResultSet.HOLD_CURSORS_OVER_COMMIT 或 ResultSet.CLOSE_CURSORS_AT_COMMIT 
+
+4.2、常用方法：
+  void close()：立即释放此Connection对象的数据库和JDBC资源，而不是等待它们自动释放
+  Statement createStatement()：创建Statement用于将SQL语句发送到数据库的对象 
+  CallableStatement prepareCall(String sql)：创建一个CallableStatement用于调用数据库存储过程的对象 
+  PreparedStatement prepareStatement(String sql)：创建PreparedStatement用于将参数化SQL语句发送到数据库的对象 
+  boolean isClosed()：检索此Connection对象是否已关闭 
+  void setReadOnly(boolean readOnly)：将此连接置于只读模式，作为驱动程序的提示以启用数据库优化 
+  boolean isReadOnly()：检索此Connection对象是否处于只读模式 
+  boolean isValid(int timeout)：如果连接尚未关闭且仍然有效，则返回true 
+  void setAutoCommit(boolean autoCommit)：将此连接的自动提交模式设置为给定状态 
+  void commit()：使自上次提交/回滚以来所做的所有更改成为永久更改，并释放此Connection对象当前持有的所有数据库锁 
+  void rollback()：撤消当前事务中所做的所有更改，并释放此Connection对象当前持有的所有数据库锁 
+  void setNetworkTimeout(Executor executor, int milliseconds)：设置从连接创建的连接或对象的最长时间，将等待数据库回复任何一个请求 
+  void setTransactionIsolation(int level)：尝试将此Connection对象的事务隔离级别更改为给定的对象 
 ```
 
 ConnectionMain.java：

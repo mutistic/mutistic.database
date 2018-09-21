@@ -208,7 +208,7 @@ JDBC也正迅速成为Java数据库访问的标准
 ```
 
 ---
-### <a id="a_step">二、JDBC连接数据库步骤：</a> <a href="#a_jdbc">last</a> <a href="#a_dirver">next</a>
+### <a id="a_step">二、JDBC连接数据库步骤：</a> <a href="#a_jdbc">last</a> <a href="#a_driver">next</a>
 [mysql:mysql-connector-java:8.0.12](https://search.maven.org/artifact/mysql/mysql-connector-java/8.0.12/jar)  
 一、配置数据库驱动（以Mysql数据库创建一张表为例）：  
 ```

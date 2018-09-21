@@ -29,7 +29,7 @@ public class JDBCUtil {
 			+ "?useSSL=false&serverTimezone=GMT%2B8";
 
 	/**
-	 * @description 获取数据库连接 
+	 * @description 获取数据库连接
 	 * @author mutisitic
 	 * @date 2018年9月21日
 	 * @return 创建后的数据库连接
@@ -39,10 +39,10 @@ public class JDBCUtil {
 		try {
 			PrintUtil.two("0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
 					+ PASS_WORD + "，driver class name=" + DRIVER_CLASS_NAME);
-			
+
 			// 加载驱动-JDBC 4.0新特性可以不用显示加载
 			Class.forName(DRIVER_CLASS_NAME);
-			
+
 			connection = DriverManager.getConnection(JDBC_URL, USER_NAME, PASS_WORD);
 			PrintUtil.two("1.通过DriverManager.getConnection()获取数据库连接（会话）", "Connection=" + connection);
 			return connection;
@@ -55,27 +55,89 @@ public class JDBCUtil {
 		}
 		return connection;
 	}
-	
+
 	/**
-	 * @description 获取数据库连接 
+	 * @description 创建Statement对象
 	 * @author mutisitic
 	 * @date 2018年9月21日
-	 * @return 创建后的数据库连接
+	 * @return 创建后的Statement对象
 	 */
 	public static Statement createStatement() {
 		try {
 			PrintUtil.two("0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
 					+ PASS_WORD + "，driver class name=" + DRIVER_CLASS_NAME);
-			
+
 			// 加载驱动-JDBC 4.0新特性可以不用显示加载
 			Class.forName(DRIVER_CLASS_NAME);
-			
+
 			Connection connection = DriverManager.getConnection(JDBC_URL, USER_NAME, PASS_WORD);
 			PrintUtil.two("1.通过DriverManager.getConnection()获取数据库连接（会话）", "Connection=" + connection);
-			
+
 			Statement statement = connection.createStatement();
 			PrintUtil.two("2.通过Connection.createStatement()：创建Statement对象", "Statement=" + statement);
 			return statement;
+		} catch (ClassNotFoundException e) {
+			PrintUtil.err("加载驱动" + DRIVER_CLASS_NAME + "出现异常，打印异常堆栈信息：");
+			e.printStackTrace();
+		} catch (SQLException e) {
+			PrintUtil.err("获取数据库连接出现异常，打印异常堆栈信息：");
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * @description 创建PreparedStatement对象
+	 * @author mutisitic
+	 * @date 2018年9月21日
+	 * @return 创建后的PreparedStatement对象
+	 */
+	public static PreparedStatement prepareStatement(String sql) {
+		try {
+			PrintUtil.two("0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
+					+ PASS_WORD + "，driver class name=" + DRIVER_CLASS_NAME);
+
+			// 加载驱动-JDBC 4.0新特性可以不用显示加载
+			Class.forName(DRIVER_CLASS_NAME);
+
+			Connection connection = DriverManager.getConnection(JDBC_URL, USER_NAME, PASS_WORD);
+			PrintUtil.two("1.通过DriverManager.getConnection()获取数据库连接（会话）", "Connection=" + connection);
+
+			PreparedStatement prepared = connection.prepareStatement(sql);
+			PrintUtil.two("2.通过Connection.prepareStatement(String sql)：创建PreparedStatement对象",
+					"PreparedStatement=" + prepared + ", sql=" + sql);
+			return prepared;
+		} catch (ClassNotFoundException e) {
+			PrintUtil.err("加载驱动" + DRIVER_CLASS_NAME + "出现异常，打印异常堆栈信息：");
+			e.printStackTrace();
+		} catch (SQLException e) {
+			PrintUtil.err("获取数据库连接出现异常，打印异常堆栈信息：");
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * @description 获取CallableStatement对象
+	 * @author mutisitic
+	 * @date 2018年9月21日
+	 * @return 创建后的CallableStatement对象
+	 */
+	public static CallableStatement prepareCall(String sql) {
+		try {
+			PrintUtil.two("0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
+					+ PASS_WORD + "，driver class name=" + DRIVER_CLASS_NAME);
+
+			// 加载驱动-JDBC 4.0新特性可以不用显示加载
+			Class.forName(DRIVER_CLASS_NAME);
+
+			Connection connection = DriverManager.getConnection(JDBC_URL, USER_NAME, PASS_WORD);
+			PrintUtil.two("1.通过DriverManager.getConnection()获取数据库连接（会话）", "Connection=" + connection);
+
+			CallableStatement callable = connection.prepareCall(sql);
+			PrintUtil.two("2.通过Connection.prepareCall(String sql)：创建CallableStatement对象",
+					"CallableStatement=" + callable + ", sql=" + sql);
+			return callable;
 		} catch (ClassNotFoundException e) {
 			PrintUtil.err("加载驱动" + DRIVER_CLASS_NAME + "出现异常，打印异常堆栈信息：");
 			e.printStackTrace();
@@ -90,11 +152,12 @@ public class JDBCUtil {
 	 * @description 关闭数据库连接
 	 * @author mutisitic
 	 * @date 2018年9月21日
-	 * @param connection 需要关闭的数据库连接
+	 * @param connection
+	 *            需要关闭的数据库连接
 	 */
 	public static void close(Connection connection) {
 		try {
-			if(connection != null) {
+			if (connection != null && !connection.isClosed()) {
 				connection.close();
 				PrintUtil.two("成功关闭数据库连接", "Connection.close()");
 			}
@@ -103,16 +166,17 @@ public class JDBCUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @description 关闭Statement对象
 	 * @author mutisitic
 	 * @date 2018年9月21日
-	 * @param statement 需要关闭的Statement对象
+	 * @param statement
+	 *            需要关闭的Statement对象
 	 */
 	public static void close(Statement statement) {
 		try {
-			if(statement != null) {
+			if (statement != null && !statement.isClosed()) {
 				statement.close();
 				PrintUtil.two("成功Statement对象", "Statement.close()");
 			}
@@ -121,16 +185,17 @@ public class JDBCUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @description 关闭PreparedStatement对象
 	 * @author mutisitic
 	 * @date 2018年9月21日
-	 * @param prepared 需要关闭的PreparedStatement对象
+	 * @param prepared
+	 *            需要关闭的PreparedStatement对象
 	 */
 	public static void close(PreparedStatement prepared) {
 		try {
-			if(prepared != null) {
+			if (prepared != null && !prepared.isClosed()) {
 				prepared.close();
 				PrintUtil.two("成功PreparedStatement对象", "PreparedStatement.close()");
 			}
@@ -139,16 +204,17 @@ public class JDBCUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @description 关闭CallableStatement对象
 	 * @author mutisitic
 	 * @date 2018年9月21日
-	 * @param callable 需要关闭的CallableStatement对象
+	 * @param callable
+	 *            需要关闭的CallableStatement对象
 	 */
 	public static void close(CallableStatement callable) {
 		try {
-			if(callable != null) {
+			if (callable != null && !callable.isClosed()) {
 				callable.close();
 				PrintUtil.two("成功CallableStatement对象", "Statement.close()");
 			}

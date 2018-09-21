@@ -18,6 +18,7 @@
 3. <a href="#a_driver">java.sql.Driver：数据库驱动</a>
 4. <a href="#a_manager">java.sql.DriverManager：驱动管理</a>
 5. <a href="#a_connection">java.sql.Connection：数据库连接</a>
+6. <a href="#a_statement">java.sql.Statement：执行静态SQL</a>
 
 99. <a href="#a_down">down</a>
 
@@ -500,7 +501,7 @@ JDBC连接数据库步骤
 |DriverPropertyInfo[]|getPropertyInfo(String url, Properties info)|获取有关此驱动程序的可能属性的信息|
 |boolean|jdbcCompliant()|报告此驱动程序是否为真正的JDBC Compliant驱动程序|
 
-四、[java.sql.DriverPropertyInfo](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverPropertyInfo.html)
+四、[java.sql.DriverPropertyInfo](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverPropertyInfo.html)  
 4.1、描述：
 ```
 用于建立连接的驱动程序属性。只有那些需要通过getDriverProperties方法与Driver交互来发现
@@ -617,7 +618,6 @@ java.sql.Driver：数据库驱动：
   DriverPropertyInfo.description：属性的名称【Port number of MySQL Server】
   7.xxxx...
 ```
-
 
 ### <a id="a_manager">四、java.sql.DriverManager：驱动管理：</a> <a href="#a_driver">last</a> <a href="#a_connection">next</a>
 [java.sql.DriverManager](https://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html)   
@@ -818,7 +818,7 @@ logStream.txt：
 测试打印数据
 ```
 
-### <a id="a_connection">五、java.sql.Connection：数据库连接：</a> <a href="#a_manager">last</a> <a href="#">next</a>
+### <a id="a_connection">五、java.sql.Connection：数据库连接：</a> <a href="#a_manager">last</a> <a href="#a_statement">next</a>
 [java.sql.Connection](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)  
 [UDT：互联网数据传输协议](https://baike.baidu.com/item/UDT)  
 一、描述：
@@ -842,11 +842,11 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 
 |数据类型|方法|说明|
 |---|---|---|
-|static int|TRANSACTION_NONE|一个常量，指示不支持事务|
-|static int|TRANSACTION_READ_COMMITTED|一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取|
-|static int|TRANSACTION_READ_UNCOMMITTED|一个常量，表示可以发生脏读，不可重复读和幻像读|
-|static int|TRANSACTION_REPEATABLE_READ|一个常量，表示防止脏读和不可重复读; 可以发生幻像读取|
-|static int|TRANSACTION_SERIALIZABLE|一个常量，表示禁止脏读，不可重复读和幻像读|
+|static int|TRANSACTION_NONE=0|一个常量，指示不支持事务|
+|static int|TRANSACTION_READ_COMMITTED=2|一个常量，表示防止脏读; 可以发生不可重复的读取和幻像读取|
+|static int|TRANSACTION_READ_UNCOMMITTED=1|一个常量，表示可以发生脏读，不可重复读和幻像读|
+|static int|TRANSACTION_REPEATABLE_READ=4|一个常量，表示防止脏读和不可重复读; 可以发生幻像读取|
+|static int|TRANSACTION_SERIALIZABLE=8|一个常量，表示禁止脏读，不可重复读和幻像读|
 
 三、方法说明：
 
@@ -905,9 +905,8 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 |void|setTransactionIsolation(int level)|尝试将此Connection对象的事务隔离级别更改为给定的对象|
 |void|setTypeMap(Map<String,Class<?>> map)|将给定TypeMap对象安装为此Connection对象的类型映射|
 
-四、其他：
-[java.sql.ResultSet](https://docs.oracle.com/javase/8/docs/api/java/sql/ResultSet.html)  
-[java.sql.Statement](https://docs.oracle.com/javase/8/docs/api/java/sql/Statement.html)
+四、其他：  
+[java.sql.ResultSet](https://docs.oracle.com/javase/8/docs/api/java/sql/ResultSet.html)
 ```
 一些方法参数中sql，resultSetType, resultSetConcurrency, resultSetHoldability：
  sql - 一个 String 对象，它是将被发送到数据库的 SQL 语句，可以包含一个或多个 '?' IN 参数
@@ -1222,6 +1221,85 @@ java.sql.Connection：数据库连接：
 47.Connection.commit()【使自上次提交/回滚以来所做的所有更改成为永久更改，并释放此Connection对象当前持有的所有数据库锁】
 48.Connection.close()【立即释放此Connection对象的数据库和JDBC资源，而不是等待它们自动释放】
 ```
+
+### <a id="a_statement">六、java.sql.Statement：执行静态SQL：</a> <a href="#a_connection">last</a> <a href="#a_statement">next</a>
+[java.sql.Statement](https://docs.oracle.com/javase/8/docs/api/java/sql/Statement.html)  
+一、描述：
+```
+  用于执行静态SQL语句并返回它所生成结果的对象。 
+
+  在默认情况下，同一时间每个 Statement 对象在只能打开一个ResultSet对象。
+因此，如果读取一个ResultSet对象与读取另一个交叉，则这两个对象必须是由不同的 Statement 对象生成的。
+如果存在某个语句的打开的当前ResultSet对象，则 Statement 接口中的所有执行方法都会隐式关闭它。 
+```
+二、字段说明 ：  
+
+|数据类型|字段|说明|
+|---|---|---|
+|static int|CLOSE_ALL_RESULTS=3|该常量指示调用getMoreResults时应该关闭以前一直打开的所有ResultSet对象|
+|static int|CLOSE_CURRENT_RESULT=1|该常量指示调用getMoreResults时应该关闭当前ResultSet对象|
+|static int|EXECUTE_FAILED=-3|该常量指示在执行批量语句时发生错误|
+|static int|KEEP_CURRENT_RESULT=2|该常量指示调用getMoreResults时应该关闭当前ResultSet对象|
+|static int|NO_GENERATED_KEYS=2|该常量指示生成的键应该不可用于获取|
+|static int|RETURN_GENERATED_KEYS=1|该常量指示生成的键应该可用于获取|
+|static int|SUCCESS_NO_INFO=-2|该常量指示批量语句执行成功但不存在受影响的可用行数计数|
+
+三、方法说明 ：  
+
+|数据类型|字段|说明|
+|---|---|---|
+|void|addBatch(String sql)|将给定的SQL命令添加到此Statement对象的当前命令列表中|
+|void|cancel()|Statement如果DBMS和驱动程序都支持中止SQL语句，则取消此对象|
+|void|clearBatch()|清空此Statement对象的当前SQL命令列表|
+|void|clearWarnings()|清除此Statement 对象上报告的所有警告|
+|void|close()|立即释放此Statement对象的数据库和JDBC资源，而不是等待它自动关闭时发生|
+|void|closeOnCompletion()|指定Statement在关闭所有相关结果集时将关闭它|
+|boolean|execute(String sql)|执行给定的SQL语句，该语句可能返回多个结果|
+|boolean|execute(String sql, int autoGeneratedKeys)|执行给定的SQL语句，该语句可能返回多个结果，并向驱动程序发出信号，告知任何自动生成的键应该可用于检索|
+|boolean|execute(String sql, int[] columnIndexes)|执行给定的SQL语句，该语句可能返回多个结果，并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于检索|
+|boolean|execute(String sql, String[] columnNames)|执行给定的SQL语句，该语句可能返回多个结果，并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于检索|
+|int[]|executeBatch()|将一批命令提交到数据库以供执行，如果所有命令成功执行，则返回一组更新计数|
+|default long[]|executeLargeBatch()|将一批命令提交到数据库以供执行，如果所有命令成功执行，则返回一组更新计数|
+|default long|executeLargeUpdate(String sql)|执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容，如SQL DDL语句的SQL语句|
+|default long|executeLargeUpdate(String sql, int autoGeneratedKeys)|执行给定的SQL语句，并使用给定标志向驱动程序发出信号，告知该Statement对象生成的自动生成的密钥是否应该可用于检索|
+|default long|executeLargeUpdate(String sql, int[] columnIndexes)|执行给定的SQL语句并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于检索|
+|default long|executeLargeUpdate(String sql, String[] columnNames)|执行给定的SQL语句并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于检索|
+|ResultSet|executeQuery(String sql)|执行给定的SQL语句，该语句返回单个 ResultSet对象|
+|int|executeUpdate(String sql)|执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容，如SQL DDL语句的SQL语句|
+|int|executeUpdate(String sql, int autoGeneratedKeys)|执行给定的SQL语句，并使用给定标志向驱动程序发出信号，告知该Statement对象生成的自动生成的密钥是否应该可用于检索|
+|int|executeUpdate(String sql, int[] columnIndexes)|执行给定的SQL语句并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于检索|
+|int|executeUpdate(String sql, String[] columnNames)|执行给定的SQL语句并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于检索|
+|Connection|getConnection()|检索Connection生成此Statement对象的对象|
+|int|getFetchDirection()|检索从数据库表中获取行的方向，该方向是从此Statement对象生成的结果集的缺省值|
+|int|getFetchSize()|检索结果集行的数量，该行是ResultSet从此对象生成的对象的默认提取大小Statement|
+|ResultSet|getGeneratedKeys()|检索由于执行此Statement对象而创建的任何自动生成的密钥 |
+|default long|getLargeMaxRows()|检索此ResultSet对象生成的 Statement对象可以包含的最大行数 |
+|default long|getLargeUpdateCount()|检索当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1|
+|int|getMaxFieldSize()|检索此ResultSet 对象生成的Statement对象中的字符和二进制列值可以返回的最大字节数|
+|int|getMaxRows()|检索此ResultSet对象生成的 Statement对象可以包含的最大行数 |
+|boolean|getMoreResults()|移动到此Statement对象的下一个结果，true如果它是ResultSet对象则返回 ，并隐式关闭ResultSet 使用该方法获得的任何当前对象getResultSet|
+|boolean|getMoreResults(int current)|移动到此Statement对象的下一个结果，ResultSet根据给定标志指定的指令处理任何当前对象，并true在下一个结果是ResultSet对象时返回|
+|int|getQueryTimeout()|检索驱动程序等待Statement对象执行的秒数|
+|ResultSet|getResultSet()|将当前结果检索为ResultSet对象|
+|int|getResultSetConcurrency()|检索此ResultSet对象生成的Statement对象的结果集并发性|
+|int|getResultSetHoldability()|检索此ResultSet对象生成的Statement对象的结果集可保持性|
+|int|getResultSetType()|检索此ResultSet对象生成的Statement对象的结果集类型|
+|int|getUpdateCount()|检索当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1|
+|SQLWarning|getWarnings()|检索此Statement对象上的调用报告的第一个警告|
+|boolean|isClosed()|检索此Statement对象是否已关闭|
+|boolean|isCloseOnCompletion()|返回一个值，该值指示Statement在关闭所有相关结果集时是否将关闭此值|
+|boolean|isPoolable()|返回一个值，指示是否Statement 可以使用poolable|
+|void|setCursorName(String name)|将SQL游标名称设置为给定的String，后续Statement对象 execute方法将使用该名称|
+|void|setEscapeProcessing(boolean enable)|打开或关闭转义处理|
+|void|setFetchDirection(int direction)|为驱动程序提供有关ResultSet 在使用此Statement对象创建的对象中处理行的方向的提示|
+|void|setFetchSize(int rows)|为JDBC驱动程序提供有关当ResultSet由此生成的对象需要更多行时应从数据库获取的行数的提示 Statement|
+|default void|setLargeMaxRows(long max)|ResultSet将此Statement 对象生成的任何对象可包含的最大行数限制设置为 给定数字|
+|void|setMaxFieldSize(int max)|设置此ResultSet 对象生成的Statement对象中字符和二进制列值可返回的最大字节数限制|
+|void|setMaxRows(int max)|ResultSet将此Statement 对象生成的任何对象可包含的最大行数限制设置为 给定数字|
+|void|setPoolable(boolean poolable)|要求Statement汇集或不汇集|
+|void|setQueryTimeout(int seconds)|将驱动程序等待 Statement对象执行的秒数设置为给定的秒数|
+
+
 
 ---
 <a id="a_down"></a>  

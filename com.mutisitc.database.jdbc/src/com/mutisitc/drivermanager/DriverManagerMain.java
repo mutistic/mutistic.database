@@ -88,11 +88,14 @@ public class DriverManagerMain {
 			PrintWriter newPrintWriter = new PrintWriter(file);
 			DriverManager.setLogWriter(newPrintWriter);
 			PrintUtil.three("12.1.通过DriverManager.setLogWriter(PrintWriter out)：设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager", "PrintWriter="+newPrintWriter);
-		
+			
 			String message = "测试打印数据";
 			DriverManager.println(message);
 			PrintUtil.two("13.DriverManager.println(String message)：将消息打印到当前JDBC日志流", "Message="+message);
 			
+			printStream.close();
+			printWriter.close();
+			newPrintStream.close();
 		} catch (SQLException e) {
 			PrintUtil.err("演示 java.sql.DriverManager：驱动管理出现异常，打印异常堆栈信息：");
 			e.printStackTrace();

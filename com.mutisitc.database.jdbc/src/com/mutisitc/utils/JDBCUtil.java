@@ -180,6 +180,7 @@ public class JDBCUtil {
 				statement.close();
 				PrintUtil.two("成功Statement对象", "Statement.close()");
 			}
+			close(statement.getConnection());
 		} catch (SQLException e) {
 			PrintUtil.err("关闭Statement对象出现异常，打印异常堆栈信息：");
 			e.printStackTrace();
@@ -199,6 +200,7 @@ public class JDBCUtil {
 				prepared.close();
 				PrintUtil.two("成功PreparedStatement对象", "PreparedStatement.close()");
 			}
+			close(prepared.getConnection());
 		} catch (SQLException e) {
 			PrintUtil.err("关闭PreparedStatement对象出现异常，打印异常堆栈信息：");
 			e.printStackTrace();
@@ -218,9 +220,11 @@ public class JDBCUtil {
 				callable.close();
 				PrintUtil.two("成功CallableStatement对象", "Statement.close()");
 			}
+			close(callable.getConnection());
 		} catch (SQLException e) {
 			PrintUtil.err("关闭CallableStatement对象出现异常，打印异常堆栈信息：");
 			e.printStackTrace();
 		}
 	}
+	
 }

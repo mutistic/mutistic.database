@@ -147,7 +147,7 @@ public class JDBCUtil {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @description 关闭数据库连接
 	 * @author mutisitic
@@ -175,12 +175,14 @@ public class JDBCUtil {
 	 *            需要关闭的Statement对象
 	 */
 	public static void close(Statement statement) {
+		PrintUtil.println();
 		try {
+			Connection connection = statement.getConnection();
 			if (statement != null && !statement.isClosed()) {
 				statement.close();
-				PrintUtil.two("成功Statement对象", "Statement.close()");
+				PrintUtil.two("成功关闭Statement对象", "Statement.close()");
 			}
-			close(statement.getConnection());
+			close(connection);
 		} catch (SQLException e) {
 			PrintUtil.err("关闭Statement对象出现异常，打印异常堆栈信息：");
 			e.printStackTrace();
@@ -196,11 +198,12 @@ public class JDBCUtil {
 	 */
 	public static void close(PreparedStatement prepared) {
 		try {
+			Connection connection = prepared.getConnection();
 			if (prepared != null && !prepared.isClosed()) {
 				prepared.close();
-				PrintUtil.two("成功PreparedStatement对象", "PreparedStatement.close()");
+				PrintUtil.two("成功关闭PreparedStatement对象", "PreparedStatement.close()");
 			}
-			close(prepared.getConnection());
+			close(connection);
 		} catch (SQLException e) {
 			PrintUtil.err("关闭PreparedStatement对象出现异常，打印异常堆栈信息：");
 			e.printStackTrace();
@@ -216,15 +219,16 @@ public class JDBCUtil {
 	 */
 	public static void close(CallableStatement callable) {
 		try {
+			Connection connection = callable.getConnection();
 			if (callable != null && !callable.isClosed()) {
 				callable.close();
-				PrintUtil.two("成功CallableStatement对象", "Statement.close()");
+				PrintUtil.two("成功关闭CallableStatement对象", "Statement.close()");
 			}
-			close(callable.getConnection());
+			close(connection);
 		} catch (SQLException e) {
 			PrintUtil.err("关闭CallableStatement对象出现异常，打印异常堆栈信息：");
 			e.printStackTrace();
 		}
 	}
-	
+
 }

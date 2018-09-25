@@ -19,6 +19,7 @@
 4. <a href="#a_manager">java.sql.DriverManager：驱动管理</a>
 5. <a href="#a_connection">java.sql.Connection：数据库连接</a>
 6. <a href="#a_statement">java.sql.Statement：执行静态SQL</a>
+7. <a href="#a_insert1">使用Statement.execute：插入数据</a>
 
 99. <a href="#a_down">down</a>
 
@@ -369,11 +370,12 @@ public class JDBCUtil {
    */
   public static void close(Statement statement) {
     try {
+      Connection connection = statement.getConnection();
       if (statement != null && !statement.isClosed()) {
         statement.close();
-        PrintUtil.two("成功Statement对象", "Statement.close()");
+        PrintUtil.two("成功关闭Statement对象", "Statement.close()");
       }
-      close(statement.getConnection());
+      close(connection);
     } catch (SQLException e) {
       PrintUtil.err("关闭Statement对象出现异常，打印异常堆栈信息：");
       e.printStackTrace();
@@ -386,11 +388,12 @@ public class JDBCUtil {
    */
   public static void close(PreparedStatement prepared) {
     try {
+            Connection connection = prepared.getConnection();
       if (prepared != null && !prepared.isClosed()) {
         prepared.close();
-        PrintUtil.two("成功PreparedStatement对象", "PreparedStatement.close()");
+        PrintUtil.two("成功关闭PreparedStatement对象", "PreparedStatement.close()");
       }
-      close(prepared.getConnection());
+      close(connection);
     } catch (SQLException e) {
       PrintUtil.err("关闭PreparedStatement对象出现异常，打印异常堆栈信息：");
       e.printStackTrace();
@@ -403,11 +406,12 @@ public class JDBCUtil {
    */
   public static void close(CallableStatement callable) {
     try {
+      Connection connection = callable.getConnection();
       if (callable != null && !callable.isClosed()) {
         callable.close();
-        PrintUtil.two("成功CallableStatement对象", "Statement.close()");
+        PrintUtil.two("成功关闭CallableStatement对象", "Statement.close()");
       }
-      close(callable.getConnection());
+      close(connection);
     } catch (SQLException e) {
       PrintUtil.err("关闭CallableStatement对象出现异常，打印异常堆栈信息：");
       e.printStackTrace();
@@ -442,7 +446,28 @@ public class CommonUtil {
    */
   public static String toString(int[] result) {
     String str = "";
+    if(null == result || result.length == 0) {
+      return str;
+    }
+    
     for (int i : result) {
+      str += i+",";
+    }
+    return str.substring(0, str.length()-1);
+  }
+  
+  /**
+   * 数组转换成字符串
+   * @param result
+   * @return
+   */
+  public static String toString(String[] result) {
+    String str = "";
+    if(null == result || result.length == 0) {
+      return str;
+    }
+    
+    for (String i : result) {
       str += i+",";
     }
     return str.substring(0, str.length()-1);
@@ -683,18 +708,6 @@ public class StepMain {
     }
 }
 ```
-输出验证：
-```
-JDBC连接数据库步骤
-0.创建Connection数据库连接引用
-1.通过Class.forName()加载Driver驱动类：com.mysql.cj.jdbc.Driver【class com.mysql.cj.jdbc.Driver】
-2.通过DriverManager.getConnection()，获取数据库连接Connection【com.mysql.cj.jdbc.ConnectionImpl@6f79caec】
-3.通过Connection.createStatement()连接，创建Statement对象【com.mysql.cj.jdbc.StatementImpl@2d6a9952】
-4.通过Statement.executeQuery()，执行查询SQL，获取查询结果集ResultSet对象【com.mysql.cj.jdbc.result.ResultSetImpl@2b80d80f】
-5.通过ResultSet结果集，获取数据列信息【bookId=111, title=222,author=333remark=444,createrTime=2018-09-18】
-6.通过Statement.close()【关闭Statement对象，释放资源】
-7.通过Connection.close()【关闭数据库连接，释放资源】
-```
 
 ### <a id="a_driver">三、java.sql.Driver：数据库驱动：</a> <a href="#a_step">last</a> <a href="#a_manager">next</a>
 [java.sql.Driver](https://docs.oracle.com/javase/8/docs/api/java/sql/Driver.html)  
@@ -829,36 +842,6 @@ public class DriverMain {
         }
     }
 }
-```
-输出验证：
-```
-java.sql.Driver：数据库驱动：
-0.Mysql数据库连接信息：
-  JDBC URL【jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8】
-  userName【root】
-  password【root】
-1.通过DriverManager.getDriver()：获取到的数据库驱动【Driver=com.mysql.cj.jdbc.Driver@6d6f6e28】
-2.Driver.isacceptsURL()：获取驱动程序是否认为它可以打开与给定URL的连接：获取结果【isacceptsURL=true】
-3.使用Driver获取数据库连接【Driver.connect(String url, Properties info)】
-  3.1.配置Properties属性，至少包含user和password信息【class java.util.Properties={user=root, password=root}】
-  3.2.Driver.connect()：尝试与给定的URL建立数据库连接【Connection=com.mysql.cj.jdbc.ConnectionImpl@6f79caec】
-4.通过Driver.getMajorVersion()：获取驱动程序的主要版本号【MajorVersion=8】
-5.通过Driver.getMinorVersion()：获取驱动程序的次要版本号【MinorVersion=0】
-6.通过Driver.jdbcCompliant()：报告此驱动程序是否为真正的JDBC Compliant驱动程序【jdbcCompliant=false】
-7.通过Driver.getPropertyInfo()：获取有关此驱动程序的可能属性的信息【DriverPropertyInfo=[java.sql.DriverPropertyInfo@22a71081, ...]】
-  7.1.驱动程序的属性信息：DriverPropertyInfo【java.sql.DriverPropertyInfo@22a71081】
-  DriverPropertyInfo.name：属性的名称【HOST】
-  DriverPropertyInfo.required：是否在Driver.connect期间必须为此属性提供一个值【true】
-  DriverPropertyInfo.value：value 字段通过综合为 getPropertyInfo 方法提供的信息、Java 环境和驱动程序提供的默认值来指定当前属性值【127.0.0.1】
-  DriverPropertyInfo.choices：可以从特定值集中选择字段的值：
-  DriverPropertyInfo.description：属性的名称【Hostname of MySQL Server】
-  7.2.驱动程序的属性信息：DriverPropertyInfo【java.sql.DriverPropertyInfo@3930015a】
-  DriverPropertyInfo.name：属性的名称【PORT】
-  DriverPropertyInfo.required：是否在Driver.connect期间必须为此属性提供一个值【false】
-  DriverPropertyInfo.value：value 字段通过综合为 getPropertyInfo 方法提供的信息、Java 环境和驱动程序提供的默认值来指定当前属性值【3306】
-  DriverPropertyInfo.choices：可以从特定值集中选择字段的值：
-  DriverPropertyInfo.description：属性的名称【Port number of MySQL Server】
-  7.xxxx...
 ```
 
 ### <a id="a_manager">四、java.sql.DriverManager：驱动管理：</a> <a href="#a_driver">last</a> <a href="#a_connection">next</a>
@@ -1023,41 +1006,6 @@ public class DriverManagerMain {
         }
     }
 }
-```
-输出验证：
-```
-Console：
-java.sql.DriverManager：驱动管理：
-0.Mysql数据库连接信息：
-  0.1.JDBC URL【jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8】
-  0.2.userName【root】
-  0.3.password【root】
-1.使用DriverManager.getConnection()获取数据库连接【DriverManager.getConnection(String url, Properties info)】
-  1.1.配置Properties属性，至少包含user和password信息【class java.util.Properties={user=root, password=root}】
-  1.2.DriverManager.getConnection(String url, Properties info)：尝试建立与给定数据库URL的连接【Connection=com.mysql.cj.jdbc.ConnectionImpl@5d3411d】
-2.DriverManager.getConnection(String url, String user, String password)：尝试建立与给定数据库URL的连接【Connection=com.mysql.cj.jdbc.ConnectionImpl@763d9750】
-3.DriverManager.getDriver()：获取到的数据库驱动【Driver=com.mysql.cj.jdbc.Driver@45ee12a7】
-
-Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. 
-The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
-4.DriverManager.registerDriver(Driver driver)：注册给定的驱动程序DriverManager【Driver=com.mysql.jdbc.Driver@d70c109】
-
-5.DriverManager.getDrivers()：检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举【Enumeration<Driver>=java.util.Vector$1@17ed40e0】
-  5.1.当前加载的JDBC驱动程序【Driver=com.mysql.cj.jdbc.Driver@45ee12a7】
-  5.2.当前加载的JDBC驱动程序【Driver=com.mysql.jdbc.Driver@d70c109】
-6.DriverManager.deregisterDriver(Driver driver)：从已DriverManager注册的驱动程序列表中删除指定的驱动程序【Driver=com.mysql.jdbc.Driver@d70c109】
-7.DriverManager.getLoginTimeout()：获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）【loginTimeout=0】
-8.DriverManager.setLoginTimeout(int seconds)：设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）【loginTimeout=10000】
-9.DriverManager.getLogStream()：已过时，检索由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream【PrintStream=null】
-10.加载文件【File=src\com\mutisitc\drivermanager\logStream.txt】
-  10.1.通过DriverManager.setLogStream(PrintStream out)：已过时，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream【PrintStream=java.io.PrintStream@50675690】
-11.通过DriverManager.getLogStream()：检索日志编写器【PrintWriter=java.io.PrintWriter@31b7dea0】
-12.加载文件【File=src\com\mutisitc\drivermanager\logStream.txt】
-  12.1.通过DriverManager.setLogWriter(PrintWriter out)：设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager【PrintWriter=java.io.PrintWriter@3ac42916】
-13.DriverManager.println(String message)：将消息打印到当前JDBC日志流【Message=测试打印数据】
-
-logStream.txt：
-测试打印数据
 ```
 
 ### <a id="a_connection">五、java.sql.Connection：数据库连接：</a> <a href="#a_manager">last</a> <a href="#a_statement">next</a>
@@ -1422,64 +1370,8 @@ public class ConnectionMain {
   }
 }
 ```
-输出验证：
-```
-java.sql.Connection：数据库连接：
-0.Mysql数据库连接信息：
-  0.1.JDBC URL【jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8】
-  0.2.userName【root】
-  0.2.password【root】
-1.通过DriverManager.getConnection()获取数据库连接（会话）【Connection=com.mysql.cj.jdbc.ConnectionImpl@5d3411d】
-2.Connection.abort(Executor executor)【终止打开的连接】
-3.Connection.clearWarnings()【清除为此Connection对象报告的所有警告】
-4.Connection.createArrayOf(String typeName, Object[] elements)：用于创建java.sql.Array对象的工厂方法【Mysql没有具体实现改方法，会抛出java.sql.SQLFeatureNotSupportedException异常】
-5.Connection.createBlob()：构造一个实现Blob接口的对象【Blob=com.mysql.cj.jdbc.Blob@50675690】
-6.Connection.createClob()：构造一个实现Clob接口的对象【Clob=com.mysql.cj.jdbc.Clob@629f0666】
-7.Connection.createNClob()：构造一个实现NClob接口的对象【NClob=com.mysql.cj.jdbc.NClob@387c703b】
-8.Connection.createSQLXML()：构造一个实现SQLXML接口的对象【SQLXML=com.mysql.cj.jdbc.MysqlSQLXML@71e7a66b】
-9.Connection.createStatement()：创建Statement用于将SQL语句发送到数据库的对象【Statement=com.mysql.cj.jdbc.StatementImpl@326de728】
-10.Connection.createStatement(int resultSetType, int resultSetConcurrency)：创建一个Statement将生成 ResultSet具有给定类型和并发性的对象的对象【resultSetType=java.sql.ResultSet.TYPE_FORWARD_ONLY=1003, resultSetConcurrency=java.sql.ResultSet.CONCUR_READ_ONLY=1007, Statement=com.mysql.cj.jdbc.StatementImpl@25618e91】
-11.Connection.createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)：创建一个Statement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的对象【resultSetType=java.sql.ResultSet.TYPE_FORWARD_ONLY=1003, resultSetConcurrency=java.sql.ResultSet.CONCUR_READ_ONLY=1007, resultSetHoldability=java.sql.ResultSet.HOLD_CURSORS_OVER_COMMIT=1, Statement=com.mysql.cj.jdbc.StatementImpl@7a92922】
-12.Connection.createStruct(String typeName, Object[] attributes)：用于创建java.sql.Struct对象的工厂方法【Mysql没有具体实现改方法，会抛出java.sql.SQLFeatureNotSupportedException异常】
-13.Connection.getAutoCommit()：检索此Connection 对象的当前是否是自动提交模式【AutoCommit=true】
-14.Connection.setAutoCommit(boolean autoCommit)：将此连接的自动提交模式设置为给定状态【autoCommit=false】
-15.Connection.getCatalog()：检索此Connection对象的当前目录名称【Catalog=study】
-16.Connection.setCatalog(String catalog)：设置给定的目录名称，以便选择要Connection在其中工作的此对象的数据库的子空间【Catalog=study】
-17.Connection.setClientInfo(Properties properties)：设置连接的客户端信息属性的值【properties={}】
-18.Connection.setClientInfo(String name, String value)：将name指定的客户端信息属性的值设置为value指定的值【name=test, value=test】
-19.Connection.getClientInfo()：返回一个列表，其中包含驱动程序支持的每个客户端信息属性的名称和当前值【java.util.Properties={test=test}】
-20.Connection.getHoldability()：检索ResultSet使用此Connection对象创建的对象的当前可保存性【Holdability=java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT=2】
-21.Connection.setHoldability(int holdability)：将ResultSet使用此Connection对象创建的对象的默认可保存性更改为给定的可保持性【holdability=java.sql.ResultSet.HOLD_CURSORS_OVER_COMMIT=1】
-22.Connection.getMetaData()：检索DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的对象【DatabaseMetaData=com.mysql.cj.jdbc.DatabaseMetaData@2fc14f68】
-23.Connection.getNetworkTimeout()：检索驱动程序等待数据库请求完成的毫秒数【NetworkTimeout=0】
-24.Connection.setNetworkTimeout(Executor executor, int milliseconds)【设置从连接创建的连接或对象的最长时间，将等待数据库回复任何一个请求】
-25.Connection.getSchema()：检索此Connection对象的当前架构名称【Schema=null】
-26.Connection.getTransactionIsolation()：检索此Connection对象的当前事务隔离级别【transactionIsolation=java.sql.Connection.TRANSACTION_REPEATABLE_READ=4】
-27.Connection.setTransactionIsolation(int level)：尝试将此Connection对象的事务隔离级别更改为给定的对象【level=java.sql.Connection.TRANSACTION_READ_COMMITTED=2】
-28.Connection.getTypeMap()：检索Map与此Connection对象关联的对象【typeMap.keySet()=[]】
-29.Connection.setTypeMap(Map<String,Class<?>> map)：将给定TypeMap对象安装为此Connection对象的类型映射【typeMap={}】
-30.Connection.getWarnings()：检索此Connection对象上的调用报告的第一个警告【java.sql.SQLWarning=null】
-31.Connection.isClosed()：检索此Connection对象是否已关闭【isClosed=false】
-32.Connection.isReadOnly()：检索此Connection对象是否处于只读模式【isReadOnly=false】
-33.Connection.setReadOnly()：将此连接置于只读模式，作为驱动程序的提示以启用数据库优化【isReadOnly=true】
-34.Connection.nativeSQL(String sql)：将给定的SQL语句转换为系统的本机SQL语法【sql=select * from book, nativeSQL=select * from book】
-35.Connection.prepareCall(String sql)：创建一个CallableStatement用于调用数据库存储过程的对象【sql=test, CallableStatement=com.mysql.cj.jdbc.CallableStatement: test】
-36.Connection.prepareCall(String sql, int resultSetType, int resultSetConcurrency)：创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象【sql=test, resultSetType=java.sql.ResultSet.TYPE_FORWARD_ONLY=1003, resultSetConcurrency=java.sql.ResultSet.CONCUR_READ_ONLY=1007, CallableStatement=com.mysql.cj.jdbc.CallableStatement: test】
-37.Connection.prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)：创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象【sql=testresultSetType=java.sql.ResultSet.TYPE_FORWARD_ONLY=1003, resultSetConcurrency=java.sql.ResultSet.CONCUR_READ_ONLY=1007, resultSetHoldability=java.sql.ResultSet.HOLD_CURSORS_OVER_COMMIT=1, CallableStatement=com.mysql.cj.jdbc.CallableStatement: test】
-38.Connection.prepareStatement(String sql)：创建PreparedStatement用于将参数化SQL语句发送到数据库的对象【sql=select * from book, PreparedStatement=com.mysql.cj.jdbc.ClientPreparedStatement: select * from book】
-39.Connection.prepareStatement(String sql, int autoGeneratedKeys)：创建一个PreparedStatement能够检索自动生成的密钥的默认对象【sql=select * from book, autoGeneratedKeys=Statement.RETURN_GENERATED_KEYS=1, PreparedStatement=com.mysql.cj.jdbc.ClientPreparedStatement: select * from book】
-40.Connection.prepareStatement(String sql, int[] columnIndexes)：创建一个PreparedStatement能够返回给定数组指定的自动生成的键的默认对象【sql=select * from book, columnIndexes=[I@2d209079, PreparedStatement=com.mysql.cj.jdbc.ClientPreparedStatement: select * from book】
-41.Connection.prepareStatement(String sql, String[] columnNames)：创建一个PreparedStatement能够返回给定数组指定的自动生成的键的默认对象【sql=select * from book, columnNames=[Ljava.lang.String;@6bdf28bb, PreparedStatement=com.mysql.cj.jdbc.ClientPreparedStatement: select * from book】
-42.Connection.prepareStatement(String sql, int resultSetType, int resultSetConcurrency)：创建一个PreparedStatement将生成 ResultSet具有给定类型和并发性的对象的对象【sql=select * from book, resultSetType=java.sql.ResultSet.TYPE_FORWARD_ONLY=1003, resultSetConcurrency=java.sql.ResultSet.CONCUR_READ_ONLY=1007, PreparedStatement=com.mysql.cj.jdbc.ClientPreparedStatement: select * from book】
-43.Connection.prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)：创建一个PreparedStatement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的对象【sql=select * from bookresultSetType=java.sql.ResultSet.TYPE_FORWARD_ONLY=1003, resultSetConcurrency=java.sql.ResultSet.CONCUR_READ_ONLY=1007, resultSetHoldability=java.sql.ResultSet.HOLD_CURSORS_OVER_COMMIT=1, PreparedStatement=com.mysql.cj.jdbc.ClientPreparedStatement: select * from book】
-44.Connection.releaseSavepoint(Savepoint savepoint)【从当前事务中删除指定的java.sql.Savepoint和后续的Savepoint对象】
-45.Connection.rollback()【撤消当前事务中所做的所有更改，并释放此Connection对象当前持有的所有数据库锁】
-46.Connection.rollback(Savepoint savepoint)【取消java.sql.Savepoint设置给定对象后所做的所有更改】
-47.Connection.commit()【使自上次提交/回滚以来所做的所有更改成为永久更改，并释放此Connection对象当前持有的所有数据库锁】
-48.Connection.close()【立即释放此Connection对象的数据库和JDBC资源，而不是等待它们自动释放】
-```
 
-### <a id="a_statement">六、java.sql.Statement：执行静态SQL：</a> <a href="#a_connection">last</a> <a href="#a_statement">next</a>
+### <a id="a_statement">六、java.sql.Statement：执行静态SQL：</a> <a href="#a_connection">last</a> <a href="#a_insert1">next</a>
 [java.sql.Statement](https://docs.oracle.com/javase/8/docs/api/java/sql/Statement.html)  
 一、描述：
 ```
@@ -1766,66 +1658,218 @@ public class StatementMain {
     return "INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (" + bookId
         + ", 'test by jdbc', 'test author', 'test remark', '" + CommonUtil.getCurrentTime() + "')";
   }
-
 }
 ```
 
-输出验证：
+### <a id="a_insert1">七、使用Statement.execute：插入数据：</a> <a href="#a_statement">last</a> <a href="#">next</a>
 ```
-java.sql.Statement：基本语句：
-0.Mysql数据库连接信息：【JDBC URL=jdbc:mysql://127.0.0.1:3306/study?useSSL=false&serverTimezone=GMT%2B8, userName=root, password=root，driver class name=com.mysql.cj.jdbc.Driver】
-1.通过DriverManager.getConnection()获取数据库连接（会话）【Connection=com.mysql.cj.jdbc.ConnectionImpl@5d3411d】
-2.通过Connection.createStatement()：创建Statement对象【Statement=com.mysql.cj.jdbc.StatementImpl@3930015a】
-3.Statement.addBatch(String sql)：将给定的SQL命令添加到此Statement对象的当前命令列表中【insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530835, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-4.Statement.cancel()【Statement如果DBMS和驱动程序都支持中止SQL语句，则取消此对象】
-5.Statement.clearBatch()【清空此Statement对象的当前SQL命令列表】
-6.Statement.clearWarnings()【清除此Statement对象上报告的所有警告】
-7.Statement.execute(String sql)：执行给定的SQL语句，该语句可能返回多个结果【executeResult=false,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530835, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-8.Statement.execute(String sql, int autoGeneratedKeys)：执行给定的SQL语句（该语句可能返回多个结果），并通知驱动程序所有自动生成的键都应该可用于获取【autoGeneratedKeys=Statement.RETURN_GENERATED_KEYS=1, executeResult=false,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530850, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-9.Statement.execute(String sql, int[] columnIndexes)：执行给定的SQL语句（该语句可能返回多个结果），并通知驱动程序在给定数组中指示的自动生成的键应该可用于获取。此数组包含目标表中的列的索引，而该目标表包含应该使其可用的自动生成的键【columnIndexes=new int[] {0}, executeResult=false,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530854, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-10.Statement.execute(String sql, String[] columnNames)：执行给定的SQL语句（该语句可能返回多个结果），并通知驱动程序在给定数组中指示的自动生成的键应该可用于获取。此数组包含目标表中的列的名称，而该目标表包含应该使其可用的自动生成的键【columnIndexes=new String[] { "bookId" }, executeResult=false,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530856, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-11.Statement.executeBatch()：将一批命令提交到数据库以供执行，如果所有命令成功执行，则返回一组更新计数【executeBatchResult=1,1】
-12.Statement.executeLargeUpdate(String sql)：执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)【executeLargeUpdate=1,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530869, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-13.Statement.executeLargeUpdate(String sql, int autoGeneratedKeys)：执行给定的SQL语句，并通知驱动程序所有自动生成的键都应该可用于获取【autoGeneratedKeys=Statement.RETURN_GENERATED_KEYS=1, executeLargeUpdate=1,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530870, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-14.Statement.executeLargeUpdate(String sql, int[] columnIndexes)：执行给定的SQL语句，并通知驱动程序在给定数组中指示的自动生成的键应该可用于获取。此数组包含目标表中的列的索引，而该目标表包含应该使其可用的自动生成的键【columnIndexes=new int[] {0}, executeLargeUpdate=1,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530872, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-15.Statement.executeLargeUpdate(String sql, String[] columnNames)：执行给定的SQL语句，并通知驱动程序在给定数组中指示的自动生成的键应该可用于获取。此数组包含目标表中的列的名称，而该目标表包含应该使其可用的自动生成的键【columnIndexes=new String[] { "bookId" }, executeLargeUpdate=1,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530873, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-16.Statement.executeQuery(String sql)：执行给定的SQL语句，该语句返回单个 ResultSet对象【ResultSet=com.mysql.cj.jdbc.result.ResultSetImpl@d7b1517, querySQL=SELECT bookId, title, author, remark, createrTime FROM book】
-17.Statement.executeUpdate(String sql)：执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)【executeUpdate=1,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530877, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-18.Statement.executeUpdate(String sql, int autoGeneratedKeys)：执行给定的SQL语句，并通知驱动程序所有自动生成的键都应该可用于获取【autoGeneratedKeys=Statement.RETURN_GENERATED_KEYS=1, executeUpdate=1,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530878, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-19.Statement.executeUpdate(String sql, int[] columnIndexes)：执行给定的SQL语句，并通知驱动程序在给定数组中指示的自动生成的键应该可用于获取。此数组包含目标表中的列的索引，而该目标表包含应该使其可用的自动生成的键【columnIndexes=new int[] {0}, executeUpdate=1,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530880, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-20.Statement.executeUpdate(String sql, String[] columnNames)：执行给定的SQL语句，并通知驱动程序在给定数组中指示的自动生成的键应该可用于获取。此数组包含目标表中的列的名称，而该目标表包含应该使其可用的自动生成的键【columnIndexes=new String[] { "bookId" }, executeUpdate=1,insertSQL=INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (1537849530881, 'test by jdbc', 'test author', 'test remark', '2018-09-25 12:25:30')】
-21.Statement.getConnection()：检索Connection生成此Statement对象的对象【Connection=com.mysql.cj.jdbc.ConnectionImpl@5d3411d】
-22.Statement.getFetchDirection()：检索从数据库表中获取行的方向，该方向是从此Statement对象生成的结果集的缺省值【fetchDirection=1000】
-23.Statement.getFetchDirection()：检索结果集行的数量，该行是ResultSet从此对象生成的对象的默认提取大小Statement【fetchSize=0】
-24.Statement.getGeneratedKeys()：检索由于执行此Statement对象而创建的任何自动生成的密钥【generatedKeys=com.mysql.cj.jdbc.result.ResultSetImpl@16c0663d】
-25.Statement.getLargeMaxRows()：检索此ResultSet对象生成的 Statement对象可以包含的最大行数【largeMaxRows=0】
-26.Statement.getLargeUpdateCount()：检索当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1【largeUpdateCount=1】
-27.Statement.getMaxFieldSize()：检索此ResultSet 对象生成的Statement对象中的字符和二进制列值可以返回的最大字节数1【maxFieldSize=4194304】
-28.Statement.setMaxFieldSize(int max)：设置此ResultSet 对象生成的Statement对象中字符和二进制列值可返回的最大字节数限制【maxFieldSize=3】
-29.Statement.getMaxRows()：检索此ResultSet对象生成的 Statement对象可以包含的最大行数【maxRows=0】
-30.Statement.setMaxRows(int max)：设置此ResultSet 对象生成的Statement对象中字符和二进制列值可返回的最大字节数限制【maxRows=3】
-31.Statement.getMoreResults()：移动到此Statement对象的下一个结果，true如果它是ResultSet对象则返回 ，并隐式关闭ResultSet 使用该方法获得的任何当前对象getResultSet【moreResults=false】
-32.Statement.getMoreResults(int current)：移动到此Statement对象的下一个结果，ResultSet根据给定标志指定的指令处理任何当前对象，并true在下一个结果是ResultSet对象时返回【moreResults=false】
-33.Statement.getQueryTimeout()：检索驱动程序等待Statement对象执行的秒数【queryTimeout=0】
-34.Statement.setQueryTimeout(int seconds)：将驱动程序等待 Statement对象执行的秒数设置为给定的秒数【queryTimeout=10】
-35.Statement.getQueryTimeout()：检索驱动程序等待Statement对象执行的秒数【ResultSet=null】
-36.Statement.getResultSetConcurrency()：检索此ResultSet对象生成的Statement对象的结果集并发性【resultSetConcurrency=1007】
-37.Statement.getResultSetHoldability()：检索此ResultSet对象生成的Statement对象的结果集可保持性【resultSetHoldability=1】
-38.Statement.getResultSetType()：检索此ResultSet对象生成的Statement对象的结果集类型【resultSetType=1003】
-39.Statement.getUpdateCount()：检索当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1【updateCount=-1】
-40.Statement.getWarnings()：检索此Statement对象上的调用报告的第一个警告【SQLWarning=null】
-41.Statement.isClosed()：检索此Statement对象是否已关闭【isClosed=false】
-42.Statement.isCloseOnCompletion()：返回一个值，该值指示Statement在关闭所有相关结果集时是否将关闭此值【isCloseOnCompletion=false】
-43.Statement.isPoolable()：返回一个值，指示是否Statement 可以使用poolable【isPoolable=true】
-44.Statement.setPoolable(boolean poolable)：请求将 Statement 池化或非池化【poolable=false】
-45.Statement.setCursorName(String name)：将SQL游标名称设置为给定的String，后续Statement对象 execute方法将使用该名称【cursorName=test】
-46.Statement.setEscapeProcessing(boolean enable)：打开或关闭转义处理【enable=true】
-47.Statement.setFetchDirection(int direction)：为驱动程序提供有关ResultSet在使用此Statement对象创建的对象中处理行的方向的提示【direction=ResultSet.FETCH_FORWARD=1000】
-48.Statement.setFetchSize(int rows)：为JDBC驱动程序提供有关当ResultSet由此生成的对象需要更多行时应从数据库获取的行数的提示Statement【rows=3】
-49.Statement.setLargeMaxRows(int max)：ResultSet将此Statement对象生成的任何对象可包含的最大行数限制设置为给定数字【largeMaxRows=3】
-50.Statement.closeOnCompletion()：【指定Statement在关闭所有相关结果集时将关闭它】
-51.Statement.close()：【立即释放此Statement对象的数据库和JDBC资源，而不是等待它自动关闭时发生】
+一、使用java.sql.Statement.execute()方法实现数据的插入的方法：
+  1、Statement.execute(String sql)
+  2、Statement.execute(String sql, int autoGeneratedKeys)
+  3、Statement.execute(String sql, int[] columnIndexes)
+  4、Statement.execute(String sql, String[] columnNames)
+
+二、根据的是mysql-connector-java-8.0.11.jar源码分析：
+参数autoGeneratedKeys、columnNames、columnIndexes后续用法基本一致，都是用并通知驱动程序在给定数组中指示的自动生成的键应该可用于获取，此外并没有其他的不同：
+com.mysql.cj.jdbc.StatementImpl：方法具体代码：
+public boolean execute(String sql, int returnGeneratedKeys) throws SQLException {
+   return executeInternal(sql, returnGeneratedKeys == java.sql.Statement.RETURN_GENERATED_KEYS);
+}
+public boolean execute(String sql, int[] generatedKeyIndices) throws SQLException {
+   return executeInternal(sql, generatedKeyIndices != null && generatedKeyIndices.length > 0);
+}
+public boolean execute(String sql, String[] generatedKeyNames) throws SQLException {
+   return executeInternal(sql, generatedKeyNames != null && generatedKeyNames.length > 0);
+}
 ```
+
+StatementMain.java：
+```Java
+package com.mutisitc.statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import com.mutisitc.utils.CommonUtil;
+import com.mutisitc.utils.JDBCUtil;
+import com.mutisitc.utils.PrintUtil;
+/**
+ * 使用Statement接口实现插入数据
+ */
+public class InsertByExecuteMain {
+  public static void main(String[] args) {
+    PrintUtil.one("使用Statement接口实现插入数据：");
+    try {
+      Statement statement = JDBCUtil.createStatement();
+
+      mianByExecute(statement);
+      mianByAutoGeneratedKeys(statement);
+      mainByColumnIndexes(statement);
+      mainByColumnNames(statement);
+      
+      PrintUtil.two("\n五、根据的是mysql-connector-java-8.0.11.jar源码分析", "参数autoGeneratedKeys、columnNames、columnIndexes后续用法基本一致，都是用并通知驱动程序在给定数组中指示的自动生成的键应该可用于获取，此外并没有其他的不同：\n"
+          + "com.mysql.cj.jdbc.StatementImpl：方法具体代码：\n"
+          + "public boolean execute(String sql, int returnGeneratedKeys) throws SQLException {\r\n" + 
+          "   return executeInternal(sql, returnGeneratedKeys == java.sql.Statement.RETURN_GENERATED_KEYS);\r\n" + 
+          "}\r\n" + 
+          "public boolean execute(String sql, int[] generatedKeyIndices) throws SQLException {\r\n" + 
+          "   return executeInternal(sql, generatedKeyIndices != null && generatedKeyIndices.length > 0);\r\n" + 
+          "}\r\npublic boolean execute(String sql, String[] generatedKeyNames) throws SQLException {\r\n" + 
+          "   return executeInternal(sql, generatedKeyNames != null && generatedKeyNames.length > 0);\r\n" + 
+          "}");
+      
+      JDBCUtil.close(statement);
+    } catch (SQLException e) {
+      PrintUtil.err("使用Statement接口实现插入数据，打印异常堆栈信息：");
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * 使用 Statement.execute(String sql)：插入数据
+   * @param statement
+   * @throws SQLException
+   */
+  private static void mianByExecute(Statement statement) throws SQLException {
+    PrintUtil.one("一、使用 Statement.execute(String sql)：插入数据：");
+    String insertSQL = "INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES ("
+      + System.currentTimeMillis() + ", 'test by jdbc', 'test author', 'test remark', '"+ CommonUtil.getCurrentTime() + "')";
+
+    PrintUtil.two("3.插入数据SQL语句：", insertSQL);
+
+    boolean executeResult = statement.execute(insertSQL);
+    PrintUtil.two("4.Statement.execute(String sql)：插入数据执行结果", "executeResult=" + executeResult);
+    PrintUtil.three("4.1：具体描述:", "执行给定的 SQL 语句，该语句可能返回多个结果。在某些（不常见）情形下，单个 SQL 语句可能返回多个结果集合和/或更新计数。"
+        + "  \n 这一点通常可以忽略，除非正在 执行已知可能返回多个结果的存储过程或者动态执行未知 SQL 字符串。  execute 方法执行 SQL 语句并指示第一个结果的形式。"
+        + "  \n 然后，必须使用方法 getResultSet 或 getUpdateCount 来获取结果，使用 getMoreResults 来移动后续结果");
+    PrintUtil.three("4.2：方法返回结果：", "如果第一个结果为 ResultSet 对象，则返回 true；如果其为更新计数或者不存在任何结果，则返回 false");
+
+    PrintUtil.two("5.使用Statement.getResultSet()获取执行SQL后的结果", "java.sql.ResultSet=" + statement.getResultSet());
+    PrintUtil.two("6.使用Statement.getUpdateCount()获取执行SQL后的结果", "updateCount=" + statement.getUpdateCount());
+  }
+  
+  /**
+   * 使用  Statement.execute(String sql, int autoGeneratedKeys)：插入数据
+   * @param statement
+   * @throws SQLException
+   */
+  private static void mianByAutoGeneratedKeys(Statement statement) throws SQLException {
+    PrintUtil.one("二、使用  Statement.execute(String sql, int autoGeneratedKeys)：插入数据：");
+    String insertSQL = "INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (" + null
+        + "," + "'test by jdbc', 'test author', 'test remark', '" + CommonUtil.getCurrentTime() + "')";
+
+    PrintUtil.two("3.插入数据SQL语句：", insertSQL);
+
+    boolean executeResult = statement.execute(insertSQL, Statement.RETURN_GENERATED_KEYS);
+    PrintUtil.two("4.Statement.execute(String sql, int autoGeneratedKeys)：插入数据执行结果", "executeResult=" + executeResult);
+    PrintUtil.three("4.1：具体描述:", "执行给定的 SQL 语句（该语句可能返回多个结果），并通知驱动程序所有自动生成的键都应该可用于获取。\n"
+        + "如果该 SQL 语句不是 INSERT 语句，或者不是可以返回自动生成键的 SQL 语句（这些语句的列表是特定于供应商的），则驱动程序将忽略此信号。\n" + 
+        "在某些（不常见）情形下，单个 SQL 语句可能返回多个结果集合和/或更新计数。这一点通常可以忽略，除非正在 执行已知可能返回多个结果的存储过程或者 动态执行未知 SQL 字符串。 " + 
+        "execute 方法执行 SQL 语句并指示第一个结果的形式。然后，必须使用方法 getResultSet 或 getUpdateCount 来获取结果，使用 getMoreResults 来移动后续结果");
+    PrintUtil.three("4.2：参数描述：autoGeneratedKeys", "指示是否应该使用 getGeneratedKeys 方法使自动生成的键可用于获取的常量；"
+        + "  \n 以下常量之一：Statement.RETURN_GENERATED_KEYS 或 Statement.NO_GENERATED_KEYS ");
+    PrintUtil.three("4.3：方法返回结果：", "如果第一个结果为 ResultSet 对象，则返回 true；如果其为更新计数或者不存在任何结果，则返回 false");
+
+    PrintUtil.two("5.使用Statement.getResultSet()获取执行SQL后的结果", "java.sql.ResultSet=" + statement.getResultSet());
+    PrintUtil.two("6.使用Statement.getUpdateCount()获取执行SQL后的结果", "updateCount=" + statement.getUpdateCount());
+    
+    ResultSet generatedKeys = statement.getGeneratedKeys();
+    PrintUtil.two("7.当指定参数autoGeneratedKeys时，且autoGeneratedKeys=Statement.RETURN_GENERATED_KEYS"+Statement.RETURN_GENERATED_KEYS, 
+        "可以使用Statement.sgetGeneratedKeys()获取由于执行此 Statement对象而创建的所有自动生成的键(可能执行多个insert sql)");
+    PrintUtil.three("7.1：当参数指autoGeneratedKeys定为Statement.NO_GENERATED_KEYS或不为Statement.RETURN_GENERATED_KEYS的其他值",
+        "则不能调用Statement.sgetGeneratedKeys()，否者会抛出异常：\n"
+        + "异常信息为：java.sql.SQLException: Generated keys not requested. You need to specify Statement.RETURN_GENERATED_KEYS to Statement.executeUpdate(), Statement.executeLargeUpdate() or Connection.prepareStatement().");
+    PrintUtil.three("7.2：由于可能执行多个insert sql：", "所以使用ResultSet作为接受自动生成主键的集合，通过循环获取每个执行结果的主键，获取索引从1开始");
+    PrintUtil.three("7.3：如果表主键没有设置为自增主键的情况下", "是要在insert 指定每条数据的主键ID，且不重复，故不需要通过Statement.sgetGeneratedKeys()再次获取主键，当然获取的主键的集合也insert 数据记录的集合主键一致");
+    PrintUtil.three("7.4：通过ResultSet.getXXX(1)获取主键", "注意要和表主键的数据类型映射到java数据一致");
+    if(generatedKeys != null) {
+      while (generatedKeys.next()) {
+        PrintUtil.three("7.5.通过循环获取到的执行结果后的主键ID", "bookId="+generatedKeys.getLong(1));
+      }
+    }
+  }
+  
+  /**
+   * 使用  Statement.execute(String sql, int[] columnIndexes)：插入数据
+   * @param statement
+   * @throws SQLException 
+   */
+  private static void mainByColumnIndexes(Statement statement) throws SQLException {
+    PrintUtil.one("三、使用  Statement.execute(String sql, int[] columnIndexes)：插入数据：");
+    String insertSQL = "INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (" + null
+        + "," + "'test by jdbc', 'test author', 'test remark', '" + CommonUtil.getCurrentTime() + "')";
+
+    PrintUtil.two("3.插入数据SQL语句：", insertSQL);
+
+    int[] columnIndexes = new int[] {0};
+    boolean executeResult = statement.execute(insertSQL, columnIndexes);
+    PrintUtil.two("4.Statement.execute(String sql, int[] columnIndexes)：插入数据执行结果", "executeResult=" + executeResult+", columnIndexes="+ CommonUtil.toString(columnIndexes));
+    PrintUtil.three("4.1：具体描述:", "执行给定的 SQL 语句（该语句可能返回多个结果），并通知驱动程序所有自动生成的键都应该可用于获取。\n"
+        + "如果该 SQL 语句不是 INSERT 语句，或者不是可以返回自动生成键的 SQL 语句（这些语句的列表是特定于供应商的），则驱动程序将忽略此信号。\n" + 
+        "在某些（不常见）情形下，单个 SQL 语句可能返回多个结果集合和/或更新计数。这一点通常可以忽略，除非正在 执行已知可能返回多个结果的存储过程或者 动态执行未知 SQL 字符串。 " + 
+        "execute 方法执行 SQL 语句并指示第一个结果的形式。然后，必须使用方法 getResultSet 或 getUpdateCount 来获取结果，使用 getMoreResults 来移动后续结果");
+    PrintUtil.three("4.2：参数描述：columnIndexes", "通过调用方法 getGeneratedKeys 应该可用于获取的插入行中的列索引数组");
+    PrintUtil.three("4.3：方法返回结果：", "如果第一个结果为 ResultSet 对象，则返回 true；如果其为更新计数或者不存在任何结果，则返回 false");
+
+    PrintUtil.two("5.使用Statement.getResultSet()获取执行SQL后的结果", "java.sql.ResultSet=" + statement.getResultSet());
+    PrintUtil.two("6.使用Statement.getUpdateCount()获取执行SQL后的结果", "updateCount=" + statement.getUpdateCount());
+    
+    ResultSet generatedKeys = statement.getGeneratedKeys();
+    PrintUtil.two("7.当指定参数columnIndexes时，且columnIndexes不为null且空数组时，", 
+        "可以使用Statement.sgetGeneratedKeys()获取由于执行此 Statement对象而创建的所有自动生成的键(可能执行多个insert sql)");
+    PrintUtil.three("7.1：当参数指columnIndexes定为null或空数组", "则不能调用Statement.sgetGeneratedKeys()，否者会抛出异常：\n"
+        + "异常信息为：java.sql.SQLException: Generated keys not requested. You need to specify Statement.RETURN_GENERATED_KEYS to Statement.executeUpdate(), Statement.executeLargeUpdate() or Connection.prepareStatement().");
+    PrintUtil.three("7.2：由于可能执行多个insert sql：", "所以使用ResultSet作为接受自动生成主键的集合，通过循环获取每个执行结果的主键，获取索引从1开始");
+    PrintUtil.three("7.3：如果表主键没有设置为自增主键的情况下", "是要在insert 指定每条数据的主键ID，且不重复，故不需要通过Statement.sgetGeneratedKeys()再次获取主键，当然获取的主键的集合也insert 数据记录的集合主键一致");
+    PrintUtil.three("7.4：通过ResultSet.getXXX(1)获取主键", "注意要和表主键的数据类型映射到java数据一致");
+    if(generatedKeys != null) {
+      while (generatedKeys.next()) {
+        PrintUtil.three("7.5.通过循环获取到的执行结果后的主键ID", "bookId="+generatedKeys.getLong(1));
+      }
+    }
+  }
+  
+  /**
+   * 使用  Statement.execute(String sql, String[] columnNames)：插入数据
+   * @param statement
+   * @throws SQLException 
+   */
+  private static void mainByColumnNames(Statement statement) throws SQLException {
+    PrintUtil.one("四、使用  Statement.execute(String sql, String[] columnNames)：插入数据：");
+    String insertSQL = "INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (" + null
+        + "," + "'test by jdbc', 'test author', 'test remark', '" + CommonUtil.getCurrentTime() + "')";
+
+    PrintUtil.two("3.插入数据SQL语句：", insertSQL);
+
+    String[] columnNames = new String[] {"bookId"};
+    boolean executeResult = statement.execute(insertSQL, columnNames);
+    PrintUtil.two("4.Statement.execute(String sql, int[] columnIndexes)：插入数据执行结果", "executeResult=" + executeResult+", columnNames="+ CommonUtil.toString(columnNames));
+    PrintUtil.three("4.1：具体描述:", "执行给定的 SQL 语句（该语句可能返回多个结果），并通知驱动程序所有自动生成的键都应该可用于获取。\n"
+        + "如果该 SQL 语句不是 INSERT 语句，或者不是可以返回自动生成键的 SQL 语句（这些语句的列表是特定于供应商的），则驱动程序将忽略此信号。\n" + 
+        "在某些（不常见）情形下，单个 SQL 语句可能返回多个结果集合和/或更新计数。这一点通常可以忽略，除非正在 执行已知可能返回多个结果的存储过程或者 动态执行未知 SQL 字符串。 " + 
+        "execute 方法执行 SQL 语句并指示第一个结果的形式。然后，必须使用方法 getResultSet 或 getUpdateCount 来获取结果，使用 getMoreResults 来移动后续结果");
+    PrintUtil.three("4.2：参数描述：columnNames", "通过调用方法 getGeneratedKeys 应该可用于获取的插入行中的列名称数组");
+    PrintUtil.three("4.3：方法返回结果：", "如果第一个结果为 ResultSet 对象，则返回 true；如果其为更新计数或者不存在任何结果，则返回 false");
+
+    PrintUtil.two("5.使用Statement.getResultSet()获取执行SQL后的结果", "java.sql.ResultSet=" + statement.getResultSet());
+    PrintUtil.two("6.使用Statement.getUpdateCount()获取执行SQL后的结果", "updateCount=" + statement.getUpdateCount());
+    
+    ResultSet generatedKeys = statement.getGeneratedKeys();
+    PrintUtil.two("7.当指定参数columnNames时，且columnNames不为null且空数组时，", 
+        "可以使用Statement.sgetGeneratedKeys()获取由于执行此 Statement对象而创建的所有自动生成的键(可能执行多个insert sql)");
+    PrintUtil.three("7.1：当参数指columnNames定为null或空数组", "则不能调用Statement.sgetGeneratedKeys()，否者会抛出异常：\n"
+        + "异常信息为：java.sql.SQLException: Generated keys not requested. You need to specify Statement.RETURN_GENERATED_KEYS to Statement.executeUpdate(), Statement.executeLargeUpdate() or Connection.prepareStatement().");
+    PrintUtil.three("7.2：由于可能执行多个insert sql：", "所以使用ResultSet作为接受自动生成主键的集合，通过循环获取每个执行结果的主键，获取索引从1开始");
+    PrintUtil.three("7.3：如果表主键没有设置为自增主键的情况下", "是要在insert 指定每条数据的主键ID，且不重复，故不需要通过Statement.sgetGeneratedKeys()再次获取主键，当然获取的主键的集合也insert 数据记录的集合主键一致");
+    PrintUtil.three("7.4：通过ResultSet.getXXX(1)获取主键", "注意要和表主键的数据类型映射到java数据一致");
+    if(generatedKeys != null) {
+      while (generatedKeys.next()) {
+        PrintUtil.three("7.5.通过循环获取到的执行结果后的主键ID", "bookId="+generatedKeys.getLong(1));
+      }
+    }
+  }
+}
+```
+
 
 ---
 <a id="a_down"></a>  

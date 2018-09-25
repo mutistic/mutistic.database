@@ -32,7 +32,30 @@ public class CommonUtil {
 	 */
 	public static String toString(int[] result) {
 		String str = "";
+		if(null == result || result.length == 0) {
+			return str;
+		}
+		
 		for (int i : result) {
+			str += i+",";
+		}
+		return str.substring(0, str.length()-1);
+	}
+	
+	/**
+	 * @description 数组转换成字符串
+	 * @author mutisitic
+	 * @date 2018年9月25日
+	 * @param result
+	 * @return
+	 */
+	public static String toString(String[] result) {
+		String str = "";
+		if(null == result || result.length == 0) {
+			return str;
+		}
+		
+		for (String i : result) {
 			str += i+",";
 		}
 		return str.substring(0, str.length()-1);

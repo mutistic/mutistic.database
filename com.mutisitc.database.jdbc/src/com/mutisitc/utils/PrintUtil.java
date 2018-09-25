@@ -35,7 +35,7 @@ public class PrintUtil {
 	}
 
 	public static String two(Object str, Object obj) {
-		String val = "\n" + (str == null ? "" : str) + (obj == null ? "" : T_LEFT + obj + T_RIGTH);
+		String val = "" + (str == null ? "" : str) + (obj == null ? "" : T_LEFT + obj + T_RIGTH);
 		System.out.println(val);
 		return val;
 	}

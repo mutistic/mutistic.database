@@ -40,7 +40,7 @@ public class ExecuteByDelete {
 	}
 
 	/**
-	 * @description 测试更新SQL
+	 * @description 测试删除SQL
 	 * @author mutisitic
 	 * @date 2018年9月26日
 	 * @param bookId 主键ID

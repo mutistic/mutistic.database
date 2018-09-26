@@ -26,7 +26,7 @@ public class ExecuteLargeUpdateMain {
 			ExecuteLargeUpdateByUpdate.mainByUpdate(statement);
 			
 			PrintUtil.two("\nexecuteLargeUpdate()方法返回的实际上是this.updateCount", "也就是Statement.getUpdateCount()");
-			
+			PrintUtil.two("\nexecuteLargeUpdate方法一般用于执行当返回的行数可能超过Integer.MAX_VALUE时", null);
 			JDBCUtil.close(statement);
 		} catch (SQLException e) {
 			PrintUtil.err("使用Statement.execute接口实现，打印异常堆栈信息：");

@@ -7,14 +7,14 @@ import com.mutisitc.utils.JDBCUtil;
 import com.mutisitc.utils.PrintUtil;
 
 /**
- * @program 使用Statement.execute接口实现数据操作
+ * @program 使用Statement.executeUpdate接口实现数据操作
  * @description 
  * @author mutisitic
  * @date 2018年9月26日
  */
 public class ExecuteUpdateMain {
 	public static void main(String[] args) {
-		PrintUtil.one("使用Statement.execute接口实现数据操作：");
+		PrintUtil.one("使用Statement.executeUpdate接口实现数据操作：");
 		try {
 			Statement statement = JDBCUtil.createStatement();
 			

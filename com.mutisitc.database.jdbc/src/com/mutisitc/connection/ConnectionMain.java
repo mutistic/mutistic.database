@@ -111,12 +111,10 @@ public class ConnectionMain {
 
 			int holdability = connection.getHoldability();
 			PrintUtil.two("20.Connection.getHoldability()：检索ResultSet使用此Connection对象创建的对象的当前可保存性",
-					"Holdability=java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT=" + holdability);
+					"Holdability=固定值java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT=" + holdability);
 
-			connection.setHoldability(ResultSet.HOLD_CURSORS_OVER_COMMIT);
-			PrintUtil.two(
-					"21.Connection.setHoldability(int holdability)：将ResultSet使用此Connection对象创建的对象的默认可保存性更改为给定的可保持性",
-					"holdability=java.sql.ResultSet.HOLD_CURSORS_OVER_COMMIT=" + ResultSet.HOLD_CURSORS_OVER_COMMIT);
+			PrintUtil.two("21.Connection.setHoldability(int holdability)：将ResultSet使用此Connection对象创建的对象的默认可保存性更改为给定的可保持性",
+					"com.mysql.cj.jdbc.ConnectionImpl空实现该方法，即该常量指示提交当前事务时，具有此可保存性的打开的 ResultSet 对象将被关闭");
 
 			DatabaseMetaData databaseMetaData = connection.getMetaData();
 			PrintUtil.two("22.Connection.getMetaData()：检索DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的对象",

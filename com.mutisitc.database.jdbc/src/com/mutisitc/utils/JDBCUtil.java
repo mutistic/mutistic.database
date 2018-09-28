@@ -37,7 +37,7 @@ public class JDBCUtil {
 	public static Connection getConnection() {
 		Connection connection = null;
 		try {
-			PrintUtil.two("0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
+			PrintUtil.two("\n0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
 					+ PASS_WORD + "，driver class name=" + DRIVER_CLASS_NAME);
 
 			// 加载驱动-JDBC 4.0新特性可以不用显示加载
@@ -64,7 +64,7 @@ public class JDBCUtil {
 	 */
 	public static Statement createStatement() {
 		try {
-			PrintUtil.two("0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
+			PrintUtil.two("\n0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
 					+ PASS_WORD + "，driver class name=" + DRIVER_CLASS_NAME);
 
 			// 加载驱动-JDBC 4.0新特性可以不用显示加载
@@ -94,7 +94,7 @@ public class JDBCUtil {
 	 */
 	public static PreparedStatement prepareStatement(String sql) {
 		try {
-			PrintUtil.two("0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
+			PrintUtil.two("\n0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
 					+ PASS_WORD + "，driver class name=" + DRIVER_CLASS_NAME);
 
 			// 加载驱动-JDBC 4.0新特性可以不用显示加载
@@ -125,7 +125,7 @@ public class JDBCUtil {
 	 */
 	public static CallableStatement prepareCall(String sql) {
 		try {
-			PrintUtil.two("0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
+			PrintUtil.two("\n0.Mysql数据库连接信息：", "JDBC URL=" + JDBC_URL + ", userName=" + USER_NAME + ", password="
 					+ PASS_WORD + "，driver class name=" + DRIVER_CLASS_NAME);
 
 			// 加载驱动-JDBC 4.0新特性可以不用显示加载

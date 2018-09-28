@@ -20,7 +20,10 @@
 5. <a href="#a_connection">java.sql.Connection：数据库连接</a>
 6. <a href="#a_statement">java.sql.Statement：执行静态SQL</a>
 7. <a href="#a_execute">使用Statement.execute方法实现数据操作</a>
-8. <a href="#a_executeUpdate">使用Statement.executeUpdae方法实现数据操作</a>
+8. <a href="#a_executeLargeUpdate">使用Statement.executeLargeUpdate方法实现数据操作</a>
+9. <a href="#a_executeUpdate">使用Statement.executeUpdae方法实现数据操作</a>
+10. <a href="#a_prepared">java.sql.PreparedStatement：预编译SQL语句</a>
+11. <a href="#a_preparedOperation">使用PreparedStatement方法实现数据操作</a>
 
 99. <a href="#a_down">down</a>
 
@@ -746,9 +749,9 @@ public class StepMain {
 
 |返回类型|方法|说明|
 |---|---|---|
-|boolean|acceptsURL(String url)|检索驱动程序是否认为它可以打开与给定URL的连接|
+|boolean|acceptsURL(String url)|获取驱动程序是否认为它可以打开与给定URL的连接|
 |Connection|connect(String url, Properties info)|尝试与给定的URL建立数据库连接|
-|int|getMajorVersion()|检索驱动程序的主要版本号|
+|int|getMajorVersion()|获取驱动程序的主要版本号|
 |int|getMinorVersion()|获取驱动程序的次要版本号|
 |Logger|getParentLogger()|返回此驱动程序使用的所有记录器的父记录器|
 |DriverPropertyInfo[]|getPropertyInfo(String url, Properties info)|获取有关此驱动程序的可能属性的信息|
@@ -891,15 +894,15 @@ DriverManager.getConnection的URL来对驱动程序进行测试，然后连接�
 |static Connection|getConnection(String url, Properties info)|尝试建立与给定数据库URL的连接|
 |static Connection|getConnection(String url, String user, String password)|尝试建立与给定数据库URL的连接|
 |static Driver|getDriver(String url)|尝试查找理解给定URL的驱动程序|
-|static Enumeration<Driver>|getDrivers()|检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举|
+|static Enumeration<Driver>|getDrivers()|获取当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举|
 |static int|getLoginTimeout()|获取驱动程序在尝试登录数据库时可以等待的最长时间（以秒为单位）|
-|static PrintStream|getLogStream()|~~已过时~~。使用 getLogWriter，检索由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream|
-|static PrintWriter|getLogWriter()|检索日志编写器|
+|static PrintStream|getLogStream()|~~已过时~~。使用 getLogWriter，获取由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream|
+|static PrintWriter|getLogWriter()|获取日志编写器|
 |static void|println(String message)|将消息打印到当前JDBC日志流|
 |static void|registerDriver(Driver driver)|注册给定的驱动程序DriverManager|
 |static void|registerDriver(Driver driver, DriverAction da)|注册给定的驱动程序DriverManager|
 |static void|setLoginTimeout(int seconds)|设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）|
-|static void|setLogStream(PrintStream out)|~~已过时。~~使用 setLogWriter，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream|
+|static void|setLogStream(PrintStream out)|~~已过时。~~使用 setLogWriter，获取由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream|
 |static void|setLogWriter(PrintWriter out)|设置和所有驱动程序PrintWriter使用的日志记录/跟踪对象DriverManager|
 
 DriverManagerMain.java：
@@ -951,7 +954,7 @@ public class DriverManagerMain {
             PrintUtil.two("4.DriverManager.registerDriver(Driver driver)：注册给定的驱动程序DriverManager", "Driver="+dirver2);
             
             Enumeration<Driver> driverEnums = DriverManager.getDrivers();
-            PrintUtil.two("5.DriverManager.getDrivers()：检索当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举", "Enumeration<Driver>="+driverEnums);
+            PrintUtil.two("5.DriverManager.getDrivers()：获取当前调用者可以访问的所有当前加载的JDBC驱动程序的枚举", "Enumeration<Driver>="+driverEnums);
             int index = 0;
             while(driverEnums.hasMoreElements()) {
                 index++;
@@ -970,17 +973,17 @@ public class DriverManagerMain {
             PrintUtil.two("8.DriverManager.setLoginTimeout(int seconds)：设置驱动程序在识别驱动程序后尝试连接数据库时等待的最长时间（以秒为单位）", "loginTimeout="+loginTimeout);
             
             PrintStream printStream = DriverManager.getLogStream();
-            PrintUtil.two("9.DriverManager.getLogStream()：已过时，检索由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream", "PrintStream="+printStream);
+            PrintUtil.two("9.DriverManager.getLogStream()：已过时，获取由DriverManager和所有驱动程序使用的日志记录/跟踪PrintStream", "PrintStream="+printStream);
             
             File file = new File("src/com/mutisitc/drivermanager/logStream.txt");
             PrintUtil.two("10.加载文件", "File="+file);
             
             PrintStream newPrintStream = new PrintStream(file);
             DriverManager.setLogStream(newPrintStream);
-            PrintUtil.three("10.1.通过DriverManager.setLogStream(PrintStream out)：已过时，检索由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream", "PrintStream="+newPrintStream);
+            PrintUtil.three("10.1.通过DriverManager.setLogStream(PrintStream out)：已过时，获取由DriverManager 和所有驱动程序使用的日志记录/跟踪PrintStream", "PrintStream="+newPrintStream);
             
             PrintWriter printWriter = DriverManager.getLogWriter();
-            PrintUtil.two("11.通过DriverManager.getLogStream()：检索日志编写器", "PrintWriter="+printWriter);
+            PrintUtil.two("11.通过DriverManager.getLogStream()：获取日志编写器", "PrintWriter="+printWriter);
             
             PrintUtil.two("12.加载文件", "File="+file);
             PrintWriter newPrintWriter = new PrintWriter(file);
@@ -1049,26 +1052,26 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 |Statement|createStatement(int resultSetType, int resultSetConcurrency)|创建一个Statement将生成 ResultSet具有给定类型和并发性的对象的对象|
 |Statement|createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)|创建一个Statement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的对象|
 |Struct|createStruct(String typeName, Object[] attributes)|用于创建Struct对象的工厂方法|
-|boolean|getAutoCommit()|检索此Connection 对象的当前自动提交模式|
-|String|getCatalog()|检索此Connection对象的当前目录名称|
+|boolean|getAutoCommit()|获取此Connection 对象的当前自动提交模式|
+|String|getCatalog()|获取此Connection对象的当前目录名称|
 |Properties|getClientInfo()|返回一个列表，其中包含驱动程序支持的每个客户端信息属性的名称和当前值|
 |String|getClientInfo(String name)|返回name指定的客户端信息属性的值|
-|int|getHoldability()|检索ResultSet使用此Connection对象创建的对象的当前可保存性|
-|DatabaseMetaData|getMetaData()|检索DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的对象|
-|int|getNetworkTimeout()|检索驱动程序等待数据库请求完成的毫秒数|
-|String|getSchema()|检索此Connection对象的当前架构名称|
-|int|getTransactionIsolation()|检索此Connection对象的当前事务隔离级别|
-|Map<String,Class<?>>|getTypeMap()|检索Map与此Connection对象关联的对象|
-|SQLWarning|getWarnings()|检索此Connection对象上的调用报告的第一个警告|
-|boolean|isClosed()|检索此Connection对象是否已关闭|
-|boolean|isReadOnly()|检索此Connection对象是否处于只读模式|
+|int|getHoldability()|获取ResultSet使用此Connection对象创建的对象的当前可保存性|
+|DatabaseMetaData|getMetaData()|获取DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的对象|
+|int|getNetworkTimeout()|获取驱动程序等待数据库请求完成的毫秒数|
+|String|getSchema()|获取此Connection对象的当前架构名称|
+|int|getTransactionIsolation()|获取此Connection对象的当前事务隔离级别|
+|Map<String,Class<?>>|getTypeMap()|获取Map与此Connection对象关联的对象|
+|SQLWarning|getWarnings()|获取此Connection对象上的调用报告的第一个警告|
+|boolean|isClosed()|获取此Connection对象是否已关闭|
+|boolean|isReadOnly()|获取此Connection对象是否处于只读模式|
 |boolean|isValid(int timeout)|如果连接尚未关闭且仍然有效，则返回true|
 |String|nativeSQL(String sql)|将给定的SQL语句转换为系统的本机SQL语法|
 |CallableStatement|prepareCall(String sql)|创建一个CallableStatement用于调用数据库存储过程的对象|
 |CallableStatement|prepareCall(String sql, int resultSetType, int resultSetConcurrency)|创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象|
 |CallableStatement|prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)|创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象|
 |PreparedStatement|prepareStatement(String sql)|创建PreparedStatement用于将参数化SQL语句发送到数据库的对象|
-|PreparedStatement|prepareStatement(String sql, int autoGeneratedKeys)|创建一个PreparedStatement能够检索自动生成的密钥的默认对象|
+|PreparedStatement|prepareStatement(String sql, int autoGeneratedKeys)|创建一个PreparedStatement能够获取自动生成的密钥的默认对象|
 |PreparedStatement|prepareStatement(String sql, int[] columnIndexes)|创建一个PreparedStatement能够返回给定数组指定的自动生成的键的默认对象|
 |PreparedStatement|prepareStatement(String sql, int resultSetType, int resultSetConcurrency)|创建一个PreparedStatement将生成 ResultSet具有给定类型和并发性的对象的对象|
 |PreparedStatement|prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)|创建一个PreparedStatement对象，该对象将生成ResultSet具有给定类型，并发性和可保持性的对象|
@@ -1103,9 +1106,9 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
   Statement createStatement()：创建Statement用于将SQL语句发送到数据库的对象 
   CallableStatement prepareCall(String sql)：创建一个CallableStatement用于调用数据库存储过程的对象 
   PreparedStatement prepareStatement(String sql)：创建PreparedStatement用于将参数化SQL语句发送到数据库的对象 
-  boolean isClosed()：检索此Connection对象是否已关闭 
+  boolean isClosed()：获取此Connection对象是否已关闭 
   void setReadOnly(boolean readOnly)：将此连接置于只读模式，作为驱动程序的提示以启用数据库优化 
-  boolean isReadOnly()：检索此Connection对象是否处于只读模式 
+  boolean isReadOnly()：获取此Connection对象是否处于只读模式 
   boolean isValid(int timeout)：如果连接尚未关闭且仍然有效，则返回true 
   void setAutoCommit(boolean autoCommit)：将此连接的自动提交模式设置为给定状态 
   void commit()：使自上次提交/回滚以来所做的所有更改成为永久更改，并释放此Connection对象当前持有的所有数据库锁 
@@ -1191,7 +1194,7 @@ public class ConnectionMain {
           "Mysql没有具体实现改方法，会抛出java.sql.SQLFeatureNotSupportedException异常");
 
       boolean autoCommit = connection.getAutoCommit();
-      PrintUtil.two("13.Connection.getAutoCommit()：检索此Connection 对象的当前是否是自动提交模式", "AutoCommit=" + autoCommit);
+      PrintUtil.two("13.Connection.getAutoCommit()：获取此Connection 对象的当前是否是自动提交模式", "AutoCommit=" + autoCommit);
 
       autoCommit = false;
       connection.setAutoCommit(autoCommit);
@@ -1199,7 +1202,7 @@ public class ConnectionMain {
           "autoCommit=" + autoCommit);
 
       String catalog = connection.getCatalog();
-      PrintUtil.two("15.Connection.getCatalog()：检索此Connection对象的当前目录名称", "Catalog=" + catalog);
+      PrintUtil.two("15.Connection.getCatalog()：获取此Connection对象的当前目录名称", "Catalog=" + catalog);
 
       connection.setCatalog(catalog);
       PrintUtil.two("16.Connection.setCatalog(String catalog)：设置给定的目录名称，以便选择要Connection在其中工作的此对象的数据库的子空间",
@@ -1219,7 +1222,7 @@ public class ConnectionMain {
           "java.util.Properties=" + properties);
 
       int holdability = connection.getHoldability();
-      PrintUtil.two("20.Connection.getHoldability()：检索ResultSet使用此Connection对象创建的对象的当前可保存性",
+      PrintUtil.two("20.Connection.getHoldability()：获取ResultSet使用此Connection对象创建的对象的当前可保存性",
           "Holdability=java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT=" + holdability);
 
       connection.setHoldability(ResultSet.HOLD_CURSORS_OVER_COMMIT);
@@ -1228,20 +1231,20 @@ public class ConnectionMain {
           "holdability=java.sql.ResultSet.HOLD_CURSORS_OVER_COMMIT=" + ResultSet.HOLD_CURSORS_OVER_COMMIT);
 
       DatabaseMetaData databaseMetaData = connection.getMetaData();
-      PrintUtil.two("22.Connection.getMetaData()：检索DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的对象",
+      PrintUtil.two("22.Connection.getMetaData()：获取DatabaseMetaData包含有关此Connection对象表示连接的数据库的元数据的对象",
           "DatabaseMetaData=" + databaseMetaData);
 
       int networkTimeout = connection.getNetworkTimeout();
-      PrintUtil.two("23.Connection.getNetworkTimeout()：检索驱动程序等待数据库请求完成的毫秒数", "NetworkTimeout=" + networkTimeout);
+      PrintUtil.two("23.Connection.getNetworkTimeout()：获取驱动程序等待数据库请求完成的毫秒数", "NetworkTimeout=" + networkTimeout);
 
       PrintUtil.two("24.Connection.setNetworkTimeout(Executor executor, int milliseconds)",
           "设置从连接创建的连接或对象的最长时间，将等待数据库回复任何一个请求");
 
       String schema = connection.getSchema();
-      PrintUtil.two("25.Connection.getSchema()：检索此Connection对象的当前架构名称", "Schema=" + schema);
+      PrintUtil.two("25.Connection.getSchema()：获取此Connection对象的当前架构名称", "Schema=" + schema);
 
       int transactionIsolation = connection.getTransactionIsolation();
-      PrintUtil.two("26.Connection.getTransactionIsolation()：检索此Connection对象的当前事务隔离级别",
+      PrintUtil.two("26.Connection.getTransactionIsolation()：获取此Connection对象的当前事务隔离级别",
           "transactionIsolation=java.sql.Connection.TRANSACTION_REPEATABLE_READ=" + transactionIsolation);
 
       connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
@@ -1249,7 +1252,7 @@ public class ConnectionMain {
           "level=java.sql.Connection.TRANSACTION_READ_COMMITTED=" + Connection.TRANSACTION_READ_COMMITTED);
 
       Map<String, Class<?>> typeMap = connection.getTypeMap();
-      PrintUtil.two("28.Connection.getTypeMap()：检索Map与此Connection对象关联的对象",
+      PrintUtil.two("28.Connection.getTypeMap()：获取Map与此Connection对象关联的对象",
           "typeMap.keySet()=" + typeMap.keySet());
 
       connection.setTypeMap(typeMap);
@@ -1257,14 +1260,14 @@ public class ConnectionMain {
           "typeMap=" + typeMap);
 
       SQLWarning sqlWarning = connection.getWarnings();
-      PrintUtil.two("30.Connection.getWarnings()：检索此Connection对象上的调用报告的第一个警告",
+      PrintUtil.two("30.Connection.getWarnings()：获取此Connection对象上的调用报告的第一个警告",
           "java.sql.SQLWarning=" + sqlWarning);
 
       boolean isClosed = connection.isClosed();
-      PrintUtil.two("31.Connection.isClosed()：检索此Connection对象是否已关闭", "isClosed=" + isClosed);
+      PrintUtil.two("31.Connection.isClosed()：获取此Connection对象是否已关闭", "isClosed=" + isClosed);
 
       boolean isReadOnly = connection.isReadOnly();
-      PrintUtil.two("32.Connection.isReadOnly()：检索此Connection对象是否处于只读模式", "isReadOnly=" + isReadOnly);
+      PrintUtil.two("32.Connection.isReadOnly()：获取此Connection对象是否处于只读模式", "isReadOnly=" + isReadOnly);
 
       connection.setReadOnly(true);
       PrintUtil.two("33.Connection.setReadOnly()：将此连接置于只读模式，作为驱动程序的提示以启用数据库优化", "isReadOnly=true");
@@ -1305,7 +1308,7 @@ public class ConnectionMain {
 
       PreparedStatement preparedStatement2 = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       PrintUtil.two(
-          "39.Connection.prepareStatement(String sql, int autoGeneratedKeys)：创建一个PreparedStatement能够检索自动生成的密钥的默认对象",
+          "39.Connection.prepareStatement(String sql, int autoGeneratedKeys)：创建一个PreparedStatement能够获取自动生成的密钥的默认对象",
           "sql=" + sql + ", autoGeneratedKeys=Statement.RETURN_GENERATED_KEYS="
               + Statement.RETURN_GENERATED_KEYS + ", PreparedStatement=" + preparedStatement2);
       preparedStatement2.close();
@@ -1406,27 +1409,27 @@ public class ConnectionMain {
 |default long|executeLargeUpdate(String sql, String[] columnNames)|执行给定的SQL语句，通知驱动程序在给定数组中指示的自动生成的键应该可用于获取。此数组包含目标表中的列的名称，而该目标表包含应该使其可用的自动生成的键，当返回的行数可能超过Integer.MAX_VALUE时，应使用此方法|
 |ResultSet|executeQuery(String sql)|执行给定的SQL语句，该语句返回单个 ResultSet对象|
 |int|executeUpdate(String sql)|执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)|
-|int|executeUpdate(String sql, int autoGeneratedKeys)|执行给定的SQL语句，并使用给定标志向驱动程序发出信号，告知该Statement对象生成的自动生成的密钥是否应该可用于检索|
-|int|executeUpdate(String sql, int[] columnIndexes)|执行给定的SQL语句并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于检索|
-|int|executeUpdate(String sql, String[] columnNames)|执行给定的SQL语句并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于检索|
-|Connection|getConnection()|检索Connection生成此Statement对象的对象|
-|int|getFetchDirection()|检索从数据库表中获取行的方向，该方向是从此Statement对象生成的结果集的缺省值|
-|int|getFetchSize()|检索结果集行的数量，该行是ResultSet从此对象生成的对象的默认提取大小Statement|
-|ResultSet|getGeneratedKeys()|检索由于执行此Statement对象而创建的任何自动生成的密钥|
-|default long|getLargeMaxRows()|检索此ResultSet对象生成的 Statement对象可以包含的最大行数|
-|default long|getLargeUpdateCount()|检索当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1|
-|int|getMaxFieldSize()|检索此ResultSet 对象生成的Statement对象中的字符和二进制列值可以返回的最大字节数|
-|int|getMaxRows()|检索此ResultSet对象生成的 Statement对象可以包含的最大行数|
+|int|executeUpdate(String sql, int autoGeneratedKeys)|执行给定的SQL语句，并使用给定标志向驱动程序发出信号，告知该Statement对象生成的自动生成的密钥是否应该可用于获取|
+|int|executeUpdate(String sql, int[] columnIndexes)|执行给定的SQL语句并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于获取|
+|int|executeUpdate(String sql, String[] columnNames)|执行给定的SQL语句并向驱动程序发出信号，指示给定数组中指示的自动生成的键应该可用于获取|
+|Connection|getConnection()|获取Connection生成此Statement对象的对象|
+|int|getFetchDirection()|获取从数据库表中获取行的方向，该方向是从此Statement对象生成的结果集的缺省值|
+|int|getFetchSize()|获取结果集行的数量，该行是ResultSet从此对象生成的对象的默认提取大小Statement|
+|ResultSet|getGeneratedKeys()|获取由于执行此Statement对象而创建的任何自动生成的密钥|
+|default long|getLargeMaxRows()|获取此ResultSet对象生成的 Statement对象可以包含的最大行数|
+|default long|getLargeUpdateCount()|获取当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1|
+|int|getMaxFieldSize()|获取此ResultSet 对象生成的Statement对象中的字符和二进制列值可以返回的最大字节数|
+|int|getMaxRows()|获取此ResultSet对象生成的 Statement对象可以包含的最大行数|
 |boolean|getMoreResults()|移动到此Statement对象的下一个结果，true如果它是ResultSet对象则返回 ，并隐式关闭ResultSet 使用该方法获得的任何当前对象getResultSet|
 |boolean|getMoreResults(int current)|移动到此Statement对象的下一个结果，ResultSet根据给定标志指定的指令处理任何当前对象，并true在下一个结果是ResultSet对象时返回|
-|int|getQueryTimeout()|检索驱动程序等待Statement对象执行的秒数|
-|ResultSet|getResultSet()|将当前结果检索为ResultSet对象|
-|int|getResultSetConcurrency()|检索此ResultSet对象生成的Statement对象的结果集并发性|
-|int|getResultSetHoldability()|检索此ResultSet对象生成的Statement对象的结果集可保持性|
-|int|getResultSetType()|检索此ResultSet对象生成的Statement对象的结果集类型|
-|int|getUpdateCount()|检索当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1|
-|SQLWarning|getWarnings()|检索此Statement对象上的调用报告的第一个警告|
-|boolean|isClosed()|检索此Statement对象是否已关闭|
+|int|getQueryTimeout()|获取驱动程序等待Statement对象执行的秒数|
+|ResultSet|getResultSet()|将当前结果获取为ResultSet对象|
+|int|getResultSetConcurrency()|获取此ResultSet对象生成的Statement对象的结果集并发性|
+|int|getResultSetHoldability()|获取此ResultSet对象生成的Statement对象的结果集可保持性|
+|int|getResultSetType()|获取此ResultSet对象生成的Statement对象的结果集类型|
+|int|getUpdateCount()|获取当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1|
+|SQLWarning|getWarnings()|获取此Statement对象上的调用报告的第一个警告|
+|boolean|isClosed()|获取此Statement对象是否已关闭|
 |boolean|isCloseOnCompletion()|返回一个值，该值指示Statement在关闭所有相关结果集时是否将关闭此值|
 |boolean|isPoolable()|返回一个值，指示是否Statement可以使用poolable|
 |void|setCursorName(String name)|将SQL游标名称设置为给定的String，后续Statement对象 execute方法将使用该名称|
@@ -1539,31 +1542,31 @@ public class StatementMain {
           "columnIndexes=new String[] { \"bookId\" }" + ", executeUpdate=" + executeUpdate4 + ",insertSQL=" + insertSQL);
 
       Connection connection = statement.getConnection();
-      PrintUtil.two("21.Statement.getConnection()：检索Connection生成此Statement对象的对象", "Connection=" + connection);
+      PrintUtil.two("21.Statement.getConnection()：获取Connection生成此Statement对象的对象", "Connection=" + connection);
 
       int fetchDirection = statement.getFetchDirection();
-      PrintUtil.two("22.Statement.getFetchDirection()：检索从数据库表中获取行的方向，该方向是从此Statement对象生成的结果集的缺省值", "fetchDirection=" + fetchDirection);
+      PrintUtil.two("22.Statement.getFetchDirection()：获取从数据库表中获取行的方向，该方向是从此Statement对象生成的结果集的缺省值", "fetchDirection=" + fetchDirection);
 
       int fetchSize = statement.getFetchSize();
-      PrintUtil.two("23.Statement.getFetchDirection()：检索结果集行的数量，该行是ResultSet从此对象生成的对象的默认提取大小Statement", "fetchSize=" + fetchSize);
+      PrintUtil.two("23.Statement.getFetchDirection()：获取结果集行的数量，该行是ResultSet从此对象生成的对象的默认提取大小Statement", "fetchSize=" + fetchSize);
 
       ResultSet generatedKeys = statement.getGeneratedKeys();
-      PrintUtil.two("24.Statement.getGeneratedKeys()：检索由于执行此Statement对象而创建的任何自动生成的密钥", "generatedKeys=" + generatedKeys);
+      PrintUtil.two("24.Statement.getGeneratedKeys()：获取由于执行此Statement对象而创建的任何自动生成的密钥", "generatedKeys=" + generatedKeys);
 
       long largeMaxRows = statement.getLargeMaxRows();
-      PrintUtil.two("25.Statement.getLargeMaxRows()：检索此ResultSet对象生成的 Statement对象可以包含的最大行数", "largeMaxRows=" + largeMaxRows);
+      PrintUtil.two("25.Statement.getLargeMaxRows()：获取此ResultSet对象生成的 Statement对象可以包含的最大行数", "largeMaxRows=" + largeMaxRows);
 
       long largeUpdateCount = statement.getLargeUpdateCount();
-      PrintUtil.two("26.Statement.getLargeUpdateCount()：检索当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1", "largeUpdateCount=" + largeUpdateCount);
+      PrintUtil.two("26.Statement.getLargeUpdateCount()：获取当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1", "largeUpdateCount=" + largeUpdateCount);
 
       long maxFieldSize = statement.getMaxFieldSize();
-      PrintUtil.two("27.Statement.getMaxFieldSize()：检索此ResultSet 对象生成的Statement对象中的字符和二进制列值可以返回的最大字节数1", "maxFieldSize=" + maxFieldSize);
+      PrintUtil.two("27.Statement.getMaxFieldSize()：获取此ResultSet 对象生成的Statement对象中的字符和二进制列值可以返回的最大字节数1", "maxFieldSize=" + maxFieldSize);
 
       statement.setMaxFieldSize(4);
       PrintUtil.two("28.Statement.setMaxFieldSize(int max)：设置此ResultSet 对象生成的Statement对象中字符和二进制列值可返回的最大字节数限制", "maxFieldSize=3");
 
       long maxRows = statement.getMaxRows();
-      PrintUtil.two("29.Statement.getMaxRows()：检索此ResultSet对象生成的 Statement对象可以包含的最大行数", "maxRows=" + maxRows);
+      PrintUtil.two("29.Statement.getMaxRows()：获取此ResultSet对象生成的 Statement对象可以包含的最大行数", "maxRows=" + maxRows);
 
       statement.setMaxRows(3);
       PrintUtil.two("30.Statement.setMaxRows(int max)：设置此ResultSet 对象生成的Statement对象中字符和二进制列值可返回的最大字节数限制", "maxRows=3");
@@ -1575,32 +1578,32 @@ public class StatementMain {
       PrintUtil.two("32.Statement.getMoreResults(int current)：移动到此Statement对象的下一个结果，ResultSet根据给定标志指定的指令处理任何当前对象，并true在下一个结果是ResultSet对象时返回", "moreResults=" + moreResults2);
 
       int queryTimeout = statement.getQueryTimeout();
-      PrintUtil.two("33.Statement.getQueryTimeout()：检索驱动程序等待Statement对象执行的秒数", "queryTimeout=" + queryTimeout);
+      PrintUtil.two("33.Statement.getQueryTimeout()：获取驱动程序等待Statement对象执行的秒数", "queryTimeout=" + queryTimeout);
 
       queryTimeout = 10;
       statement.setQueryTimeout(queryTimeout);
       PrintUtil.two("34.Statement.setQueryTimeout(int seconds)：将驱动程序等待 Statement对象执行的秒数设置为给定的秒数", "queryTimeout=" + queryTimeout);
 
       ResultSet resultSet2 = statement.getResultSet();
-      PrintUtil.two("35.Statement.getQueryTimeout()：检索驱动程序等待Statement对象执行的秒数", "ResultSet=" + resultSet2);
+      PrintUtil.two("35.Statement.getQueryTimeout()：获取驱动程序等待Statement对象执行的秒数", "ResultSet=" + resultSet2);
 
       int resultSetConcurrency = statement.getResultSetConcurrency();
-      PrintUtil.two("36.Statement.getResultSetConcurrency()：检索此ResultSet对象生成的Statement对象的结果集并发性", "resultSetConcurrency=" + resultSetConcurrency);
+      PrintUtil.two("36.Statement.getResultSetConcurrency()：获取此ResultSet对象生成的Statement对象的结果集并发性", "resultSetConcurrency=" + resultSetConcurrency);
 
       int resultSetHoldability = statement.getResultSetHoldability();
-      PrintUtil.two("37.Statement.getResultSetHoldability()：检索此ResultSet对象生成的Statement对象的结果集可保持性", "resultSetHoldability=" + resultSetHoldability);
+      PrintUtil.two("37.Statement.getResultSetHoldability()：获取此ResultSet对象生成的Statement对象的结果集可保持性", "resultSetHoldability=" + resultSetHoldability);
 
       int resultSetType = statement.getResultSetType();
-      PrintUtil.two("38.Statement.getResultSetType()：检索此ResultSet对象生成的Statement对象的结果集类型", "resultSetType=" + resultSetType);
+      PrintUtil.two("38.Statement.getResultSetType()：获取此ResultSet对象生成的Statement对象的结果集类型", "resultSetType=" + resultSetType);
 
       int updateCount = statement.getUpdateCount();
-      PrintUtil.two("39.Statement.getUpdateCount()：检索当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1", "updateCount=" + updateCount);
+      PrintUtil.two("39.Statement.getUpdateCount()：获取当前结果作为更新计数; 如果结果是ResultSet对象或没有更多结果，则返回-1", "updateCount=" + updateCount);
 
       SQLWarning sqlWarning = statement.getWarnings();
-      PrintUtil.two("40.Statement.getWarnings()：检索此Statement对象上的调用报告的第一个警告", "SQLWarning=" + sqlWarning);
+      PrintUtil.two("40.Statement.getWarnings()：获取此Statement对象上的调用报告的第一个警告", "SQLWarning=" + sqlWarning);
 
       boolean isClosed = statement.isClosed();
-      PrintUtil.two("41.Statement.isClosed()：检索此Statement对象是否已关闭", "isClosed=" + isClosed);
+      PrintUtil.two("41.Statement.isClosed()：获取此Statement对象是否已关闭", "isClosed=" + isClosed);
 
       boolean isCloseOnCompletion = statement.isCloseOnCompletion();
       PrintUtil.two("42.Statement.isCloseOnCompletion()：返回一个值，该值指示Statement在关闭所有相关结果集时是否将关闭此值", "isCloseOnCompletion=" + isCloseOnCompletion);
@@ -1932,7 +1935,7 @@ public class ExecuteByUpdate {
 }
 ```
 
-### <a id="a_executeLargeUpdate">八、使用Statement.executeUpdae方法实现数据操作</a> <a href="#a_execute">last</a> <a href="#a_executeUpdate">next</a>
+### <a id="a_executeLargeUpdate">八、使用Statement.executeLargeUpdate方法实现数据操作</a> <a href="#a_execute">last</a> <a href="#a_executeUpdate">next</a>
 ```
 一、使用java.sql.Statement.executeLargeUpdate()方法使实现数据操作，主要实现新增、删除、更新功能：
   default long  executeLargeUpdate(String sql)
@@ -1962,6 +1965,8 @@ public long executeLargeUpdate(String sql, String[] columnNames) throws SQLExcep
 2.2、方法参数autoGeneratedKeys、columnIndexes、columnNames：用法和execute()方法的用法一致
 
 2.3、executeLargeUpdate方法返回的实际上是this.updateCount，也就是Statement.getUpdateCount()
+
+2.4、executeLargeUpdate方法一般用于执行当返回的行数可能超过Integer.MAX_VALUE时
 ```
 ExecuteLargeUpdateMain.java：
 ```Java
@@ -2040,7 +2045,8 @@ public class ExecuteLargeUpdateByInsert {
 
     long executeLargeUpdateResult = statement.executeLargeUpdate(insertSQL);
     PrintUtil.two("4.Statement.executeLargeUpdate(String sql)：数据新增执行结果", "executeLargeUpdateResult=" + executeLargeUpdateResult);
-    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)");
+    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)\n"
+        + "当返回的行数可能超过Integer.MAX_VALUE时，应使用此方法");
     PrintUtil.three("4.2：方法返回结果：", "SQL数据操作语言（DML）语句的行数 或 0表示不返回任何内容的SQL语句");
   }
   // 使用  Statement.executeLargeUpdate(String sql, int autoGeneratedKeys)：数据新增
@@ -2080,7 +2086,8 @@ public class ExecuteLargeUpdateByInsert {
     int[] columnIndexes = new int[] {0};
     long executeLargeUpdateResult = statement.executeLargeUpdate(insertSQL, columnIndexes);
     PrintUtil.two("4.Statement.executeLargeUpdate(String sql, int[] columnIndexes)：数据新增执行结果", "executeLargeUpdateResult=" + executeLargeUpdateResult+", columnIndexes="+ CommonUtil.toString(columnIndexes));
-    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)");
+    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)\n"
+        + "当返回的行数可能超过Integer.MAX_VALUE时，应使用此方法");
     PrintUtil.three("4.2：方法返回结果：", "SQL数据操作语言（DML）语句的行数 或 0表示不返回任何内容的SQL语句");
 
     ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -2107,7 +2114,8 @@ public class ExecuteLargeUpdateByInsert {
     String[] columnNames = new String[] {"bookId"};
     long executeLargeUpdateResult = statement.executeLargeUpdate(insertSQL, columnNames);
     PrintUtil.two("4.Statement.executeLargeUpdate(String sql, int[] columnIndexes)：数据新增执行结果", "executeLargeUpdateResult=" + executeLargeUpdateResult+", columnNames="+ CommonUtil.toString(columnNames));
-    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)");
+    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)\n"
+        + "当返回的行数可能超过Integer.MAX_VALUE时，应使用此方法");
     PrintUtil.three("4.2：方法返回结果：", "SQL数据操作语言（DML）语句的行数 或 0表示不返回任何内容的SQL语句");
     
     ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -2148,7 +2156,8 @@ public class ExecuteLargeUpdateByDelete {
 
     int executeUpdateResult = statement.executeUpdate(deleteSQL);
     PrintUtil.two("4.Statement.executeUpdate(String sql)：数据删除执行结果", "executeUpdateResult=" + executeUpdateResult);
-    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)");
+    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)\n"
+        + "当返回的行数可能超过Integer.MAX_VALUE时，应使用此方法");
     PrintUtil.three("4.2：方法返回结果：", "SQL数据操作语言（DML）语句的行数 或 0表示不返回任何内容的SQL语句");
   }
 }
@@ -2172,13 +2181,14 @@ public class ExecuteLargeUpdateByUpdate {
 
     int executeUpdateResult = statement.executeUpdate(updateSQL);
     PrintUtil.two("4.Statement.executeUpdate(String sql)：数据更新执行结果", "executeUpdateResult=" + executeUpdateResult);
-    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)");
+    PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)\n"
+        + "当返回的行数可能超过Integer.MAX_VALUE时，应使用此方法");
     PrintUtil.three("4.2：方法返回结果：", "SQL数据操作语言（DML）语句的行数 或 0表示不返回任何内容的SQL语句");
   }
 }
 ```
 
-### <a id="a_executeUpdate">九、使用Statement.executeUpdae方法实现数据操作</a> <a href="#executeLargeUpdate">last</a> <a href="#">next</a>
+### <a id="a_executeUpdate">九、使用Statement.executeUpdae方法实现数据操作</a> <a href="#a_executeLargeUpdate">last</a> <a href="#a_prepared">next</a>
 ```
 一、使用java.sql.Statement.executeUpdate()方法使实现数据操作，主要实现新增、删除、更新功能：
   int executeUpdate(String sql)
@@ -2459,6 +2469,325 @@ public class ExecuteUpdateByUpdate {
     PrintUtil.two("4.Statement.executeUpdate(String sql)：数据更新执行结果", "executeUpdateResult=" + executeUpdateResult);
     PrintUtil.three("4.1：具体描述:", "执行给定的SQL语句，它可以是一个INSERT， UPDATE或者DELETE语句，或者不返回任何内容的SQL语句(如SQL DDL语句)");
     PrintUtil.three("4.2：方法返回结果：", "SQL数据操作语言（DML）语句的行数 或 0表示不返回任何内容的SQL语句");
+  }
+}
+```
+
+### <a id="a_prepared">十、java.sql.PreparedStatement：预编译SQL语句</a> <a href="#a_executeUpdate">last</a> <a href="#a_preparedOperation">next</a>
+[java.sql.PreparedStatement](https://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html)  
+一、描述：
+```
+  表示预编译的 SQL 语句的对象。 继承 java.sql.Statement对象
+SQL 语句被预编译并存储在 PreparedStatement 对象中。然后可以使用此对象多次高效地执行该语句。 
+注：用于设置 IN 参数值的设置方法（setShort、setString 等等）必须指定与输入参数的已定义 SQL 类型兼容的类型。
+例如，如果 IN 参数具有 SQL 类型 INTEGER，那么应该使用 setInt 方法。 
+
+如果需要任意参数类型转换，使用 setObject 方法时应该将目标 SQL 类型作为其参数。 
+```
+
+二、方法说明：
+
+|返回类型|方法|说明|
+|---|---|---|
+|void|addBatch()|向该PreparedStatement 对象的一批命令添加一组参数|
+|void|clearParameters()|立即清除当前参数值|
+|boolean|execute()|在此PreparedStatement对象中执行SQL语句，该语句可以是任何类型的SQL语句|
+|default long|executeLargeUpdate()|在此PreparedStatement对象中执行SQL语句，该语句必须是SQL数据操作语言（DML）语句，例如INSERT，UPDATE或 DELETE; 或者不返回任何内容的SQL语句，例如DDL语句|
+|ResultSet|executeQuery()|在此PreparedStatement对象中执行SQL查询并返回ResultSet查询生成的对象|
+|int|executeUpdate()|在此PreparedStatement对象中执行SQL语句，该语句必须是SQL数据操作语言（DML）语句，例如INSERT，UPDATE或 DELETE; 或者不返回任何内容的SQL语句，例如DDL语句|
+|ResultSetMetaData|getMetaData()|获取一个ResultSetMetaData对象，该对象包含有关执行ResultSet此PreparedStatement对象时将返回的对象列的信息|
+|ParameterMetaData|getParameterMetaData()|获取此 PreparedStatement 对象的参数的编号、类型和属性|
+|void|setArray(int parameterIndex, Array x)|将指定参数设置为给定java.sql.Array对象|
+|void|setAsciiStream(int parameterIndex, InputStream x)|将指定参数设置为给定输入流|
+|void|setAsciiStream(int parameterIndex, InputStream x, int length)|将指定参数设置为给定输入流，该输入流将具有指定的字节数|
+|void|setAsciiStream(int parameterIndex, InputStream x, long length)|将指定参数设置为给定输入流，该输入流将具有指定的字节数|
+|void|setBigDecimal(int parameterIndex, BigDecimal x)|将指定参数设置为给定java.math.BigDecimal值|
+|void|setBinaryStream(int parameterIndex, InputStream x)|将指定参数设置为给定输入流|
+|void|setBinaryStream(int parameterIndex, InputStream x, int length)|将指定参数设置为给定输入流，该输入流将具有指定的字节数|
+|void|setBinaryStream(int parameterIndex, InputStream x, long length)|将指定参数设置为给定输入流，该输入流将具有指定的字节数|
+|void|setBlob(int parameterIndex, Blob x)|将指定参数设置为给定java.sql.Blob对象|
+|void|setBlob(int parameterIndex, InputStream inputStream)|将指定参数设置为InputStream对象|
+|void|setBlob(int parameterIndex, InputStream inputStream, long length)|将指定参数设置为InputStream对象|
+|void|setBoolean(int parameterIndex, boolean x)|将指定参数设置为给定的Java boolean值|
+|void|setByte(int parameterIndex, byte x)|将指定参数设置为给定的Java byte值|
+|void|setBytes(int parameterIndex, byte[] x)|将指定参数设置为给定的Java字节数组|
+|void|setCharacterStream(int parameterIndex, Reader reader)|将指定参数设置为给定Reader 对象|
+|void|setCharacterStream(int parameterIndex, Reader reader, int length)|将指定参数设置为给定Reader 对象，即给定的字符长度|
+|void|setCharacterStream(int parameterIndex, Reader reader, long length)|将指定参数设置为给定Reader 对象，即给定的字符长度|
+|void|setClob(int parameterIndex, Clob x)|将指定参数设置为给定java.sql.Clob对象|
+|void|setClob(int parameterIndex, Reader reader)|将指定参数设置为Reader对象|
+|void|setClob(int parameterIndex, Reader reader, long length)|将指定参数设置为Reader对象|
+|void|setDate(int parameterIndex, Date x)|java.sql.Date使用运行应用程序的虚拟机的默认时区将指定参数设置为给定值|
+|void|setDate(int parameterIndex, Date x, Calendar cal)|java.sql.Date使用给定Calendar对象将指定参数设置为给定值|
+|void|setDouble(int parameterIndex, double x)|将指定参数设置为给定的Java double值|
+|void|setFloat(int parameterIndex, float x)|将指定参数设置为给定的Java float值|
+|void|setInt(int parameterIndex, int x)|将指定参数设置为给定的Java int值|
+|void|setLong(int parameterIndex, long x)|将指定参数设置为给定的Java long值|
+|void|setNCharacterStream(int parameterIndex, Reader value)|将指定参数设置为Reader对象|
+|void|setNCharacterStream(int parameterIndex, Reader value, long length)|将指定参数设置为Reader对象|
+|void|setNClob(int parameterIndex, NClob value)|将指定参数设置为java.sql.NClob对象|
+|void|setNClob(int parameterIndex, Reader reader)|将指定参数设置为Reader对象|
+|void|setNClob(int parameterIndex, Reader reader, long length)|将指定参数设置为Reader对象|
+|void|setNString(int parameterIndex, String value)|将指定参数设置为给定String对象|
+|void|setNull(int parameterIndex, int sqlType)|将指定参数设置为SQL NULL|
+|void|setNull(int parameterIndex, int sqlType, String typeName)|将指定参数设置为SQL NULL|
+|void|setObject(int parameterIndex, Object x)|使用给定对象设置指定参数的值|
+|void|setObject(int parameterIndex, Object x, int targetSqlType)|使用给定对象设置指定参数的值|
+|void|setObject(int parameterIndex, Object x, int targetSqlType, int scaleOrLength)|使用给定对象设置指定参数的值|
+|default void|setObject(int parameterIndex, Object x, SQLType targetSqlType)|使用给定对象设置指定参数的值|
+|default void|setObject(int parameterIndex, Object x, SQLType targetSqlType, int scaleOrLength)|使用给定对象设置指定参数的值|
+|void|setRef(int parameterIndex, Ref x)|将指定参数设置为给定 REF(<structured-type>)值|
+|void|setRowId(int parameterIndex, RowId x)|将指定参数设置为给定java.sql.RowId对象|
+|void|setShort(int parameterIndex, short x)|将指定参数设置为给定的Java short值|
+|void|setSQLXML(int parameterIndex, SQLXML xmlObject)|将指定参数设置为给定java.sql.SQLXML对象|
+|void|setString(int parameterIndex, String x)|将指定参数设置为给定的Java String值|
+|void|setTime(int parameterIndex, Time x)|将指定参数设置为给定java.sql.Time值|
+|void|setTime(int parameterIndex, Time x, Calendar cal)|java.sql.Time使用给定Calendar对象将指定参数设置为给定值|
+|void|setTimestamp(int parameterIndex, Timestamp x)|将指定参数设置为给定java.sql.Timestamp值|
+|void|setTimestamp(int parameterIndex, Timestamp x, Calendar cal)|java.sql.Timestamp使用给定Calendar对象将指定参数设置为给定值|
+|void|setUnicodeStream(int parameterIndex, InputStream x, int length)|~~已过时~~使用 setCharacterStream|
+|void|setURL(int parameterIndex, URL x)|将指定参数设置为给定java.net.URL值|
+
+PreparedStatementMain.java：
+```Java
+package com.mutisitc.preparedstatement;
+import java.sql.Date;
+import java.sql.ParameterMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import com.mutisitc.utils.JDBCUtil;
+import com.mutisitc.utils.PrintUtil;
+// java.sql.PreparedStatement：预编译SQL语句
+public class PreparedStatementMain {
+  public static void main(String[] args) {
+    PrintUtil.one("java.sql.PreparedStatement：预编译SQL语句：");
+    try {
+      String preparedSQL = "SELECT bookId, title, author, remark, createrTime FROM book WHERE bookId = ? AND title = ?";
+      PreparedStatement preparedStatement = JDBCUtil.prepareStatement(preparedSQL);
+      preparedStatement.setLong(1, 1538104150648L);
+      preparedStatement.setString(2, "test by jdbc");
+      PrintUtil.two("3.PreparedStatement.setXXX(int int parameterIndex, XXX xxx)", "将指定参数设置为给定的值");
+      PrintUtil.two("4.PreparedStatement.clearParameters()", "立即清除当前参数值");
+      
+      ParameterMetaData parameterMetaData = preparedStatement.getParameterMetaData();
+      PrintUtil.two("5.PreparedStatement.getParameterMetaData()：获取此 PreparedStatement 对象的参数的编号、类型和属性", "ParameterMetaData="+parameterMetaData);
+      if(null != parameterMetaData) {
+        int parameterCount = parameterMetaData.getParameterCount();
+        PrintUtil.three("5.1.使用ParameterMetaData.getParameterCount()获取此 PreparedStatement 此ParameterMetaData对象包含信息的对象中的参数数", "parameterCount="+parameterCount);
+        PrintUtil.three("5.2.如果要使用ParameterMetaData参数元数据需要在URL开启参数：", "generateSimpleParameterMetadata=true");
+        PrintUtil.three("  5.2.1.如果不开启参数generateSimpleParameterMetadata=true在使用ParameterMetaData会抛出异常：",
+            "SQL java.sql.SQLException: Parameter metadata not available for the given statement");
+        for (int i = 1; i <= parameterCount; i++) {
+          PrintUtil.three("5."+(i+2)+".获取参数信息：", "ClassName="+parameterMetaData.getParameterClassName(i)
+          +", TypeName="+ parameterMetaData.getParameterTypeName(i) +", Type="+ parameterMetaData.getParameterType(i)
+          +", Mode="+ parameterMetaData.getParameterMode(i));
+        }
+      }
+      
+      ResultSet resultSet = preparedStatement.executeQuery();
+      PrintUtil.two("6.PreparedStatement.executeQuery()：在此PreparedStatement对象中执行SQL查询并返回ResultSet查询生成的对象", "ResultSet="+resultSet);
+      int index = 1;
+      while(resultSet.next()) {
+        Long bookId = resultSet.getLong("bookId");
+        String title = resultSet.getString("title");
+        String author = resultSet.getString("author");
+        String remark = resultSet.getString("remark");
+        Date createrTime = resultSet.getDate("createrTime");
+        PrintUtil.three("6."+index+".通过ResultSet结果集，获取数据列信息", "bookId="+bookId+", title="+title+
+            ", author="+author+", remark="+remark+", createrTime="+createrTime);
+        index++;
+      }
+      
+      PrintUtil.two("7.PreparedStatement.execute()", "在此PreparedStatement对象中执行SQL语句，该语句可以是任何类型的SQL语句");
+      PrintUtil.two("8.PreparedStatement.executeLargeUpdate()", "在此PreparedStatement对象中执行SQL语句，该语句必须是SQL数据操作语言（DML）语句，例如INSERT，UPDATE或 DELETE; 或者不返回任何内容的SQL语句，例如DDL语句");
+      PrintUtil.two("9.PreparedStatement.executeUpdate()", "在此PreparedStatement对象中执行SQL语句，该语句必须是SQL数据操作语言（DML）语句，例如INSERT，UPDATE或 DELETE; 或者不返回任何内容的SQL语句，例如DDL语句");
+      
+      ResultSetMetaData resultSetMetaData = preparedStatement.getMetaData();
+      PrintUtil.two("10.PreparedStatement.getMetaData()：获取一个ResultSetMetaData对象，该对象包含有关执行ResultSet此PreparedStatement对象时将返回的对象列的信息", "ResultSetMetaData="+resultSetMetaData.getClass()+"@"+resultSetMetaData.hashCode());
+      if(null != resultSetMetaData) {
+        int columnCount = resultSetMetaData.getColumnCount();
+        PrintUtil.three("10.1.使用ResultSetMetaData.getColumnCount()返回此ResultSet对象中的列数", "columnCount="+columnCount);
+        for (int i = 1; i <= columnCount; i++) {
+          PrintUtil.three("10."+(i+1)+".使用ResultSetMetaData获取返回列信息：", "CatalogName="+resultSetMetaData.getCatalogName(i)+" ,TableName="+resultSetMetaData.getTableName(i)
+            +" ,ColumnLabel="+resultSetMetaData.getColumnLabel(i)+" ,ColumnName="+resultSetMetaData.getColumnName(i)
+            +" ,TypeName="+resultSetMetaData.getColumnTypeName(i)+" ,ClassName="+resultSetMetaData.getColumnClassName(i)+" ,Type="+resultSetMetaData.getColumnType(i)
+            +" ,SchemaName="+resultSetMetaData.getSchemaName(i)+" ,Scale="+resultSetMetaData.getScale(i)
+            +" ,Precision="+resultSetMetaData.getPrecision(i)+" , DisplaySize="+resultSetMetaData.getColumnDisplaySize(i)+"");
+        }
+      }
+      
+      JDBCUtil.close(preparedStatement);
+    } catch (SQLException e) {
+      PrintUtil.err("演示 java.sql.PreparedStatement：预编译SQL语句，打印异常堆栈信息：");
+      e.printStackTrace();
+    }
+  }
+}
+```
+
+### <a id="a_preparedOperation">十一、使用PreparedStatement方法实现数据操作</a> <a href="#a_prepared">last</a> <a href="#">next</a>
+11.1、使用PreparedStatement实现数据新增：  
+InsertByMain.java：
+```Java
+package com.mutisitc.preparedstatement.operation;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import com.mutisitc.utils.CommonUtil;
+import com.mutisitc.utils.JDBCUtil;
+import com.mutisitc.utils.PrintUtil;
+// 使用PreparedStatement实现数据新增
+public class InsertByMain {
+  public static void main(String[] args) {
+    PrintUtil.one("使用PreparedStatement实现数据新增：");
+    try {
+      String preparedSQL = "INSERT INTO book (bookId, title, author, remark, createrTime) VALUES (?, ?, ?, ?, ?)";
+      PreparedStatement preparedStatement = JDBCUtil.prepareStatement(preparedSQL);
+      preparedStatement.setLong(1, System.currentTimeMillis());
+      preparedStatement.setString(2, "test by jdbc");
+      preparedStatement.setString(3, "test author");
+      preparedStatement.setString(4, "使用PreparedStatement.execute接口实现数据新增");
+      preparedStatement.setString(5, CommonUtil.getCurrentTime());
+      
+      boolean executeResult = preparedStatement.execute();
+      PrintUtil.two("3.使用PreparedStatement.execute()：执行SQL结果：", "executeResult="+executeResult);
+      PrintUtil.three("3.1.使用PreparedStatement.getUpdateCount()：获取执行影响行数：", "updateCount="+preparedStatement.getUpdateCount());
+      
+      preparedStatement.setLong(1, System.currentTimeMillis());
+      long executeLargeUpdateResult = preparedStatement.executeLargeUpdate();
+      PrintUtil.two("4.使用PreparedStatement.executeLargeUpdate()：执行SQL结果：", "executeLargeUpdateResult="+executeLargeUpdateResult);
+      
+      preparedStatement.setLong(1, System.currentTimeMillis());
+      int executeUpdateResult = preparedStatement.executeUpdate();
+      PrintUtil.two("5.使用PreparedStatement.executeUpdate()：执行SQL结果：", "executeUpdateResult="+executeUpdateResult);
+      
+      PrintUtil.two("6.PreparedStatement不支持继承至Statement的以下方法", "execute(String sql)等重载方法、executeLargeUpdate(String sql)等重载方法、"
+          + "executeUpdate(String sql)等重载方法、addBatch(String  sql)");
+      JDBCUtil.close(preparedStatement);
+    } catch (SQLException e) {
+      PrintUtil.err("使用PreparedStatement实现数据新增，打印异常堆栈信息：");
+      e.printStackTrace();
+    }
+  }
+}
+```
+11.2、使用PreparedStatement实现数据删除：  
+DeleteByMain.java：
+```Java
+package com.mutisitc.preparedstatement.operation;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import com.mutisitc.utils.JDBCUtil;
+import com.mutisitc.utils.PrintUtil;
+// 使用PreparedStatement实现数据删除
+public class DeleteByMain {
+  public static void main(String[] args) {
+    PrintUtil.one("使用PreparedStatement实现数据删除：");
+    try {
+      String preparedSQL = "DELETE FROM book WHERE bookId=?";
+      PreparedStatement preparedStatement = JDBCUtil.prepareStatement(preparedSQL);
+      
+      preparedStatement.setLong(1, 1538104150648L);
+      boolean executeResult = preparedStatement.execute();
+      PrintUtil.two("3.使用PreparedStatement.execute()：执行SQL结果：", "executeResult="+executeResult);
+      PrintUtil.three("3.1.使用PreparedStatement.getUpdateCount()：获取执行影响行数：", "updateCount="+preparedStatement.getUpdateCount());
+      
+      preparedStatement.setLong(1, 1538104210204L);
+      long executeLargeUpdateResult = preparedStatement.executeLargeUpdate();
+      PrintUtil.two("4.使用PreparedStatement.executeLargeUpdate()：执行SQL结果：", "executeLargeUpdateResult="+executeLargeUpdateResult);
+      
+      preparedStatement.setLong(1, 1538104307831L);
+      int executeUpdateResult = preparedStatement.executeUpdate();
+      PrintUtil.two("5.使用PreparedStatement.executeUpdate()：执行SQL结果：", "executeUpdateResult="+executeUpdateResult);
+      
+      JDBCUtil.close(preparedStatement);
+    } catch (SQLException e) {
+      PrintUtil.err("使用PreparedStatement实现数据删除，打印异常堆栈信息：");
+      e.printStackTrace();
+    }
+  }
+}
+```
+11.3、使用PreparedStatement实现数据更新：  
+UpdateByMain.java：
+```Java
+package com.mutisitc.preparedstatement.operation;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import com.mutisitc.utils.CommonUtil;
+import com.mutisitc.utils.JDBCUtil;
+import com.mutisitc.utils.PrintUtil;
+// 使用PreparedStatement实现数据更新
+public class UpdateByMain {
+  public static void main(String[] args) {
+    PrintUtil.one("使用PreparedStatement实现数据更新：");
+    try {
+      String preparedSQL = "UPDATE book SET title=?, author=?, remark=?, createrTime=? WHERE bookId=?";
+      PreparedStatement preparedStatement = JDBCUtil.prepareStatement(preparedSQL);
+      preparedStatement.setString(1, "test by jdbc");
+      preparedStatement.setString(2, "test author");
+      preparedStatement.setString(3, "使用PreparedStatement.execute接口实现数据更新");
+      preparedStatement.setString(4, CommonUtil.getCurrentTime());
+      preparedStatement.setLong(5, 1538120200851l);
+      
+      boolean executeResult = preparedStatement.execute();
+      PrintUtil.two("3.使用PreparedStatement.execute()：执行SQL结果：", "executeResult="+executeResult);
+      PrintUtil.three("3.1.使用PreparedStatement.getUpdateCount()：获取执行影响行数：", "updateCount="+preparedStatement.getUpdateCount());
+      
+      preparedStatement.setString(1, "PreparedStatement executeLargeUpdate");
+      long executeLargeUpdateResult = preparedStatement.executeLargeUpdate();
+      PrintUtil.two("4.使用PreparedStatement.executeLargeUpdate()：执行SQL结果：", "executeLargeUpdateResult="+executeLargeUpdateResult);
+      
+      preparedStatement.setString(4, CommonUtil.getCurrentTime());
+      int executeUpdateResult = preparedStatement.executeUpdate();
+      PrintUtil.two("5.使用PreparedStatement.executeUpdate()：执行SQL结果：", "executeUpdateResult="+executeUpdateResult);
+      
+      JDBCUtil.close(preparedStatement);
+    } catch (SQLException e) {
+      PrintUtil.err("使用PreparedStatement实现数据更新，打印异常堆栈信息：");
+      e.printStackTrace();
+    }
+  }
+}
+```
+11.4、使用PreparedStatement实现数据查询：   
+QueryByMain.java：
+```Java
+package com.mutisitc.preparedstatement.operation;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import com.mutisitc.utils.JDBCUtil;
+import com.mutisitc.utils.PrintUtil;
+// 使用PreparedStatement实现数据查询
+public class QueryByMain {
+  public static void main(String[] args) {
+    PrintUtil.one("使用PreparedStatement实现数据更新：");
+    try {
+      String preparedSQL = "SELECT bookId, title, author, remark, createrTime FROM book WHERE bookId >= ?";
+      PreparedStatement preparedStatement = JDBCUtil.prepareStatement(preparedSQL);
+      preparedStatement.setLong(1, 1538105479358l);
+      ResultSet resultSet = preparedStatement.executeQuery();
+      
+      PrintUtil.two("3.PreparedStatement.executeQuery()：执行SQL返回结果：", "ResultSet="+resultSet);
+      int index = 1;
+      while(resultSet.next()) {
+        Long bookId = resultSet.getLong("bookId");
+        String title = resultSet.getString("title");
+        String author = resultSet.getString("author");
+        String remark = resultSet.getString("remark");
+        Date createrTime = resultSet.getDate("createrTime");
+        PrintUtil.three("3."+index+".通过ResultSet结果集，获取数据列信息", "bookId="+bookId+", title="+title+
+            ", author="+author+", remark="+remark+", createrTime="+createrTime);
+        index++;
+      }
+      JDBCUtil.close(preparedStatement);
+    } catch (SQLException e) {
+      PrintUtil.err("使用PreparedStatement实现数据更新，打印异常堆栈信息：");
+      e.printStackTrace();
+    }
   }
 }
 ```

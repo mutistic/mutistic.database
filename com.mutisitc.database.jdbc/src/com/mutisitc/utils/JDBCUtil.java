@@ -26,7 +26,7 @@ public class JDBCUtil {
 	private final static String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
 	/** JDBC URL */
 	private final static String JDBC_URL = "jdbc:mysql://" + IP_PORT + "/" + DB_NAME
-			+ "?useSSL=false&serverTimezone=GMT%2B8";
+			+ "?useSSL=false&serverTimezone=GMT%2B8&generateSimpleParameterMetadata=true";
 
 	/**
 	 * @description 获取数据库连接

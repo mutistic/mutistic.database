@@ -163,16 +163,17 @@ public class ConnectionMain {
 			PrintUtil.two("34.Connection.nativeSQL(String sql)：将给定的SQL语句转换为系统的本机SQL语法",
 					"sql=" + sql + ", nativeSQL=" + nativeSQL);
 
-			CallableStatement callableStatement = connection.prepareCall("test");
+			String procedureSQL = "{CALL pro_testByQuery(?, ?)}";
+			CallableStatement callableStatement = connection.prepareCall(procedureSQL);
 			PrintUtil.two("35.Connection.prepareCall(String sql)：创建一个CallableStatement用于调用数据库存储过程的对象",
-					"sql=test, CallableStatement=" + callableStatement);
+					"sql="+procedureSQL+", CallableStatement=" + callableStatement);
 			callableStatement.close();
 
-			CallableStatement callableStatement2 = connection.prepareCall("test", ResultSet.TYPE_FORWARD_ONLY,
+			CallableStatement callableStatement2 = connection.prepareCall(procedureSQL, ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			PrintUtil.two(
 					"36.Connection.prepareCall(String sql, int resultSetType, int resultSetConcurrency)：创建一个CallableStatement将生成 ResultSet具有给定类型和并发性的对象的对象",
-					"sql=test" + ", resultSetType=java.sql.ResultSet.TYPE_FORWARD_ONLY=" + ResultSet.TYPE_FORWARD_ONLY
+					"sql="+procedureSQL+", resultSetType=java.sql.ResultSet.TYPE_FORWARD_ONLY=" + ResultSet.TYPE_FORWARD_ONLY
 							+ ", resultSetConcurrency=java.sql.ResultSet.CONCUR_READ_ONLY=" + ResultSet.CONCUR_READ_ONLY
 							+ ", CallableStatement=" + callableStatement2);
 			callableStatement2.close();

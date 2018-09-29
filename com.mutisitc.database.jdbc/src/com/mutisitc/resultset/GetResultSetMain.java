@@ -1,6 +1,5 @@
 package com.mutisitc.resultset;
 
-import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

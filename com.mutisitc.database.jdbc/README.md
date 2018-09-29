@@ -25,6 +25,8 @@
 10. <a href="#a_prepared">java.sql.PreparedStatement：预编译SQL语句</a>
 11. <a href="#a_preparedOperation">使用PreparedStatement方法实现数据操作</a>
 12. <a href="#a_resultSet">java.sql.ResultSet：数据库结果集</a>
+13. <a href="#a_callable">java.sql.CallableStatement：执行SQL存储过程</a>
+14. <a href="#a_types">java.sql.Types：JDBC类型常量</a>
 
 99. <a href="#a_down">down</a>
 
@@ -2791,7 +2793,7 @@ public class QueryByMain {
 }
 ```
 
-### <a id="a_resultSet">十二、java.sql.ResultSet：数据库结果集</a> <a href="#a_preparedOperation">last</a> <a href="#">next</a>
+### <a id="a_resultSet">十二、java.sql.ResultSet：数据库结果集</a> <a href="#a_preparedOperation">last</a> <a href="#a_callable">next</a>
 一、描述：
 ```
   表示数据库结果集的数据表，通常通过执行查询数据库的语句生成。 
@@ -3059,6 +3061,173 @@ public class GetResultSetMain {
     
     ResultSet resultSet = preparedStatement.executeQuery();
     PrintUtil.two("3.使用PreparedStatement.executeQuery()获取数据库查询结果集", "ResultSet="+resultSet);
+  }
+}
+```
+
+### <a id="a_callable">十三、java.sql.CallableStatement：执行SQL存储过程</a> <a href="#a_resultSet">last</a> <a href="#">next</a>
+[java.sql.CallableStatement](https://docs.oracle.com/javase/8/docs/api/java/sql/CallableStatement.html)  
+
+一、描述：
+```
+继承java.sql.PreparedStatement
+用于执行 SQL 存储过程的接口。JDBC API 提供了一个存储过程 SQL 转义语法，
+该语法允许对所有 RDBMS 使用标准方式调用存储过程。此转义语法有一个包含结果参数的形式和一个不包含结果参数的形式。
+如果使用结果参数，则必须将其注册为 OUT 参数。其他参数可用于输入、输出或同时用于二者。参数是根据编号按顺序引用的，第一个参数的编号是 1。 
+   {?= call <procedure-name>[(<arg1>,<arg2>, ...)]}
+   {call <procedure-name>[(<arg1>,<arg2>, ...)]}
+ IN 参数值是使用继承自 PreparedStatement 的 set 方法设置的。在执行存储过程之前，必须注册所有 OUT 参数的类型；
+它们的值是在执行后通过此类提供的 get 方法获取的。 
+
+CallableStatement 可以返回一个 ResultSet 对象或多个 ResultSet 对象。多个 ResultSet 对象是使用继承自 Statement 的操作处理的。 
+为了获得最大的可移植性，某一调用的 ResultSet 对象和更新计数应该在获得输出参数的值之前处理。
+
+CallableStatement调用存储过程时，如果存在IN参数(入参)着必须指定具体的值(可以为null)、如果存在OUT参数(返参)则必须注册JDBC类型
+```
+
+二、[Mysql存储过程：](https://www.cnblogs.com/mark-chan/p/5384139.html)
+```SQL
+-- 删除存储过程
+DROP PROCEDURE IF EXISTS pro_testByQuery;
+-- 创建存储过程
+CREATE PROCEDURE pro_testByQuery(IN p_bookId BIGINT(20), OUT p_title VARCHAR(50))
+  BEGIN
+    SELECT title INTO p_title FROM book WHERE bookId = p_bookId;
+  END;
+-- 执行存储过程
+CALL pro_testByQuery(1, @p_title);
+-- 查询返回参数OUT
+SELECT @p_title;
+```
+
+三、方法说明 ：
+
+|返回类型|方法|说明|
+|---|---|---|
+|void|registerOutParameter(String parameterName, int sqlType)|注册名为parameterName JDBC类型 的OUT参数 sqlType|
+|void|registerOutParameter(String parameterName, int sqlType, int scale)|注册名为parameterName JDBC类型 的参数 sqlType|
+|void|registerOutParameter(String parameterName, int sqlType, String typeName)|注册指定的输出参数|
+|default void|registerOutParameter(String parameterName, SQLType sqlType)|注册名为parameterName JDBC类型 的OUT参数 sqlType|
+|default void|registerOutParameter(String parameterName, SQLType sqlType, int scale)|注册名为parameterName JDBC类型 的参数 sqlType|
+|default void|registerOutParameter(String parameterName, SQLType sqlType, String typeName)|注册指定的输出参数|
+|Array|getArray(String parameterName)|获取JDBC ARRAY参数的值作为ArrayJava编程语言中的 对象|
+|BigDecimal|getBigDecimal(String parameterName)|获取JDBC NUMERIC参数的值，作为 java.math.BigDecimal对象，其值包含小数点右侧的位数|
+|Blob|getBlob(String parameterName)|获取JDBC BLOB参数的值作为Blob Java编程语言中的 对象|
+|boolean|getBoolean(String parameterName)|以Java编程语言的形式获取JDBC BIT或BOOLEAN 参数 的值boolean|
+|byte|getByte(String parameterName)|以Java编程语言的形式获取JDBC TINYINT参数的值byte|
+|byte[]|getBytes(String parameterName)|以Java编程语言中 的值数组的形式获取JDBC BINARY或VARBINARY参数的byte值|
+|Reader|getCharacterStream(String parameterName)|获取指定参数的值作为java.io.ReaderJava编程语言中的 对象|
+|Clob|getClob(String parameterName)|获取JDBC CLOB参数的值作为java.sql.ClobJava编程语言中的 对象|
+|Date|getDate(String parameterName)|获取JDBC DATE参数的值作为 java.sql.Date对象|
+|Date|getDate(String parameterName, Calendar cal)|使用给定对象构造日期DATE，以java.sql.Date对象的形式获取JDBC 参数 的值Calendar|
+|double|getDouble(String parameterName)|以Java编程语言的形式获取JDBC DOUBLE参数的值double|
+|float|getFloat(String parameterName)|以Java编程语言的形式获取JDBC FLOAT参数的值float|
+|int|getInt(String parameterName)|以Java编程语言中的形式获取JDBC INTEGER参数的值int|
+|long|getLong(String parameterName)|以Java编程语言的形式获取JDBC BIGINT参数的值long|
+|Reader|getNCharacterStream(String parameterName)|获取指定参数的值作为java.io.ReaderJava编程语言中的 对象|
+|NClob|getNClob(String parameterName)|获取JDBC NCLOB参数的值作为java.sql.NClobJava编程语言中的 对象|
+|String|getNString(String parameterName)|获取指定的值NCHAR， NVARCHAR 或LONGNVARCHAR参数作为StringJava编程语言|
+|Object|getObject(String parameterName)|Object以Java编程语言中的形式获取参数的值|
+|<T> T|getObject(String parameterName, Class<T> type)|返回表示OUT参数值的对象parameterName，如果支持转换，则将从参数 的SQL类型转换为请求的Java数据类型|
+|Object|getObject(String parameterName, Map<String,Class<?>> map)|返回表示OUT参数值的对象， parameterName并map用于参数值的自定义映射|
+|Ref|getRef(String parameterName)|获取JDBC REF(<structured-type>) 参数的值作为RefJava编程语言中的对象|
+|RowId|getRowId(String parameterName)|获取指定的JDBC ROWID参数的值作为 java.sql.RowId对象|
+|short|getShort(String parameterName)|以Java编程语言的形式获取JDBC SMALLINT参数的值short|
+|SQLXML|getSQLXML(String parameterName)|获取指定SQL XML参数的值作为java.sql.SQLXMLJava编程语言中的 对象|
+|String|getString(String parameterName)|获取JDBC的值CHAR，VARCHAR或LONGVARCHAR参数作为StringJava编程语言|
+|Time|getTime(int parameterIndex, Calendar cal)|获取指定的JDBC TIME参数的值作为 java.sql.Time对象，使用给定的Calendar对象构造时间|
+|Time|getTime(String parameterName, Calendar cal)|使用给定对象构造时间TIME，以java.sql.Time对象的形式获取JDBC 参数 的值Calendar|
+|Timestamp|getTimestamp(String parameterName)|获取JDBC TIMESTAMP参数的值作为 java.sql.Timestamp对象|
+|Timestamp|getTimestamp(String parameterName, Calendar cal)|使用给定对象构造对象，TIMESTAMP以java.sql.Timestamp对象的形式获取JDBC 参数 的值。CalendarTimestamp|
+|URL|getURL(String parameterName)|获取JDBC DATALINK参数的值作为 java.net.URL对象|
+|void|setAsciiStream(String parameterName, InputStream x)|将指定参数设置为给定输入流|
+|void|setAsciiStream(String parameterName, InputStream x, int length)|将指定参数设置为给定输入流，该输入流将具有指定的字节数|
+|void|setAsciiStream(String parameterName, InputStream x, long length)|将指定参数设置为给定输入流，该输入流将具有指定的字节数|
+|void|setBigDecimal(String parameterName, BigDecimal x)|将指定参数设置为给定 java.math.BigDecimal值|
+|void|setBinaryStream(String parameterName, InputStream x)|将指定参数设置为给定输入流|
+|void|setBinaryStream(String parameterName, InputStream x, int length)|将指定参数设置为给定输入流，该输入流将具有指定的字节数|
+|void|setBinaryStream(String parameterName, InputStream x, long length)|将指定参数设置为给定输入流，该输入流将具有指定的字节数|
+|void|setBlob(String parameterName, Blob x)|将指定参数设置为给定java.sql.Blob对象|
+|void|setBlob(String parameterName, InputStream inputStream)|将指定参数设置为InputStream对象|
+|void|setBlob(String parameterName, InputStream inputStream, long length)|将指定参数设置为InputStream对象|
+|void|setBoolean(String parameterName, boolean x)|将指定参数设置为给定的Java boolean值|
+|void|setByte(String parameterName, byte x)|将指定参数设置为给定的Java byte值|
+|void|setBytes(String parameterName, byte[] x)|将指定参数设置为给定的Java字节数组|
+|void|setCharacterStream(String parameterName, Reader reader)|将指定参数设置为给定Reader 对象|
+|void|setCharacterStream(String parameterName, Reader reader, int length)|将指定参数设置为给定Reader 对象，即给定的字符长度|
+|void|setCharacterStream(String parameterName, Reader reader, long length)|将指定参数设置为给定Reader 对象，即给定的字符长度|
+|void|setClob(String parameterName, Clob x)|将指定参数设置为给定java.sql.Clob对象|
+|void|setClob(String parameterName, Reader reader)|将指定参数设置为Reader对象|
+|void|setClob(String parameterName, Reader reader, long length)|将指定参数设置为Reader对象|
+|void|setDate(String parameterName, Date x)|java.sql.Date使用运行应用程序的虚拟机的默认时区将指定参数设置为给定值|
+|void|setDate(String parameterName, Date x, Calendar cal)|java.sql.Date使用给定Calendar对象将指定参数设置为给定值|
+|void|setDouble(String parameterName, double x)|将指定参数设置为给定的Java double值|
+|void|setFloat(String parameterName, float x)|将指定参数设置为给定的Java float值|
+|void|setInt(String parameterName, int x)|将指定参数设置为给定的Java int值|
+|void|setLong(String parameterName, long x)|将指定参数设置为给定的Java long值|
+|void|setNCharacterStream(String parameterName, Reader value)|将指定参数设置为Reader对象|
+|void|setNCharacterStream(String parameterName, Reader value, long length)|将指定参数设置为Reader对象|
+|void|setNClob(String parameterName, NClob value)|将指定参数设置为java.sql.NClob对象|
+|void|setNClob(String parameterName, Reader reader)|将指定参数设置为Reader对象|
+|void|setNClob(String parameterName, Reader reader, long length)|将指定参数设置为Reader对象|
+|void|setNString(String parameterName, String value)|将指定参数设置为给定String对象|
+|void|setNull(String parameterName, int sqlType)|将指定参数设置为SQL NULL|
+|void|setNull(String parameterName, int sqlType, String typeName)|将指定参数设置为SQL NULL|
+|void|setObject(String parameterName, Object x)|使用给定对象设置指定参数的值|
+|void|setObject(String parameterName, Object x, int targetSqlType)|使用给定对象设置指定参数的值|
+|void|setObject(String parameterName, Object x, int targetSqlType, int scale)|使用给定对象设置指定参数的值|
+|default void|setObject(String parameterName, Object x, SQLType targetSqlType)|使用给定对象设置指定参数的值|
+|default void|setObject(String parameterName, Object x, SQLType targetSqlType, int scaleOrLength)|使用给定对象设置指定参数的值|
+|void|setRowId(String parameterName, RowId x)|将指定参数设置为给定java.sql.RowId对象|
+|void|setShort(String parameterName, short x)|将指定参数设置为给定的Java short值|
+|void|setSQLXML(String parameterName, SQLXML xmlObject)|将指定参数设置为给定java.sql.SQLXML对象|
+|void|setString(String parameterName, String x)|将指定参数设置为给定的Java String值|
+|void|setTime(String parameterName, Time x)|将指定参数设置为给定java.sql.Time值|
+|void|setTime(String parameterName, Time x, Calendar cal)|java.sql.Time使用给定Calendar对象将指定参数设置为给定值|
+|void|setTimestamp(String parameterName, Timestamp x)|将指定参数设置为给定java.sql.Timestamp值|
+|void|setTimestamp(String parameterName, Timestamp x, Calendar cal)|java.sql.Timestamp使用给定Calendar对象将指定参数设置为给定值|
+|void|setURL(String parameterName, URL val)|将指定参数设置为给定java.net.URL对象|
+|boolean|wasNull()|获取读取的最后一个OUT参数是否具有SQL的值NULL|
+
+CallableStatementMain.java：
+```Java
+package com.mutisitc.callablestatement;
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+import java.sql.Types;
+import com.mutisitc.utils.JDBCUtil;
+import com.mutisitc.utils.PrintUtil;
+// java.sql.CallableStatement：执行SQL存储过程
+public class CallableStatementMain {
+  public static void main(String[] args) {
+    PrintUtil.one("java.sql.CallableStatement：执行SQL存储过程：");
+    try {
+      String callSQL = "{CALL pro_testByQuery(?, ?)}";
+      CallableStatement callableStatement = JDBCUtil.prepareCall(callSQL);
+      Long p_bookId = 1L;
+      callableStatement.setLong(1, p_bookId);
+      PrintUtil.two("3.CallableStatement.setXXX(int parameterIndex, XXX xxx)：将指定IN参数设置为给定的值", "parameterIndex=1, p_bookId="+p_bookId);
+      PrintUtil.three("3.1.也可以通过CallableStatement.setXXX(String parameterName, XXX xxx)", "将指定IN参数设置为给定的值");
+      
+      callableStatement.registerOutParameter("p_title", Types.VARCHAR);
+      PrintUtil.two("4.CallableStatement.registerOutParameter(String parameterName, int sqlType)：注册名为parameterName JDBC类型 的OUT参数 sqlType", "p_titleOUT参数类型=java.sql.Types.VARCHAR="+Types.VARCHAR);
+      PrintUtil.three("4.1.CallableStatement.registerOutParameter(String parameterName, int sqlType, int scale)", "注册名为parameterName JDBC类型 的参数 sqlTyp");
+      PrintUtil.three("4.2.CallableStatement.registerOutParameter(String parameterName, SqlType sqlType, String typeName)", "注册指定的输出参数，SqlType=com.mysql.cj.MysqlType.class");
+
+      callableStatement.execute();
+      PrintUtil.two("5.CallableStatement.execute()", "执行调用存储过程的SQL语句");
+      
+      String p_title = callableStatement.getString(2);
+      PrintUtil.two("6.CallableStatement.getXXX(int parameterIndex)：获取JDBC参数的值", "parameterIndex=2，p_title="+p_title);
+      PrintUtil.three("6.1.也可以通过CallableStatement.getXXX(String parameterName)：获取JDBC参数的值", "parameterIndex=p_title，p_title="+p_title);
+
+      PrintUtil.two("7.CallableStatement调用存储过程时", "如果存在IN参数(入参)着必须指定具体的值(可以为null)、如果存在OUT参数(返参)则必须注册JDBC类型");
+      
+      JDBCUtil.close(callableStatement);
+    } catch (SQLException e) {
+      PrintUtil.err("演示 java.sql.CallableStatement：执行SQL存储过程，打印异常堆栈信息：");
+      e.printStackTrace();
+    }
   }
 }
 ```

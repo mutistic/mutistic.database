@@ -27,6 +27,7 @@
 12. <a href="#a_resultSet">java.sql.ResultSet：数据库结果集</a>
 13. <a href="#a_callable">java.sql.CallableStatement：执行SQL存储过程</a>
 14. <a href="#a_types">java.sql.SQLType：JDBC类型</a>
+15. <a href="#a_transaction">JDBC事务</a>
 
 99. <a href="#a_down">down</a>
 
@@ -3231,7 +3232,7 @@ public class CallableStatementMain {
 }
 ```
 
-### <a id="a_types">十四、java.sql.SQLType：JDBC类型</a> <a href="#a_callable">last</a> <a href="#">next</a>
+### <a id="a_types">十四、java.sql.SQLType：JDBC类型</a> <a href="#a_callable">last</a> <a href="#a_transaction">next</a>
 [java.sql.Types](https://docs.oracle.com/javase/8/docs/api/java/sql/Types.html)  
 [java.sql.SQLType](https://docs.oracle.com/javase/8/docs/api/java/sql/SQLType.html)  
 [java.sql.JDBCType](https://docs.oracle.com/javase/8/docs/api/java/sql/JDBCType.html)  
@@ -3288,6 +3289,166 @@ Mysql中定义的JDBC的相关的类是：com.mysql.cj.MysqlType，实现SQLType
 |static int|VARBINARY|标识通用SQL类型 VARBINARY| 
 |static int|VARCHAR|标识通用SQL类型 VARCHAR| 
 
+### <a id="a_transaction">十五、JDBC事务</a> <a href="#a_types">last</a> <a href="#a_transaction">next</a>
+[漫谈MySql中的事务](https://www.cnblogs.com/maypattis/p/5628355.html)  
+一、数据库事务的定义：
+```
+  数据库事务(Database Transaction) ：是指作为单个逻辑工作单元执行的一系列操作，要么完全地执行，要么完全地不执行。 
+事务处理可以确保除非事务性单元内的所有操作都成功完成，否则不会永久更新面向数据的资源。
+通过将一组相关操作组合为一个要么全部成功要么全部失败的单元，可以简化错误恢复并使应用程序更加可靠。
+一个逻辑工作单元要成为事务，必须满足所谓的ACID（原子性、一致性、隔离性和持久性）属性。
+事务是数据库运行中的逻辑工作单位，由DBMS中的事务管理子系统负责事务的处理
+```
+二、事务的ACID特性：
+```
+事务应该具有4个属性：原子性、一致性、隔离性、持久性。这四个属性通常称为ACID特性。
+1、原子性 atomicity：一个事务是一个不可分割的工作单位，事务中包括的诸操作要么都做，要么都不做
+  事务必须是原子工作单元；对于其数据修改，要么全都执行，要么全都不执行。通常，与某个事务关联的操作具有共同的目标，
+并且是相互依赖的。如果系统只执行这些操作的一个子集，则可能会破坏事务的总体目标。原子性消除了系统处理操作子集的可能性。
+
+2、一致性 consistency：事务必须是使数据库从一个一致性状态变到另一个一致性状态。一致性与原子性是密切相关的。
+  事务在完成时，必须使所有的数据都保持一致状态。在相关数据库中，所有规则都必须应用于事务的修改，以保持所有数据的完整性。
+事务结束时，所有的内部数据结构（如 B 树索引或双向链表）都必须是正确的。某些维护一致性的责任由应用程序开发人员承担，
+他们必须确保应用程序已强制所有已知的完整性约束
+
+3、隔离性 isolation：一个事务的执行不能被其他事务干扰。即一个事务内部的操作及使用的数据对并发的其他事务是隔离的，并发执行的各个事务之间不能互相干扰。
+  由并发事务所作的修改必须与任何其它并发事务所作的修改隔离。事务查看数据时数据所处的状态，要么是另一并发事务修改它之前的状态，
+要么是另一事务修改它之后的状态，事务不会查看中间状态的数据。这称为隔离性，因为它能够重新装载起始数据，并且重播一系列事务，
+以使数据结束时的状态与原始事务执行的状态相同。当事务可序列化时将获得最高的隔离级别。在此级别上，
+从一组可并行执行的事务获得的结果与通过连续运行每个事务所获得的结果相同。由于高度隔离会限制可并行执行的事务数，所以一些应用程序降低隔离级别以换取更大的吞吐量
+
+4、持久性 durability：持久性也称永久性（permanence），指一个事务一旦提交，它对数据库中数据的改变就应该是永久性的。接下来的其他操作或故障不应该对其有任何影响
+```
+三、事务的类型：
+```
+1、手动事务：
+  手动事务允许显式处理若干过程，这些过程包括：开始事务、控制事务边界内的每个连接和资源登记、确定事务结果（提交或中止）以及结束事务。
+尽管此模型提供了对事务的标准控制，但它缺少一些内置于自动事务模型的简化操作。例如，在手动事务中数据存储区之间没有自动登记和协调。
+此外，与自动事务不同，手动事务中事务不在对象间流动。
+如果选择手动控制分布式事务，则必须管理恢复、并发、安全性和完整性。也就是说，必须应用维护与事务处理关联的 ACID 属性所需的所有编程方法。
+
+2、自动事务：
+  XML Web services方法或 .NET Framework 类一旦被标记为参与事务，它们将自动在事务范围内执行。您可以通过在页、XML Web services 方法或类中
+设置一个事务属性值来控制对象的事务行为。特性值反过来确定实例化对象的事务性行为。因此，根据声明特性值的不同，对象将自动参与现有事务或正在进行的事务，
+成为新事务的根或者根本不参与事务。声明事务属性的语法在 .NET Framework 类、.NET 页和 XML Web services 方法中稍有不同。
+  声明性事务特性指定对象如何参与事务，如何以编程方式被配置。尽管此声明性级别表示事务的逻辑，但它是一个已从物理事务中移除的步骤。
+物理事务在事务性对象访问数据库或消息队列这样的数据资源时发生。与对象关联的事务自动流向合适的资源管理器，
+诸如 OLE DB、开放式数据库连接 (ODBC) 或 ActiveX 数据对象 (ADO) 的关联驱动程序在对象的上下文中查找事务，
+并通过分布式事务处理协调器 (DTC) 在此事务中登记。整个物理事务自动发生。
+
+3、隐式事务：是指每一条数据操作语句都自动地成为一个事务，事务的开始是隐式的，事务的结束有明确的标记
+```
+四、事务的隔离级别：
+```
+1、READ UNCOMMITTED(未提交读)：
+  在RU的隔离级别下，事务A对数据做的修改，即使没有提交，对于事务B来说也是可见的，这种问题叫脏读。
+这是隔离程度较低的一种隔离级别，在实际运用中会引起很多问题，因此一般不常用。
+
+2、READ COMMITTED(提交读)：
+  在RC的隔离级别下，不会出现脏读的问题。事务A对数据做的修改，提交之后会对事务B可见，
+举例，事务B开启时读到数据1，接下来事务A开启，把这个数据改成2，提交，B再次读取这个数据，会读到最新的数据2。
+在RC的隔离级别下，会出现不可重复读的问题。这个隔离级别是许多数据库的默认隔离级别。
+
+3、REPEATABLE READ(可重复读)：
+  在RR的隔离级别下，不会出现不可重复读的问题。事务A对数据做的修改，提交之后，对于先于事务A开启的事务是不可见的。
+举例，事务B开启时读到数据1，接下来事务A开启，把这个数据改成2，提交，B再次读取这个数据，仍然只能读到1。在RR的隔离级别下，会出现幻读的问题。
+幻读的意思是，当某个事务在读取某个范围内的值的时候，另外一个事务在这个范围内插入了新记录，那么之前的事务再次读取这个范围的值，会读取到新插入的数据。
+Mysql默认的隔离级别是RR，然而mysql的innoDB引擎间隙锁成功解决了幻读的问题。
+
+4、SERIALIZABLE(可串行化)：
+可串行化是最高的隔离级别。这种隔离级别强制要求所有事物串行执行，在这种隔离级别下，读取的每行数据都加锁，会导致大量的锁征用问题，性能最差
+```
+
+五、Mysql对事务的支持：
+```
+ 事务的实现是基于数据库的存储引擎。不同的存储引擎对事务的支持程度不一样。mysql中支持事务的存储引擎有innoDB和NDB。
+innoDB是mysql默认的存储引擎，默认的隔离级别是RR，并且在RR的隔离级别下更进一步，
+通过多版本并发控制（MVCC，Multiversion Concurrency Control ）解决不可重复读问题，加上间隙锁（也就是并发控制）解决幻读问题。
+因此innoDB的RR隔离级别其实实现了串行化级别的效果，而且保留了比较好的并发性能
+```
+
+|命令|描述|
+|---|---|
+|SET AUTOCOMMIT=0|取消自动提交处理，开启事务处理|
+|SET AUTOCOMMIT=1|打开自动提交处理，关闭事务处理|
+|STARTTRANSACTION|启动事务|
+|BEGIN|启动事务，相当于执行STARTTRANSACTION|
+|COMMIT|提交事务|
+|ROLLBACK|回滚全部事务|
+|SAVEPOINT 事务保存点名称|提交事务保存点|
+|ROLLBACK TO SAVEPOINT 事务保存点名称|回滚操作到保存点|
+
+六、事务保存点：  
+[java.sql.Savepoint](https://docs.oracle.com/javase/8/docs/api/java/sql/Savepoint.html)  
+```
+保存点的表示形式，它是当前事务中可从该Connection.rollback方法引用的一个点 。
+当事务回滚到保存点时，撤消该保存点之后所做的所有更改。
+
+保存点可以是命名的，也可以是未命名的。未命名的保存点由基础数据源生成的ID标识
+
+方法说明：
+int getSavepointId()
+  检索此Savepoint对象表示的保存点的生成ID 。
+
+String  getSavepointName()
+  检索此Savepoint 对象表示的保存点的名称。
+```
+
+TransactionMain.java：
+```Java
+package com.mutisitc.transaction;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import com.mutisitc.utils.CommonUtil;
+import com.mutisitc.utils.JDBCUtil;
+import com.mutisitc.utils.PrintUtil;
+// JDBC事务
+public class TransactionMain {
+  public static void main(String[] args) {
+    PrintUtil.one("JDBC事务");
+    
+    Connection connection = null;
+    Savepoint savePoint = null;
+    try {
+      String insertSQL = "INSERT INTO `book` (`bookId`, `title`, `author`, `remark`, `createrTime`) VALUES (" + System.currentTimeMillis()
+      + "," + "'test by jdbc', 'test author', '使用Statement.execute接口实现数据新增', '" + CommonUtil.getCurrentTime() + "')";
+      connection = JDBCUtil.getConnection();
+      connection.setAutoCommit(false); 
+      PrintUtil.two("2.通过Connection。setAutoCommit(false)设置AUTOCOMMIT=0", "取消自动提交处理，开启事务处理");
+      
+      Statement statement = connection.createStatement();
+      statement.execute(insertSQL);
+      PrintUtil.two("3.执行第一条insert语句", insertSQL);
+      
+      savePoint = connection.setSavepoint();
+      PrintUtil.two("4.通过Connection.setSavepoint()设置事务回滚点：", "Savepoint="+savePoint);
+      
+      PrintUtil.two("5.再次insert语句，会报主键重复的异常", insertSQL);
+      statement.execute(insertSQL);
+      
+    } catch (SQLException e) {
+      PrintUtil.two("6.测试异常通过Savepoint回滚事务", "开始回滚");
+      if(savePoint != null) {
+        try {
+//          connection.rollback();
+          connection.rollback(savePoint);
+          PrintUtil.two("7.通过Connection.rollback(Savepoint savepoint)：取消Savepoint设置给定对象后所做的所有更改", "回滚成功");
+          PrintUtil.three("7.1也可以通过Connection.rollback()", "撤消当前事务中所做的所有更改，并释放此Connection对象当前持有的所有数据库锁");
+        } catch (SQLException e1) {
+          PrintUtil.err("通过Savepoint回滚事务出现异常，打印异常堆栈信息：");
+          e1.printStackTrace();
+        }
+      }
+      PrintUtil.err("JDBC事务，打印异常堆栈信息：");
+      e.printStackTrace();
+    } finally {
+      JDBCUtil.close(connection);
+    }
+  }
+}
+```
 
 ---
 <a id="a_down"></a>  

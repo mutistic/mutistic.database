@@ -26,7 +26,7 @@
 11. <a href="#a_preparedOperation">使用PreparedStatement方法实现数据操作</a>
 12. <a href="#a_resultSet">java.sql.ResultSet：数据库结果集</a>
 13. <a href="#a_callable">java.sql.CallableStatement：执行SQL存储过程</a>
-14. <a href="#a_types">java.sql.Types：JDBC类型常量</a>
+14. <a href="#a_types">java.sql.SQLType：JDBC类型</a>
 
 99. <a href="#a_down">down</a>
 
@@ -3065,9 +3065,8 @@ public class GetResultSetMain {
 }
 ```
 
-### <a id="a_callable">十三、java.sql.CallableStatement：执行SQL存储过程</a> <a href="#a_resultSet">last</a> <a href="#">next</a>
+### <a id="a_callable">十三、java.sql.CallableStatement：执行SQL存储过程</a> <a href="#a_resultSet">last</a> <a href="#a_types">next</a>
 [java.sql.CallableStatement](https://docs.oracle.com/javase/8/docs/api/java/sql/CallableStatement.html)  
-
 一、描述：
 ```
 继承java.sql.PreparedStatement
@@ -3231,6 +3230,64 @@ public class CallableStatementMain {
   }
 }
 ```
+
+### <a id="a_types">十四、java.sql.SQLType：JDBC类型</a> <a href="#a_callable">last</a> <a href="#">next</a>
+[java.sql.Types](https://docs.oracle.com/javase/8/docs/api/java/sql/Types.html)  
+[java.sql.SQLType](https://docs.oracle.com/javase/8/docs/api/java/sql/SQLType.html)  
+[java.sql.JDBCType](https://docs.oracle.com/javase/8/docs/api/java/sql/JDBCType.html)  
+
+一、描述：
+```
+java.sql.Types：定义用于标识通用SQL类型的常量的类，称为JDBC类型。
+java.sql.SQLType：用于标识通用SQL类型的对象接口，称为JDBC类型或特定于供应商的数据类型。
+java.sql.JDBCType：定义用于标识通用SQL类型的常量枚举，称为JDBC类型。实现SQLType接口。
+Mysql中定义的JDBC的相关的类是：com.mysql.cj.MysqlType，实现SQLType接口
+```
+
+二、以java.sql.Types为例：字段说明：
+
+|数据类型|字段|说明|
+|---|---|---|
+|static int|ARRAY|标识通用SQL类型 ARRAY| 
+|static int|BIGINT|标识通用SQL类型 BIGINT| 
+|static int|BINARY|标识通用SQL类型 BINARY| 
+|static int|BIT|标识通用SQL类型 BIT| 
+|static int|BLOB|标识通用SQL类型 BLOB| 
+|static int|BOOLEAN|标识通用SQL类型 BOOLEAN| 
+|static int|CHAR|标识通用SQL类型 CHAR| 
+|static int|CLOB|标识通用SQL类型 CLOB| 
+|static int|DATALINK|标识通用SQL类型 DATALINK| 
+|static int|DATE|标识通用SQL类型 DATE| 
+|static int|DECIMAL|标识通用SQL类型 DECIMAL| 
+|static int|DISTINCT|标识通用SQL类型 DISTINCT| 
+|static int|DOUBLE|标识通用SQL类型 DOUBLE| 
+|static int|FLOAT|标识通用SQL类型 FLOAT| 
+|static int|INTEGER|标识通用SQL类型 INTEGER| 
+|static int|JAVA_OBJECT|表示SQL类型是特定于数据库的，并且映射到可以通过getObject和setObject方法访问的Java对象| 
+|static int|LONGNVARCHAR|标识通用SQL类型 LONGNVARCHAR| 
+|static int|LONGVARBINARY|标识通用SQL类型 LONGVARBINARY| 
+|static int|LONGVARCHAR|标识通用SQL类型 LONGVARCHAR| 
+|static int|NCHAR|标识通用SQL类型 NCHAR|
+|static int|NCLOB|标识通用SQL类型 NCLOB| 
+|static int|NULL|Java编程语言中的常量，用于标识通用SQL值 NULL| 
+|static int|NUMERIC|标识通用SQL类型 NUMERIC| 
+|static int|NVARCHAR|标识通用SQL类型 NVARCHAR| 
+|static int|OTHER|表示SQL类型是特定于数据库的，并且映射到可以通过getObject和setObject方法访问的Java对象| 
+|static int|REAL|标识通用SQL类型 REAL| 
+|static int|REF|标识通用SQL类型 REF| 
+|static int|REF_CURSOR|标识通用SQL类型 REF CURSOR| 
+|static int|ROWID|标识通用SQL类型 ROWID|
+|static int|SMALLINT|标识通用SQL类型 SMALLINT| 
+|static int|SQLXML|标识通用SQL类型 XML| 
+|static int|STRUCT|标识通用SQL类型 STRUCT| 
+|static int|TIME|标识通用SQL类型 TIME| 
+|static int|TIME_WITH_TIMEZONE|标识通用SQL类型 TIME WITH TIMEZONE| 
+|static int|TIMESTAMP|标识通用SQL类型 TIMESTAMP| 
+|static int|TIMESTAMP_WITH_TIMEZONE|标识通用SQL类型 TIMESTAMP WITH TIMEZONE| 
+|static int|TINYINT|标识通用SQL类型 TINYINT| 
+|static int|VARBINARY|标识通用SQL类型 VARBINARY| 
+|static int|VARCHAR|标识通用SQL类型 VARCHAR| 
+
 
 ---
 <a id="a_down"></a>  

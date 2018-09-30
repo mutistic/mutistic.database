@@ -28,7 +28,7 @@
 13. <a href="#a_callable">java.sql.CallableStatement：执行SQL存储过程</a>
 14. <a href="#a_types">java.sql.SQLType：JDBC类型</a>
 15. <a href="#a_transaction">JDBC事务</a>
-
+98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
 ---
@@ -1097,7 +1097,7 @@ UDT[数据传输协议（UDP-based Data Transfer Protocol，简称UDT）是一�
 |void|setTypeMap(Map<String,Class<?>> map)|将给定TypeMap对象安装为此Connection对象的类型映射|
 
 四、其他：  
-[java.sql.ResultSet](https://docs.oracle.com/javase/8/docs/api/java/sql/ResultSet.html)
+[java.sql.DatabaseMetaData](https://docs.oracle.com/javase/8/docs/api/java/sql/DatabaseMetaData.html)
 ```
 4.1、一些方法参数中sql，resultSetType, resultSetConcurrency, resultSetHoldability：
   sql - 一个 String 对象，它是将被发送到数据库的SQL语句，可以包含一个或多个 '?' IN 参数
@@ -2550,6 +2550,8 @@ SQL 语句被预编译并存储在 PreparedStatement 对象中。然后可以使
 |void|setUnicodeStream(int parameterIndex, InputStream x, int length)|~~已过时~~使用 setCharacterStream|
 |void|setURL(int parameterIndex, URL x)|将指定参数设置为给定java.net.URL值|
 
+[java.sql.ParameterMetaData](https://docs.oracle.com/javase/8/docs/api/java/sql/ParameterMetaData.html)  
+[java.sql.ResultSetMetaData](https://docs.oracle.com/javase/8/docs/api/java/sql/ResultSetMetaData.html)  
 PreparedStatementMain.java：
 ```Java
 package com.mutisitc.preparedstatement;
@@ -3289,7 +3291,7 @@ Mysql中定义的JDBC的相关的类是：com.mysql.cj.MysqlType，实现SQLType
 |static int|VARBINARY|标识通用SQL类型 VARBINARY| 
 |static int|VARCHAR|标识通用SQL类型 VARCHAR| 
 
-### <a id="a_transaction">十五、JDBC事务</a> <a href="#a_types">last</a> <a href="#a_transaction">next</a>
+### <a id="a_transaction">十五、JDBC事务</a> <a href="#a_types">last</a> <a href="#a_notes">next</a>
 [漫谈MySql中的事务](https://www.cnblogs.com/maypattis/p/5628355.html)  
 一、数据库事务的定义：
 ```
@@ -3449,6 +3451,12 @@ public class TransactionMain {
   }
 }
 ```
+
+### <a id="a_notes">Notes</a> <a href="#a_transaction">last</a> <a href="#a_catalogue">next</a>
+[Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes)  
+[01-JDBC数据驱动模型](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/01_JDBCPModel.png)  
+[02-JDBC：Java数据库连接.bmp](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/02_JDBC.bmp)  
+[02-JDBC：Java数据库连接.eap](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/02_JDBC.eap)  
 
 ---
 <a id="a_down"></a>  

@@ -33,7 +33,7 @@
 
 ---
 ### <a id="a_jdbc">一、JDBC：Java数据库连接：</a> <a href="#a_catalogue">last</a> <a href="#a_step">next</a>
-[JDBC数据库驱动模型](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/01_JDBCPModel.png)  
+[JDBC数据库驱动模型](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/01_JDBC_Model.png)  
 一、定义：
 ```
 JDBC：
@@ -3454,9 +3454,9 @@ public class TransactionMain {
 
 ### <a id="a_notes">Notes</a> <a href="#a_transaction">last</a> <a href="#a_catalogue">next</a>
 [Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes)  
-[01-JDBC数据驱动模型](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/01_JDBCPModel.png)  
-[02-JDBC：Java数据库连接.bmp](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/02_JDBC.bmp)  
-[02-JDBC：Java数据库连接.eap](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/02_JDBC.eap)  
+[01-JDBC数据驱动模型](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/01_JDBC_Model.png)  
+[02-JDBC：Java数据库连接-类图](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/02_JDBC_class.bmp)  
+[03-JDBC：Java数据库连接-EA设计](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/03_JDBC_ea.eap)  
 
 ---
 <a id="a_down"></a>  

@@ -3452,8 +3452,7 @@ public class TransactionMain {
 }
 ```
 
-### <a id="a_notes">Notes</a> <a href="#a_transaction">last</a> <a href="#a_catalogue">next</a>
-[Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes)  
+### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes)</a> <a href="#a_transaction">last</a> <a href="#a_catalogue">next</a>
 [01-JDBC数据驱动模型](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/01_JDBC_Model.png)  
 [02-JDBC：Java数据库连接-类图](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/02_JDBC_class.bmp)  
 [03-JDBC：Java数据库连接-EA设计](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.jdbc/notes/03_JDBC_ea.eap)  

@@ -33,7 +33,7 @@
 
 
 
-# [JDBC：Java数据库连接](https://github.com/mutistic/mutistic.database/tree/master/com.mutisitc.database.hibernate)
+# [Hibernate：对象关系映射框架](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.hibernate)
 ### 参考资料
 [Hibernate 官网](http://hibernate.org/)  
 [Hibernate 百度百科](https://baike.baidu.com/item/Hibernate/206989)  

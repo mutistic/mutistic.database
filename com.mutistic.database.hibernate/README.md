@@ -2,8 +2,8 @@
 [Hibernate 官网](http://hibernate.org/)  
 [Hibernate 百度百科](https://baike.baidu.com/item/Hibernate/206989)  
 [Hibernate 5.3 文档](http://hibernate.org/orm/documentation/5.3)  
-[Hibernate 5.3 入门指南](http://docs.jboss.org/hibernate/orm/5.3/quickstart/html_single)
-[Hibernate 5.3 JavaDoc](http://docs.jboss.org/hibernate/orm/5.3/javadocs/overview-summary.html)
+[Hibernate 5.3 用户指南](http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html)  
+[Hibernate 5.3 JavaDoc](http://docs.jboss.org/hibernate/orm/5.3/javadocs/overview-summary.html)  
 [Hibernate Git开源](https://github.com/hibernate/)  
 [Hibernate Tool](http://hibernate.org/tools/)  
 [Hibernate5:hibernate-core-5.2.17.Final.jar](https://search.maven.org/artifact/org.hibernate/hibernate-core/5.2.17.Final/jar)  
@@ -44,9 +44,33 @@ Hibernate可以应用在任何使用JDBC的场合，既可以在Java的客户端
 以Hibernate和Spring为代表的轻量级开源框架开始成为Java世界的主流和事实标准。
 在2004年Sun领导的J2EE5.0标准制定当中的持久化框架标准正式以Hibernate为蓝本。
 
-2006年，J2EE5.0标准正式发布以后，持久化框架标准Java Persistent API（简称JPA）基本上是参考Hibernate实现的，
+ 2006年，J2EE5.0标准正式发布以后，持久化框架标准Java Persistent API（简称JPA）基本上是参考Hibernate实现的，
 而Hibernate在3.2版本开始，已经完全兼容JPA标准
 ```
+三、语言特点：
+```
+1、将对数据库的操作转换为对Java对象的操作，从而简化开发。通过修改一个“持久化”对象的属性从而修改数据库表中对应的记录数据。
+2、提供线程和进程两个级别的缓存提升应用程序性能。
+3、有丰富的映射方式将Java对象之间的关系转换为数据库表之间的关系。
+4、屏蔽不同数据库实现之间的差异。在Hibernate中只需要通过“方言”的形式指定当前使用的数据库，就可以根据底层数据库的实际情况生成适合的SQL语句。
+5、非侵入式：Hibernate不要求持久化类实现任何接口或继承任何类，POJO即可
+```
+四、Hibernate模块/组件：
+
+|模块/组件|描述|
+|---|---|
+|hibernate-core|主(核心)Hibernate模块。定义其ORM功能和API以及各种集成SPI| 
+|hibernate-envers|Hibernate的历史实体版本控制功能|
+|hibernate-spatial|Hibernate的Spatial/GIS数据类型支持|
+|hibernate-osgi|Hibernate支持在OSGI容器中运行| 
+|hibernate-agroal|将Agroal连接池库集成到Hibernate中|
+|hibernate-c3p0|将C3P0连接池库集成到Hibernate中|
+|hibernate-hikaricp|将HikariCP连接池库集成到Hibernate中|
+|hibernate-vibur|将Vibur DBCP连接池库集成到Hibernate中|
+|hibernate-proxool|将Proxool连接池库集成到Hibernate中|
+|hibernate-jcache|将JCache缓存规范集成到Hibernate中，使任何兼容的实现成为二级缓存提供者| 
+|hibernate-ehcache|将Ehcache缓存库集成到Hibernate中作为二级缓存提供程序|
+
 
 
 ### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.hibernate/notes)</a> <a href="#a_transaction">last</a> <a href="#a_catalogue">next</a>

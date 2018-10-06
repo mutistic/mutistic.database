@@ -15,11 +15,12 @@
 ---
 ### <a id="a_catalogue">目录</a>：
 1. <a href="#a_hibernate">Hibernate：对象关系映射框架</a>
+2. <a href="#a_integration">集成Hibernate框架</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
 ---
-### <a id="a_hibernate">一、Hibernate：对象关系映射框架：</a> <a href="#a_catalogue">last</a> <a href="#a_step">next</a>
+### <a id="a_hibernate">一、Hibernate：对象关系映射框架：</a> <a href="#a_catalogue">last</a> <a href="#a_integration">next</a>
 [Hibernate：对象关系映射框架](https://baike.baidu.com/item/Hibernate/206989)  
 [ORM框架](https://baike.baidu.com/item/ORM%E6%A1%86%E6%9E%B6)  
 [数据持久化](https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/5777076)  
@@ -137,7 +138,17 @@ Query经常被用来绑定查询参数、限制查询记录数量，并最终执
 |net.sf.hibernate.util.*|一些工具类，作用比较散|
 |net.sf.hibernate.xml.*|XML数据绑定|
 
+---
+### <a id="a_integration">二、集成Hibernate框架：</a> <a href="#a_hibernate">last</a> <a href="#a_step">next</a>
+1、Java Project直接集成Hibernate框架
 
+2、Maven项目集成Hibernate框架
+
+3、Spring项目集成Hibernate框架
+
+4、Spring Boot项目集成Hibernate框架
+
+---
 ### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.hibernate/notes)</a> <a href="#a_transaction">last</a> <a href="#a_catalogue">next</a>
 
 ---

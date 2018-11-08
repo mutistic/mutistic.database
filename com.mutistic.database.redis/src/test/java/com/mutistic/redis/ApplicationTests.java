@@ -1,4 +1,4 @@
-package com.mutistic.hibernate;
+package com.mutistic.redis;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

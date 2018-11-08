@@ -1,4 +1,4 @@
-package com.mutistic.hibernate;
+package com.mutistic.redis;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -156,44 +156,44 @@
 
 ---
 ### <a id="a_zset">五、zset(sorted set，有序集合)：</a> <a href="#a_set">last</a> <a href="#a_bitmap">next</a>
-一、成员的检测与管理：
+一、元素的检测与管理：
 
 |命令|说明|
 |---|---|
-|ZADD sorted_set score member [[score member] [score member] ...]|将给定的成员及其分值添加到有序集合|
-|ZINCRBY sorted_set increment member|为成员的分值加上指定的整数增量|
-|ZSCORE sorted_set member|返回给定成员的分值|
-|ZCARD sorted_set|返回有序集合包含的成员数量|
-|ZRANK sorted_set member|返回有序集合成员在按照分值从小到大进行排列时，给定的成员在有序集合中所处的排名|
-|ZREVRANK sorted_set member|返回有序集合成员在按照分值从大到小进行排列时，给定的成员在有序集合中所处的排名|
+|ZADD sorted_set score member [[score member] [score member] ...]|将给定的元素及其分值添加到有序集合|
+|ZINCRBY sorted_set increment member|为元素的分值加上指定的整数增量|
+|ZSCORE sorted_set member|返回给定元素的分值|
+|ZCARD sorted_set|返回有序集合包含的元素数量|
+|ZRANK sorted_set member|返回有序集合元素在按照分值从小到大进行排列时，给定的元素在有序集合中所处的排名|
+|ZREVRANK sorted_set member|返回有序集合元素在按照分值从大到小进行排列时，给定的元素在有序集合中所处的排名|
 
-二、批量处理多个成员：
+二、批量处理多个元素：
 
 |命令|说明|
 |---|---|
-|ZCOUNT sorted_set min max|返回有序集合中，分值介于指定区间之内的成员数量|
-|ZRANGE sorted_set start end [WITHSCORES]|按照分值从小到大的顺序，返回指定索引范围之内的成员及其分值（可选）|
-|ZREVRANGE sorted_set start end [WITHSCORES]|按照分值从大到小的顺序，返回指定索引范围之内的成员及其分值（可选）|
-|ZRANGEBYSCORE sorted_set min max [WITHSCORES] [LIMIT offset count]|按照分值从小到大的顺序，返回指定分值范围之内的成员|
-|ZREVRANGEBYSCORE sorted_set max min [WITHSCORES] [LIMIT offset count]|按照分值从大到小的顺序，返回指定分值范围之内的成员|
-|ZSCAN sorted_set cursor [MATCH pattern] [COUNT count]|以渐进的方式，返回有序集合包含的成员及其分值|
-|ZREM sorted_set member [member ...]|从有序集合中移除指定的一个或多个成员|
-|ZREMRANGEBYRANK sorted_set start end|移除有序集合中，位于指定排名范围内的成员，其中成员按照分值从小到大进行排列|
-|ZREMRANGEBYSCORE sorted_set min max|移除有序集合中，分值位于指定范围内的成员|
+|ZCOUNT sorted_set min max|返回有序集合中，分值介于指定区间之内的元素数量|
+|ZRANGE sorted_set start end [WITHSCORES]|按照分值从小到大的顺序，返回指定索引范围之内的元素及其分值（可选）|
+|ZREVRANGE sorted_set start end [WITHSCORES]|按照分值从大到小的顺序，返回指定索引范围之内的元素及其分值（可选）|
+|ZRANGEBYSCORE sorted_set min max [WITHSCORES] [LIMIT offset count]|按照分值从小到大的顺序，返回指定分值范围之内的元素|
+|ZREVRANGEBYSCORE sorted_set max min [WITHSCORES] [LIMIT offset count]|按照分值从大到小的顺序，返回指定分值范围之内的元素|
+|ZSCAN sorted_set cursor [MATCH pattern] [COUNT count]|以渐进的方式，返回有序集合包含的元素及其分值|
+|ZREM sorted_set member [member ...]|从有序集合中移除指定的一个或多个元素|
+|ZREMRANGEBYRANK sorted_set start end|移除有序集合中，位于指定排名范围内的元素，其中元素按照分值从小到大进行排列|
+|ZREMRANGEBYSCORE sorted_set min max|移除有序集合中，分值位于指定范围内的元素|
 
 三、集合运算：
 
 |命令|说明|
 |---|---|
 |ZINTERSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]|对给定数量的有序集合执行交集计算，并将计算的结果储存到目标有序集合里面|
-|ZUNIONSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]|对给定数量的有序集合执行并集计算，并将计算的结果储存到目标有序集合里面根据成员的大小对其进行处理|
-|ZLEXCOUNT sorted_set min max|统计有序集合里面，位于指定大小范围内的成员的数量|
-|ZRANGEBYLEX sorted_set min max [LIMIT offset count]|按照从小到大的顺序，返回有序集合里面位于指定大小范围之内的成员|
-|ZREMRANGEBYLEX sorted_set min max|从有序集合里面，移除位于指定大小范围之内的成员|
+|ZUNIONSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]|对给定数量的有序集合执行并集计算，并将计算的结果储存到目标有序集合里面根据元素的大小对其进行处理|
+|ZLEXCOUNT sorted_set min max|统计有序集合里面，位于指定大小范围内的元素的数量|
+|ZRANGEBYLEX sorted_set min max [LIMIT offset count]|按照从小到大的顺序，返回有序集合里面位于指定大小范围之内的元素|
+|ZREMRANGEBYLEX sorted_set min max|从有序集合里面，移除位于指定大小范围之内的元素|
 
 ---
 ### <a id="a_bitmap">六、位图(bitmap)：</a> <a href="#a_zset">last</a> <a href="#a_log">next</a>
-一、设置或获取单个位图：
+一、设置或获取单个位：
 
 |命令|说明|
 |---|---|
@@ -201,6 +201,7 @@
 |GETBIT bitmap index|获取位图在给定索引上的二进制位的值|
 
 二、对多个位进行计算或操作：
+
 |命令|说明|
 |---|---|
 |BITCOUNT bitmap [start] [end]|统计位图中值为 1 的二进制位的数量|

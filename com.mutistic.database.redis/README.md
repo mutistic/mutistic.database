@@ -222,11 +222,10 @@ NoSQL数据库没有标准的查询语言(SQL)，因此进行数据库查询需�
 
 
 ---
-### <a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.hibernate/notes)</a> href="#">last</a> <a href="#a_notes">next</a>
-
+### <a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a> <a href="#">last</a> <a href="#a_notes">next</a>
 
 ---
-### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.hibernate/notes)</a> <a href="#a_transaction">last</a> <a href="#a_catalogue">next</a>
+### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.hibernate/notes)</a> <a href="#a_appendix1">last</a> <a href="#a_catalogue">next</a>
 
 ---
 <a id="a_down"></a>  

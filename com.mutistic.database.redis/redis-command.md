@@ -20,6 +20,7 @@
 ---
 ### <a id="a_string">一、字符串（string）：</a> <a href="#a_catalogue">last</a> <a href="#a_hash">next</a>
 一、设置与获取：
+
 |命令|说明|
 |---|---|
 |SET key value [EX seconds] [PX milliseconds] [NX/XX]|为字符串键设置值和过期时间（可选）|
@@ -30,6 +31,7 @@
 |PSETEX key milliseconds value|为字符串键设置值和毫秒级精度的过期时间|
 
 二、批量设置与获取：
+
 |命令|说明|
 |---|---|
 |MSET key value [key value ...]|一次为多个字符串键设置值|
@@ -37,6 +39,7 @@
 |MSETNX key value [key value ...]|仅在所有给定字符串键都尚未有值的情况下，为它们设置值|
 
 三、获取或修改内容：
+
 |命令|说明|
 |---|---|
 |STRLEN key|获取字符串值的长度|
@@ -45,6 +48,7 @@
 |APPEND key value|将指定的内容追加到字符串值的末尾|
 
 四、自增与自减：
+
 |命令|说明|
 |---|---|
 |INCR key|为字符串键储存的整数值加上一|
@@ -56,6 +60,7 @@
 ---
 ### <a id="a_hash">二、hash(哈希表)：</a> <a href="#a_string">last</a> <a href="#a_list">next</a>
 一、设置与获取：
+
 |命令|说明|
 |---|---|
 |HSET hash key value|为散列中的键设置值|
@@ -65,12 +70,14 @@
 |HMGET hash key [key ...]|一次获取散列中多个键的值|
 
 二、自增与自减：
+
 |命令|说明|
 |---|---|
 |HINCRBY hash key increment|为散列中给定键储存的整数值加上指定的整数增量|
 |HINCRBYFLOAT hash key increment|为散列中给定键储存的数字值加上指定的浮点数增量|
 
 三、检测与管理：
+
 |命令|说明|
 |---|---|
 |HEXISTS hash key|检查给定键在散列中是否存在|
@@ -84,6 +91,7 @@
 ---
 ### <a id="a_list">三、list(双向链表)：</a> <a href="#a_hash">last</a> <a href="#a_set">next</a>
 一、添加元素：
+
 |命令|说明|
 |---|---|
 |LPUSH list item [item ...]|将一个或多个元素添加到列表的左端|
@@ -92,6 +100,7 @@
 |RPUSHX list item|仅在列表已经存在的情况下，将一个元素添加到列表的右端
 
 二、移除元素：
+
 |命令|说明|
 |---|---|
 |LPOP list|移除并返回列表左端第一个元素|
@@ -102,6 +111,7 @@
 |BRPOPLPUSH source_list target_list timeout|在指定的时限内，尝试移除源列表的最右端元素，并将该元素添加到目标列表的左端|
 
 三、元素的获取与管理：
+
 |命令|说明|
 |---|---|
 |LINDEX list index|获取列表在给定索引上的元素|
@@ -115,6 +125,7 @@
 ---
 ### <a id="a_set">四、set(集合)：</a> <a href="#a_list">last</a> <a href="#a_zset">next</a>
 一、元素的添加与移除：
+
 |命令|说明|
 |---|---|
 |SADD set element [element ...]|将一个或多个元素添加到集合当中|
@@ -123,6 +134,7 @@
 |SREM set element [element ...]|移除集合中的一个或多个元素|
 
 二、元素的获取与检测：
+
 |命令|说明|
 |---|---|
 |SCARD set|返回集合包含的元素数量|
@@ -132,6 +144,7 @@
 |SSCAN set cursor [MATCH pattern] [COUNT count]|以渐进的方式返回集合包含的元素|
 
 三、集合运算：
+
 |命令|说明|
 |---|---|
 |SDIFF set [set ...]|计算并返回多个集合的差集计算结果|
@@ -144,6 +157,7 @@
 ---
 ### <a id="a_zset">五、zset(sorted set，有序集合)：</a> <a href="#a_set">last</a> <a href="#a_bitmap">next</a>
 一、成员的检测与管理：
+
 |命令|说明|
 |---|---|
 |ZADD sorted_set score member [[score member] [score member] ...]|将给定的成员及其分值添加到有序集合|
@@ -154,6 +168,7 @@
 |ZREVRANK sorted_set member|返回有序集合成员在按照分值从大到小进行排列时，给定的成员在有序集合中所处的排名|
 
 二、批量处理多个成员：
+
 |命令|说明|
 |---|---|
 |ZCOUNT sorted_set min max|返回有序集合中，分值介于指定区间之内的成员数量|
@@ -167,6 +182,7 @@
 |ZREMRANGEBYSCORE sorted_set min max|移除有序集合中，分值位于指定范围内的成员|
 
 三、集合运算：
+
 |命令|说明|
 |---|---|
 |ZINTERSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]|对给定数量的有序集合执行交集计算，并将计算的结果储存到目标有序集合里面|
@@ -177,7 +193,8 @@
 
 ---
 ### <a id="a_bitmap">六、位图(bitmap)：</a> <a href="#a_zset">last</a> <a href="#a_log">next</a>
-一、设置或获取单个位：
+一、设置或获取单个位图：
+
 |命令|说明|
 |---|---|
 |SETBIT bitmap index value|为位图在指定索引上的二进制位设置值|
@@ -195,6 +212,7 @@
 ---
 ### <a id="a_log">七、HyperLogLog：</a> <a href="#a_bitmap">last</a> <a href="#a_ego">next</a>
 一、添加元素、统计元素数量、执行合并操作：
+
 |命令|说明|
 |---|---|
 |PFADD hll element [element ...]|将一个或多个元素添加到 HyperLogLog 里面|
@@ -203,12 +221,14 @@
 ---
 ### <a id="a_ego">八、地理位置(GEO)：</a> <a href="#a_log">last</a> <a href="#a_database">next</a>
 一、添加或获取地理位置：
+
 |命令|说明|
 |---|---|
 |GEOADD geoset longitude latitude location [longitude latitude location...]|将给定的一个或多个地理位置添加到地理位置集合里面|
 |GEOPOS geoset location [location ...]|从地理位置集合里面取出一个或多个地理位置的经纬度|
 
 二、计算范围或距离：
+
 |命令|说明|
 |---|---|
 |GEODIST geoset location1 location2 [unit]|计算两个给定位置之间的距离
@@ -217,6 +237,7 @@
 合里面，所有位于圆心指定半径范围之内的其他地理位置及其经纬度|
 
 三、计算地理位置的Geohash值：
+
 |命令|说明|
 |---|---|
 |GEOHASH geoset location [location ...]|为给定的一个或多个地理位置计算Geohash值|
@@ -224,6 +245,7 @@
 ---
 ### <a id="a_database">九、数据库(database)：</a> <a href="#a_ego">last</a> <a href="#a_expiration">next</a>
 一、获取：
+
 |命令|说明|
 |---|---|
 |KEYS pattern|从数据库里面获取所有符合给定模式的键|
@@ -232,6 +254,7 @@
 |SORT key [BY pattern] [LIMIT offset count] [GET pattern [GET pattern ...]][ASC/DESC] [ALPHA] [STORE destination]|对给定的键进行排序|
 
 二、检测：
+
 |命令|说明|
 |---|---|
 |EXISTS key|检查给定的键是否存在于数据库|
@@ -239,6 +262,7 @@
 |TYPE key|返回给定键储存的值的类型|
 
 三、管理：
+
 |命令|说明|
 |---|---|
 |RENAME key new-key|为给定键设置一个新名字|
@@ -251,6 +275,7 @@
 ---
 ### <a id="a_expiration">十、过期时间(expiration)：</a> <a href="#a_database">last</a> <a href="#a_transaction">next</a>
 一、设置过期时间：
+
 |命令|说明|
 |---|---|
 |EXPIRE key seconds|为键设置秒级精度的过期时间|
@@ -258,16 +283,18 @@
 |EXPIREAT key timestamp-in-seconds|为键设置秒级精度的过期 UNIX 时间戳|
 |PEXPIREAT key timestamp-in-milliseconds|为键设置毫秒级精度的过期 UNIX 时间戳|
 
-二、查看剩余生存时间：
+二、查看剩余存活时间：
+
 |命令|说明|
 |---|---|
-|TTL key|以秒级精度返回给定键的剩余生存时间|
-|PTTL key|以毫秒级精度返回给定键的剩余生存时间移除过期时间|
+|TTL key|以秒级精度返回给定键的剩余存活时间|
+|PTTL key|以毫秒级精度返回给定键的剩余存活时间移除过期时间|
 |PERSIST key|移除键的过期时间|
 
 ---
 ### <a id="a_transaction">十一、事务(transaction)：</a> <a href="#a_expiration">last</a> <a href="#a_script">next</a>
 一、基本事务操作：
+
 |命令|说明|
 |---|---|
 |MULTI|开始一次事务|
@@ -275,6 +302,7 @@
 |DISCARD|取消事务|
 
 二、乐观锁事务操作：
+
 |命令|说明|
 |---|---|
 |WATCH key [key ...]|监视给定的键，看它们在事务执行之前是否已被修改|
@@ -283,12 +311,14 @@
 ---
 ### <a id="a_script">十二、脚本(script)：</a> <a href="#a_transaction">last</a> <a href="#a_pub">next</a>
 一、执行脚本：
+
 |命令|说明|
 |---|---|
 |EVAL script number_of_keys key [key ...] arg [arg ...]|执行给定的 Lua 脚本|
 |EVALSHA sha1 number_of_keys key [key ...] arg [arg ...]|执行与给定SHA1 校验和相对应的已载入 Lua 脚本|
 
 二、脚本管理：
+
 |命令|说明|
 |---|---|
 |SCRIPT LOAD script|载入给定的 Lua 脚本|
@@ -299,23 +329,27 @@
 ---
 ### <a id="a_pub">十三、发布与订阅(pub/sub)：</a> <a href="#a_script">last</a> <a href="#a_client">next</a>
 一、发布消息：
+
 |命令|说明|
 |---|---|
 |PUBLISH channel message|向指定频道发布一条消息|
 
 二、订阅消息：
+
 |命令|说明|
 |---|---|
 |SUBSCRIBE channel [channel ...]|订阅给定的一个或多个频道|
 |PSUBSCRIBE pattern [pattern ...]|订阅给定的一个或多个模式|
 
 三、退订消息：
+
 |命令|说明|
 |---|---|
 |UNSUBSCRIBE [channel [channel ...]]|退订给定的一个或多个频道，如果没有给定频道则退订全部频道|
 |PUNSUBSCRIBE [pattern [pattern ...]]|退订给定的一个或多个模式，如果没有给定模式则退订全部模式|
 
 四、查看订阅信息：
+
 |命令|说明|
 |---|---|
 |PUBSUB CHANNELS [pattern]|列出当前被订阅的频道|
@@ -325,6 +359,7 @@
 ---
 ### <a id="a_client">十四、客户端与服务器(client&server)：</a> <a href="#a_pub">last</a> <a href="#a_down">next</a>
 一、连接管理：
+
 |命令|说明|
 |---|---|
 |AUTH password|使用给定的密码连接服务器|
@@ -334,6 +369,7 @@
 |SELECT number|切换至指定的数据库|
 
 二、客户端管理：
+
 |命令|说明|
 |---|---|
 |CLIENT SETNAME name|为当前客户端设置名字|
@@ -342,6 +378,7 @@
 |CLIENT KILL ip:port|关闭指定的客户端|
 
 三、数据持久化：
+
 |命令|说明|
 |---|---|
 |SAVE|创建一个 RDB 快照文件，这个命令在执行期间将阻塞所有客户端|
@@ -350,6 +387,7 @@
 |LASTSAVE|返回服务器最后一次成功执行持久化操作的 UNIX 时间戳|
 
 四、配置选项管理：
+
 |命令|说明|
 |---|---|
 |CONFIG SET option value|为给定的配置选项设置值|
@@ -358,6 +396,7 @@
 |CONFIG RESETSTAT|重置服务器的某些统计数据|
 
 五、服务器管理：
+
 |命令|说明|
 |---|---|
 |INFO [section]|返回与服务器相关的统计信息|
@@ -365,6 +404,7 @@
 |SHUTDOWN [SAVE/NOSAVE]|关闭服务器|
 
 六、调试：
+
 |命令|说明|
 |---|---|
 |SLOWLOG GET [number]|查看 slow log|

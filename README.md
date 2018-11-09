@@ -30,9 +30,7 @@
 15. [JDBC事务](https://github.com/mutistic/mutistic.database/tree/master/com.mutisitc.database.jdbc#a_transaction)
 98. [Notes](https://github.com/mutistic/mutistic.database/tree/master/com.mutisitc.database.jdbc#a_notes)
 
-
-
-
+---
 # [Hibernate：对象关系映射框架](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.hibernate)
 ### 参考资料
 [Hibernate 官网](http://hibernate.org/)  
@@ -44,3 +42,13 @@
 [Hibernate Tool](http://hibernate.org/tools/)  
 [Hibernate5:hibernate-core-5.2.17.Final.jar](https://search.maven.org/artifact/org.hibernate/hibernate-core/5.2.17.Final/jar)  
 ### 目录
+
+---
+# [Redis：Key-Value内存数据库](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.redis)
+### 参考资料
+[Redis中文网](http://www.Redis.cn)  
+[Redis操作命令详解](http://doc.redisfans.com)  
+[Redis文档](http://www.redis.cn/documentation.html)   
+[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)  
+### 目录
+

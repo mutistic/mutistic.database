@@ -1,7 +1,8 @@
 # <a id="a_top">Redis：Key-Value内存数据库</a>
 [Redis中文网](http://www.Redis.cn)  
 [Redis操作命令详解](http://doc.redisfans.com)  
-[Redis文档](http://www.redis.cn/documentation.html)  
+[Redis文档](http://www.redis.cn/documentation.html)   
+[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)  
 
 |作者|Mutistic|
 |---|---|
@@ -11,6 +12,7 @@
 ### <a id="a_catalogue">目录</a>：
 1. <a href="#a_redis">Redis：Key-Value内存数据库</a>
 2. <a href="#a_nosql">NoSQL简介</a>
+97. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 

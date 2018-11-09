@@ -34,9 +34,9 @@
 
 |命令|说明|
 |---|---|
-|MSET key value [key value ...]|一次为多个字符串键设置值|
-|MGET key [key ...]|一次获取多个字符串键的值|
-|MSETNX key value [key value ...]|仅在所有给定字符串键都尚未有值的情况下，为它们设置值|
+|MSET key value [key2 value ...]|一次为多个字符串键设置值|
+|MGET key [key2 ...]|一次获取多个字符串键的值|
+|MSETNX key value [key2 value ...]|仅在所有给定字符串键都尚未有值的情况下，为它们设置值|
 
 三、获取或修改内容：
 
@@ -66,8 +66,8 @@
 |HSET hash key value|为散列中的键设置值|
 |HSETNX hash key value|仅在散列中的给定键尚未有值的情况下，为该键设置值|
 |HGET hash key|返回散列中与给定键相关联的值|
-|HMSET hash key value [key value]|一次为散列中的多个键设置值|
-|HMGET hash key [key ...]|一次获取散列中多个键的值|
+|HMSET hash key value [key2 value]|一次为散列中的多个键设置值|
+|HMGET hash key [key2 ...]|一次获取散列中多个键的值|
 
 二、自增与自减：
 
@@ -82,7 +82,7 @@
 |---|---|
 |HEXISTS hash key|检查给定键在散列中是否存在|
 |HLEN hash|返回散列包含的键值对数量|
-|HDEL hash key [key ...]|删除散列中的一个或多个键，以及这些键的值批量获取散列键值|
+|HDEL hash key [key2 ...]|删除散列中的一个或多个键，以及这些键的值批量获取散列键值|
 |Has hash|返回散列包含的所有键|
 |HVALS hash|返回散列包含的所有键的值|
 |HGETALL hash|返回散列包含的所有键值对|
@@ -363,6 +363,7 @@
 
 |命令|说明|
 |---|---|
+|REDIS-SERVER [redis.config]|开启Redis服务端，redis.config指定配置文件及路径|
 |AUTH password|使用给定的密码连接服务器|
 |ECHO message|让服务器打印指定的消息，用于测试连接|
 |PING|向服务器发送一条 PING 消息，用于测试连接或者测量延迟值|
@@ -373,10 +374,12 @@
 
 |命令|说明|
 |---|---|
+|REDIS-CLI -h host -p port [-a password][--raw]|开启Redis客户端，-h指定ip地址，-p指定端口号，-a可选参数指定密码，--raw处理中文乱码|
 |CLIENT SETNAME name|为当前客户端设置名字|
 |CLIENT GETNAME|返回当前客户端的名字|
 |CLIENT LIST|返回正在连接服务器的所有客户端的相关信息|
 |CLIENT KILL ip:port|关闭指定的客户端|
+|CLEAR|清空命令操作记录|
 
 三、数据持久化：
 

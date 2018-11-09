@@ -12,6 +12,7 @@
 ### <a id="a_catalogue">目录</a>：
 1. <a href="#a_redis">Redis：Key-Value内存数据库</a>
 2. <a href="#a_nosql">NoSQL简介</a>
+3. <a href="#a_string">String类型</a>
 97. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
@@ -108,16 +109,19 @@
     port：接受连接的特定端口，默认是6379
     bind：默认Redis监听服务器上所有可用网络接口的连接，默认127.0.0.1
     timeout：一个客户端空闲多少秒后关闭连接。(0代表禁用，永不关闭)
-    logfile：指明日志文件名
+    logfile：指明日志文件名，eg：logs/redis.log
     databases：设置数据库个数。默认数据库是 DB 0
-    dir：持久化数据库的文件名
+    dir：持久化数据库的文件名，eg: data/
 
   4、Redis服务端启动脚本下： 
     Windows下执行：redis/redis-server.exe
-    Linux下（server服务 redis配置文件）：/usr/local/redis/redis-server /usr/local/redis/redis.conf
+    Windows-CMD命令，进入redis目录：redis-server.exe redis.conf
+    Linux或Windows：（server服务 redis配置文件）：/usr/local/redis/redis-server /usr/local/redis/redis.conf
   5、Redis服务端启动脚本-windos下： redis/redis-cli.exe
     Windows下执行：redis/redis-cli.exe
-    Linux下（cli客户端 -h IP地址 -p 端口号[默认6379]）：/usr/local/redis/redis-cli -h 192.168.16.113 -p 6379
+    Windows-CMD命令，进入redis目录：redis-cli.exe -h 192.168.16.113 -p 6379 --raw
+    Linux：（cli客户端 -h IP地址 -p 端口号[默认6379]）：/usr/local/redis/redis-cli -h 192.168.16.113 -p 6379
+    ps：解决中文乱码的问题可以在redis-cli 后加载 --raw
   6、查看Redis版本信息：启动服务端时可以看到 或 在客户端输入命令：  info
   7、客户端操作key：【查看key：keys *】【添加key： set key value】【获取key的值： get key】【删除key：del key】
   10、关闭Redis服务：
@@ -126,7 +130,7 @@
 ```
 
 ---
-### <a id="a_nosql">二、介绍NoSQL：</a> <a href="#a_redis">last</a> <a href="#">next</a>
+### <a id="a_nosql">二、介绍NoSQL：</a> <a href="#a_redis">last</a> <a href="#a_string">next</a>
 [NoSQL-百度百科](https://baike.baidu.com/item/NoSQL)  
 一、什么是NoSQL：
 ```
@@ -222,6 +226,55 @@ NoSQL数据库没有标准的查询语言(SQL)，因此进行数据库查询需�
 该特性是已有典型NoSQL数据库系统所不完善的，但却是云系统应具有的典型特点；“强一致性”主要是新应用的需求。
 ```
 
+---
+### <a id="a_string">三、String类型：</a> <a href="#a_nosql">last</a> <a href="#">next</a>
+一、String（字符串）：
+```
+  string 是Redis 最基本的类型，你可以理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。
+  string 类型是二进制安全的。意思是Redis 的 string 可以包含任何数据。比如jpg图片或者序列化的对象。
+  string 类型是Redis 最基本的数据类型，string 类型的值最大能存储 512MB。 
+```
+二、设置和获取方法：
+```
+  SET key value [EX seconds] [PX milliseconds] [NX/XX]：为字符串键设置值和过期时间（可选）
+    [EX seconds]：可选参数：设置参数过期时间，单位秒，
+    [PX milliseconds]：可选参数：设置参数过期时间，单位毫秒。EX PX 同时存在时，优先级高于EX
+    [NX/XX]：可选参数：设置方式
+      1、NX 当 key 不存在时进行设置，key不存在设置成功返回OK，key存在设置失败返回(nil)
+      2、XX 当 key 存在时进行设置，key存在设置成功返回OK，key不存在设置失败返回(nil)
+
+  GET key：获取字符串键的值，不存在或过期后，返回(nil)
+  GETSET key new-value：为字符串键设置新值，并返回键被设置之前的旧值
+  DEL key：删除字符串键，key存在时返回(integer) 1，key不存在时返回(integer) 0
+
+  SETNX key value：仅在字符串键尚未有值的情况下，为它设置值，SET key value NX的简写
+  SETEX key seconds value：为字符串键设置值和秒级精度的过期时间，SET key value EX seconds的简写
+  PSETEX key milliseconds value：为字符串键设置值和毫秒级精度的过期时间，SET key value PX milliseconds的简写  
+```
+
+三、批量设置与获取：
+```
+  MSET key value [key2 value ...]：一次为多个字符串键设置值
+  MGET key [key2 ...]：一次获取多个字符串键的值
+  MSETNX key value [key2 value ...]：仅在所有给定字符串键都尚未有值的情况下，为它们设置值
+```
+
+四、获取或修改内容：
+```
+  STRLEN key：获取字符串值的长度 
+  SETRANGE key offset value：对字符串值在指定索引位置上的内容进行修改 
+  GETRANGE key start end：获取字符串值在指定索引范围内的内容 
+  APPEND key value：将指定的内容追加到字符串值的末尾 
+```
+
+五、自增与自减：
+```
+  INCR key：为字符串键储存的整数值加上一
+  DECR key：为字符串键储存的整数值减去一
+  INCRBY key increment：为字符串键储存的整数值加上指定的整数增量
+  DECRBY key decrement：为字符串键储存的整数值减去指定的整数减量
+  INCRBYFLOAT key increment：为字符串键储存的数字值加上指定的浮点数增量
+```
 
 ---
 ### <a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a> <a href="#">last</a> <a href="#a_notes">next</a>

@@ -13,6 +13,7 @@
 1. <a href="#a_redis">Redis：Key-Value内存数据库</a>
 2. <a href="#a_nosql">NoSQL简介</a>
 3. <a href="#a_string">String类型</a>
+4. <a href="#a_hash">hash类型</a>
 97. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
@@ -59,7 +60,7 @@
 ```
 四、数据模型：
 ```
-  Redis的外围由一个键、值映射的字典构成。与其他非关系型数据库主要不同在于：Redis中值的类型不仅限于字符串，
+  Redis的外围由一个键、值映射的字典构成。键是区分大小写的。与其他非关系型数据库主要不同在于：Redis中值的类型不仅限于字符串，
 还支持如下抽象数据类型：
   1、字符串列表
   2、无序不重复的字符串集合
@@ -227,7 +228,7 @@ NoSQL数据库没有标准的查询语言(SQL)，因此进行数据库查询需�
 ```
 
 ---
-### <a id="a_string">三、String类型：</a> <a href="#a_nosql">last</a> <a href="#">next</a>
+### <a id="a_string">三、String类型：</a> <a href="#a_nosql">last</a> <a href="#a_hash">next</a>
 一、String（字符串）：
 ```
   string 是Redis 最基本的类型，你可以理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。
@@ -236,44 +237,98 @@ NoSQL数据库没有标准的查询语言(SQL)，因此进行数据库查询需�
 ```
 二、设置和获取方法：
 ```
-  SET key value [EX seconds] [PX milliseconds] [NX/XX]：为字符串键设置值和过期时间（可选）
-    [EX seconds]：可选参数：设置参数过期时间，单位秒，
-    [PX milliseconds]：可选参数：设置参数过期时间，单位毫秒。EX PX 同时存在时，优先级高于EX
+  SET key value [EX seconds] [PX milliseconds] [NX/XX]：为字符串键设置值和过期时间（可选），设置多次会覆盖之前的值
+    [EX seconds]：可选参数：设置参数过期时间，单位秒，不设置代表不过期
+    [PX milliseconds]：可选参数：设置参数过期时间，单位毫秒。EX PX 同时存在时，优先级高于EX，不设置代表不过期
     [NX/XX]：可选参数：设置方式
       1、NX 当 key 不存在时进行设置，key不存在设置成功返回OK，key存在设置失败返回(nil)
       2、XX 当 key 存在时进行设置，key存在设置成功返回OK，key不存在设置失败返回(nil)
 
   GET key：获取字符串键的值，不存在或过期后，返回(nil)
-  GETSET key new-value：为字符串键设置新值，并返回键被设置之前的旧值
+  GETSET key new-value：为字符串键设置新值，并返回键被设置之前的旧值，若key不存在，等同于set key，但是返回(nil)
   DEL key：删除字符串键，key存在时返回(integer) 1，key不存在时返回(integer) 0
 
   SETNX key value：仅在字符串键尚未有值的情况下，为它设置值，SET key value NX的简写
   SETEX key seconds value：为字符串键设置值和秒级精度的过期时间，SET key value EX seconds的简写
   PSETEX key milliseconds value：为字符串键设置值和毫秒级精度的过期时间，SET key value PX milliseconds的简写  
+
+  TTL key：查看key的过期时间，单位秒。如不过期返回(integer) -1，已过期或不存在返回(integer) -2
+  PTTL key：查看key的过期时间，单位毫秒。如不过期返回(integer) -1，已过期或不存在返回(integer) -2
 ```
 
 三、批量设置与获取：
 ```
   MSET key value [key2 value ...]：一次为多个字符串键设置值
   MGET key [key2 ...]：一次获取多个字符串键的值
-  MSETNX key value [key2 value ...]：仅在所有给定字符串键都尚未有值的情况下，为它们设置值
+  MSETNX key value [key2 value ...]：仅在所有给定字符串键都尚未有值的情况下，为它们设置值，设置成功返回(integer) 1，设置不成功返回(integer) 0
+  (不支持批量设置过期时间，即没有MSETEX命令。当批量设置值时，会忽略指定的 EX PX属性)
 ```
 
 四、获取或修改内容：
 ```
-  STRLEN key：获取字符串值的长度 
-  SETRANGE key offset value：对字符串值在指定索引位置上的内容进行修改 
-  GETRANGE key start end：获取字符串值在指定索引范围内的内容 
-  APPEND key value：将指定的内容追加到字符串值的末尾 
+  STRLEN key：获取字符串值的长度，如key不存在或为空串，则返回 (integer) 0
+  SETRANGE key offset value：对字符串值在指定索引位置上的内容进行修改，返回字符串的长度。若key 不存在，则等同于set key 
+  GETRANGE key start end：获取字符串值在指定索引范围内的内容，索引从0开始，若key不存在，则返回空串
+  APPEND key value：将指定的内容追加到字符串值的末尾，返回字符串的长度。若key不存在，则等同于 set key
 ```
 
 五、自增与自减：
 ```
-  INCR key：为字符串键储存的整数值加上一
-  DECR key：为字符串键储存的整数值减去一
-  INCRBY key increment：为字符串键储存的整数值加上指定的整数增量
-  DECRBY key decrement：为字符串键储存的整数值减去指定的整数减量
-  INCRBYFLOAT key increment：为字符串键储存的数字值加上指定的浮点数增量
+  INCR key：为字符串键储存的整数值加上一。若key不存在，等同于 set 1 1，若key不为整数，这返回错误
+  DECR key：为字符串键储存的整数值减去一。若key不存在，等同于 set 1 -1，若key不为整数，这返回错误
+  INCRBY key increment：为字符串键储存的整数值加上指定的整数增量。若key不存在，等同于 set key increment，若key不为整数，这返回错误
+  DECRBY key decrement：为字符串键储存的整数值减去指定的整数减量。若key不存在，等同于 set key decrement，若key不为整数，这返回错误
+  INCRBYFLOAT key increment：为字符串键储存的数字值加上指定的浮点数增量。
+    若key不存在，等同于 set key increment，若key不为数值，这返回错误
+    没有减去浮点数的命令，若想减去指定浮点数，则使用 负数：INCRBYFLOAT key -increment
+```
+
+---
+### <a id="a_hash">四、hash类型：</a> <a href="#a_string">last</a> <a href="#">next</a>
+一、Hash（哈希表）：
+```
+  Redis hash类型：是一个string类型的field和value的映射表，或者说一个String集合。类似Java的HashMap数据类型。
+hash特别适合用于存储对象。
+  相比较而言，将一个对象类型存储在Hashs类型要比存储在String类型里占用更少的内存空间，并方便存取整个对象。
+  Redis 中每个 hash 可以存储 2的32次方-1 键值对（40多亿）
+```
+二、设置与获取：
+```
+  HSET hash key value：为散列中的键设置值。如果key不存在时，返回(integer) 1， key 存在时返回(integer)0，但是value会覆盖
+  HSETNX hash key value：仅在散列中的给定键尚未有值的情况下，为该键设置值。
+    当 key 不存在时进行设置，key不存在设置成功返回1，key存在设置失败返回0，没有HSETXX命令。
+  HGET hash key：返回散列中与给定键相关联的值
+  HMSET hash key value [key2 value]：一次为散列中的多个键设置值
+  HMGET hash key [key2 ...]：一次获取散列中多个键的值
+```
+三、自增与自减：
+```
+  HINCRBY hash key increment：为散列中给定键储存的整数值加上指定的整数增量，同INCRBY，减法使用负数即可
+  HINCRBYFLOAT hash key increment：为散列中给定键储存的数字值加上指定的浮点数增量，同INCRBYFLOAT，减法使用负数即可
+```
+四、检测与管理：  
+[SCAN命令的用法](https://blog.csdn.net/qq_34579060/article/details/80451298)
+```
+  HEXISTS hash key：检查给定键在散列中是否存在，存在返回1，不存在返回0
+  HLEN hash：返回散列包含的键值对数量。hash不存在时返回0
+  HDEL hash key [key2 ...]：删除散列中的一个或多个键，以及这些键的值批量获取散列键值。hash或key不存在时，返回0
+  HKEYS hash：返回散列包含的所有键。hash不存在时，返回(empty list or set)
+  HVALS hash：返回散列包含的所有键的值。hash不存在时，返回(empty list or set)
+  HGETALL hash：返回散列包含的所有键值对。hash不存在时，返回(empty list or set)
+  
+  HSCAN hash cursor [MATCH pattern] [COUNT count]：以渐进的方式返回散列包含的键值对。
+    SCAN命令：是一个基于游标的迭代器，这意味着命令每次被调用都需要使用上一次这个调用返回的游标作为该次调用的游标参数，以此来延续之前的迭代过程，
+    SCAN命令：的返回值 是一个包含两个元素的数组， 第一个数组元素是用于进行下一次迭代的新游标， 而第二个数组元素则是一个数组， 这个数组中包含了所有被迭代的元素
+    cursor：游标参数，被设置为 0 时。服务器将开始一次新的迭代， 而当服务器向用户返回值为 0 的游标时， 表示迭代已结束。
+    [MATCH pattern]：让命令只返回和给定模式相匹配的元素，即模糊匹配。
+    [COUNT count]：选项的作用就是让用户告知迭代命令， 在每次迭代中应该从数据集里返回多少元素
+```
+五、redis.conf配置优化：
+```
+  # 当hash只有少量的entry时，并且最大的entry所占空间没有超过指定的限制时，会用一种节省内存的
+  # 数据结构来编码。可以通过下面的指令来设定限制
+  hash-max-ziplist-entries 512
+  hash-max-ziplist-value 64
 ```
 
 ---

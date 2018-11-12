@@ -83,7 +83,7 @@
 |HEXISTS hash key|检查给定键在散列中是否存在|
 |HLEN hash|返回散列包含的键值对数量|
 |HDEL hash key [key2 ...]|删除散列中的一个或多个键，以及这些键的值批量获取散列键值|
-|Has hash|返回散列包含的所有键|
+|HKEYS hash|返回散列包含的所有键|
 |HVALS hash|返回散列包含的所有键的值|
 |HGETALL hash|返回散列包含的所有键值对|
 |HSCAN hash cursor [MATCH pattern] [COUNT count]|以渐进的方式返回散列包含的键值对|

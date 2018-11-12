@@ -1,4 +1,5 @@
 # <a id="a_top">附录A：Redis操作命令速查表</a>
+[Redis操作命令详解](http://doc.redisfans.com)  
 
 ### <a id="a_catalogue">目录</a>：
 1. <a href="#a_string">字符串（string）</a>

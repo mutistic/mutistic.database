@@ -260,8 +260,9 @@ NoSQL数据库没有标准的查询语言(SQL)，因此进行数据库查询需�
 ```
   MSET key value [key2 value ...]：一次为多个字符串键设置值
   MGET key [key2 ...]：一次获取多个字符串键的值
-  MSETNX key value [key2 value ...]：仅在所有给定字符串键都尚未有值的情况下，为它们设置值，设置成功返回(integer) 1，设置不成功返回(integer) 0
-  (不支持批量设置过期时间，即没有MSETEX命令。当批量设置值时，会忽略指定的 EX PX属性)
+  MSETNX key value [key2 value ...]：仅在所有给定字符串键都尚未有值的情况下，为它们设置值。
+    设置成功返回(integer) 1，设置不成功返回(integer) 0
+    不支持批量设置过期时间，即没有MSETEX命令。当批量设置值时，会忽略指定的 EX PX属性
 ```
 
 四、获取或修改内容：
@@ -294,7 +295,8 @@ hash特别适合用于存储对象。
 ```
 二、设置与获取：
 ```
-  HSET hash key value：为散列中的键设置值。如果key不存在时，返回(integer) 1， key 存在时返回(integer)0，但是value会覆盖
+  HSET hash key value：为散列中的键设置值。
+    如果key不存在时，返回(integer) 1， key 存在时返回(integer)0，但是value会覆盖。
   HSETNX hash key value：仅在散列中的给定键尚未有值的情况下，为该键设置值。
     当 key 不存在时进行设置，key不存在设置成功返回1，key存在设置失败返回0，没有HSETXX命令。
   HGET hash key：返回散列中与给定键相关联的值

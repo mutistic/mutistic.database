@@ -14,6 +14,7 @@
 2. <a href="#a_nosql">NoSQL简介</a>
 3. <a href="#a_string">String类型</a>
 4. <a href="#a_hash">hash类型</a>
+5. <a href="#a_list">list类型</a>
 97. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
@@ -285,7 +286,7 @@ NoSQL数据库没有标准的查询语言(SQL)，因此进行数据库查询需�
 ```
 
 ---
-### <a id="a_hash">四、hash类型：</a> <a href="#a_string">last</a> <a href="#">next</a>
+### <a id="a_hash">四、hash类型：</a> <a href="#a_string">last</a> <a href="#a_list">next</a>
 一、Hash（哈希表）：
 ```
   Redis hash类型：是一个string类型的field和value的映射表，或者说一个String集合。类似Java的HashMap数据类型。
@@ -331,6 +332,38 @@ hash特别适合用于存储对象。
   # 数据结构来编码。可以通过下面的指令来设定限制
   hash-max-ziplist-entries 512
   hash-max-ziplist-value 64
+```
+
+---
+### <a id="a_list">五、list类型：</a> <a href="#a_hash">last</a> <a href="#">next</a>
+一、Hash（哈希表）：
+```
+```
+二、添加元素：
+```
+LPUSH list item [item ...]：将一个或多个元素添加到列表的左端
+LPUSHX list item：仅在列表已经存在的情况下，将一个元素添加到列表的左端
+RPUSH list item [item ...]：将一个或多个元素添加到列表的右端
+RPUSHX list item：仅在列表已经存在的情况下，将一个元素添加到列表的右端
+```
+三、移除元素：
+```
+LPOP list：移除并返回列表左端第一个元素
+RPOP list：移除并返回列表右端第一个元素
+BLPOP list [list ...] timeout：在指定的时限内，移除首个非空列表的最左端元素
+BRPOP list [list ...] timeout：在指定的时限内，移除首个非空列表的最右端元素移除元素然后添加元素
+RPOPLPUSH source_list target_list：移除源列表的最右端元素，并将该元素添加到目标列表的左端
+BRPOPLPUSH source_list target_list timeout：在指定的时限内，尝试移除源列表的最右端元素，并将该元素添加到目标列表的左端
+```
+四、元素的获取与管理：
+```
+LINDEX list index：获取列表在给定索引上的元素
+LLEN list：返回列表包含的元素数量
+LRANGE list start end：返回列表在指定索引范围内的所有元素
+LINSERT list BEFORE|AFTER target item：将给定的元素插入到目标元素的前面或者后面
+LREM list count item：从列表中移除给定的元素
+LSET list index item：把列表在指定索引上的值修改为给定的元素
+LTRIM list start end：对列表进行修剪，只保留指定索引范围内的元素
 ```
 
 ---

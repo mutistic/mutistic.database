@@ -336,34 +336,40 @@ hash特别适合用于存储对象。
 
 ---
 ### <a id="a_list">五、list类型：</a> <a href="#a_hash">last</a> <a href="#">next</a>
-一、Hash（哈希表）：
+一、List（列表）：
 ```
+  Redis列表是一个双向链表结构的集合。简单的字符串列表，按照插入顺序排序。可以添加一个元素到列表的头部（左边）或者尾部（右边）
+List设计的非常简单精巧，既可以作为栈，又可以作为队列。
+
+  一个列表最多可以包含 232 - 1 个元素 (4294967295, 每个列表超过40亿个元素)
 ```
 二、添加元素：
 ```
-LPUSH list item [item ...]：将一个或多个元素添加到列表的左端
-LPUSHX list item：仅在列表已经存在的情况下，将一个元素添加到列表的左端
-RPUSH list item [item ...]：将一个或多个元素添加到列表的右端
-RPUSHX list item：仅在列表已经存在的情况下，将一个元素添加到列表的右端
+  LPUSH list item [item ...]：将一个或多个元素添加到列表的左端。从头部加入元素（栈）先进后出。返回list的长度。
+  LPUSHX list item：仅在列表已经存在的情况下，将一个元素添加到列表的左端。返回list的长度。
+  RPUSH list item [item ...]：将一个或多个元素添加到列表的右端。从尾部加入元素（队列）先进先出。返回list的长度。
+  RPUSHX list item：仅在列表已经存在的情况下，将一个元素添加到列表的右端。返回list的长度。
 ```
 三、移除元素：
 ```
-LPOP list：移除并返回列表左端第一个元素
-RPOP list：移除并返回列表右端第一个元素
-BLPOP list [list ...] timeout：在指定的时限内，移除首个非空列表的最左端元素
-BRPOP list [list ...] timeout：在指定的时限内，移除首个非空列表的最右端元素移除元素然后添加元素
-RPOPLPUSH source_list target_list：移除源列表的最右端元素，并将该元素添加到目标列表的左端
-BRPOPLPUSH source_list target_list timeout：在指定的时限内，尝试移除源列表的最右端元素，并将该元素添加到目标列表的左端
+  LPOP list：移除并返回列表左端第一个元素。返回被移除元素的值
+  RPOP list：移除并返回列表右端第一个元素。返回被移除元素的值
+  BLPOP list [list ...] timeout：在指定的时限内，移除首个非空列表的最左端元素
+  BRPOP list [list ...] timeout：在指定的时限内，移除首个非空列表的最右端元素移除元素然后添加元素
+  RPOPLPUSH source_list target_list：移除源列表的最右端元素，并将该元素添加到目标列表的左端
+  BRPOPLPUSH source_list target_list timeout：在指定的时限内，尝试移除源列表的最右端元素，并将该元素添加到目标列表的左端
 ```
 四、元素的获取与管理：
 ```
-LINDEX list index：获取列表在给定索引上的元素
-LLEN list：返回列表包含的元素数量
-LRANGE list start end：返回列表在指定索引范围内的所有元素
-LINSERT list BEFORE|AFTER target item：将给定的元素插入到目标元素的前面或者后面
-LREM list count item：从列表中移除给定的元素
-LSET list index item：把列表在指定索引上的值修改为给定的元素
-LTRIM list start end：对列表进行修剪，只保留指定索引范围内的元素
+  LINDEX list index：获取列表在给定索引上的元素
+  LLEN list：返回列表包含的元素数量
+  LRANGE list start end：返回列表在指定索引范围内的所有元素。
+    从左到右的索引从0开始：LRANGE list 0 2，从右到左的索引从-1开始：LRANGE list -1 -3
+  LINSERT list BEFORE|AFTER target item：将给定的元素插入到目标元素的前面或者后面。目标元素不存在时，插入不成功。
+    BEFORE|AFTER：插入规则。BEFORE：插入到目标元素前面。AFTER：插入到目标元素后面。
+  LREM list count item：从列表中移除给定的元素
+  LSET list index item：把列表在指定索引上的值修改为给定的元素
+  LTRIM list start end：对列表进行修剪，只保留指定索引范围内的元素
 ```
 
 ---

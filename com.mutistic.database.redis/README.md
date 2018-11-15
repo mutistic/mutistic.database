@@ -361,15 +361,26 @@ List设计的非常简单精巧，既可以作为栈，又可以作为队列。
 ```
 四、元素的获取与管理：
 ```
-  LINDEX list index：获取列表在给定索引上的元素
+  LINDEX list index：获取列表在给定索引上的元素。
+    从左到右的索引从0开始：LINDEX list 0，从右到左的索引从-1开始：LINDEX list -1
+
   LLEN list：返回列表包含的元素数量
   LRANGE list start end：返回列表在指定索引范围内的所有元素。
     从左到右的索引从0开始：LRANGE list 0 2，从右到左的索引从-1开始：LRANGE list -1 -3
+
   LINSERT list BEFORE|AFTER target item：将给定的元素插入到目标元素的前面或者后面。目标元素不存在时，插入不成功。
     BEFORE|AFTER：插入规则。BEFORE：插入到目标元素前面。AFTER：插入到目标元素后面。
-  LREM list count item：从列表中移除给定的元素
-  LSET list index item：把列表在指定索引上的值修改为给定的元素
-  LTRIM list start end：对列表进行修剪，只保留指定索引范围内的元素
+
+  LREM list count item：根据参数COUNT的值，移除列表中与参数VALUE相等的元素。列表不存在或元素不存在返回(integer) 0
+    count：移除元素的规则。
+    count > 0 : 从表头开始向表尾搜索，移除与 VALUE 相等的元素，数量为 COUNT 。
+    count < 0 : 从表尾开始向表头搜索，移除与 VALUE 相等的元素，数量为 COUNT 的绝对值。
+    count = 0 : 移除表中所有与 VALUE 相等的值。
+
+  LSET list index item：把列表在指定索引上的值修改为给定的元素。
+    当索引参数超出范围，或对一个空列表进行 LSET 时，返回一个错误
+  
+  LTRIM list start end：对列表进行截断，只保留指定索引范围内的元素
 ```
 
 ---

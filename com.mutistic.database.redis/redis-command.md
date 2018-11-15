@@ -119,9 +119,9 @@
 |LLEN list|返回列表包含的元素数量|
 |LRANGE list start end|返回列表在指定索引范围内的所有元素|
 |LINSERT list BEFORE/AFTER target item|将给定的元素插入到目标元素的前面或者后面|
-|LREM list count item|从列表中移除给定的元素|
+|LREM list count item|根据参数COUNT的值，移除列表中与参数VALUE相等的元素|
 |LSET list index item|把列表在指定索引上的值修改为给定的元素|
-|LTRIM list start end|对列表进行修剪，只保留指定索引范围内的元素|
+|LTRIM list start end|对列表进行截断，只保留指定索引范围内的元素|
 
 ---
 ### <a id="a_set">四、set(集合)：</a> <a href="#a_list">last</a> <a href="#a_zset">next</a>

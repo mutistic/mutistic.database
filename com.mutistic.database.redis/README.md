@@ -15,6 +15,7 @@
 3. <a href="#a_string">String类型</a>
 4. <a href="#a_hash">hash类型</a>
 5. <a href="#a_list">list类型</a>
+6. <a href="#a_set">set(集合)</a>
 97. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
@@ -378,9 +379,64 @@ List设计的非常简单精巧，既可以作为栈，又可以作为队列。
     count = 0 : 移除表中所有与 VALUE 相等的值。
 
   LSET list index item：把列表在指定索引上的值修改为给定的元素。
-    当索引参数超出范围，或对一个空列表进行 LSET 时，返回一个错误
+    当索引参数超出范围，或对一个空列表进行 LSET 时，返回一个错误。list的索引规则一致。
   
-  LTRIM list start end：对列表进行截断，只保留指定索引范围内的元素
+  LTRIM list start end：对列表进行截断，只保留指定索引范围内的元素。当指定索引不存在时，不会报错。
+```
+
+### <a id="a_set">六、set(集合)：</a> <a href="#a_list">last</a> <a href="#a_zset">next</a>
+一、set(集合)：
+```
+  Redis 的 Set 是 String 类型的无序集合。集合成员是唯一的，这就意味着集合中不能出现重复的数据。
+Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，查找的复杂度都是 O(1)。
+
+  集合中最大的成员数为 232 - 1 (4294967295, 每个集合可存储40多亿个成员)。 
+```
+二、元素的添加与移除：
+```
+  SADD set element [element ...]：将一个或多个元素添加到集合当中。
+    返回插入element的数量。element存在重复时，将不会插入到集合中
+  
+  SPOP set：随机地移除并返回集合中的某个元素。删除不存在的集合或集合为空fil时返回(nil)
+
+  SMOVE source_set target_set element：将指定的元素从源集合移动到目标集合。
+    源集合或指定元素不存在时，不会报错，返回(integer)0
+
+  SREM set element [element ...]：移除集合中的一个或多个元素。元素不存在是返回(integer)0sc
+```
+三、元素的获取与检测：
+```
+  SCARD set：返回集合包含的元素数量
+  SISMEMBER set element：检查集合是否包含了给定的元素。存在时返回(integer)1，不存在时返回(integer)0
+  
+  SRANDMEMBER set [count]：随机地返回集合包含的元素
+   [count]：可选参数：随机返回元素的规则
+    如果 count 为0，这会报错，报错信息：(empty list or set)
+    如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。
+    如果 count 大于等于集合长度，那么返回整个集合。
+    如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次(当count的绝对值大于集合长度)，而数组的长度为count的绝对值。 
+  
+  SMEMBERS set：返回集合包含的所有元素。元素的顺序是无序的。如果set不存在或为空，则会报错
+  SSCAN set cursor [MATCH pattern] [COUNT count]：以渐进的方式返回集合包含的元素。参上述hash的scan用法。
+```
+四、集合运算：
+```
+  SDIFF set [set ...]：计算并返回多个集合的差集计算结果。计算规则是以首个集合为标准对进行后续集合的比较
+  SDIFFSTORE target_set set [set ...]：对多个集合执行差集计算，并将结果储存到目标集合当中
+    差集运算set集合为空或不存在时返回(empty list or set)。
+    差集运算的首个set集合的长度小于或等于要比较的set集合的长度时返回(empty list or set)。
+    
+    
+  
+  SINTER set [set ...]：计算并返回多个集合的交集计算结果
+  SINTERSTORE target_set set [set ...]：对多个集合执行交集计算，并将结果储存到目标集合当中
+    交集运算时set集合不能为空或不存在。否则会报错，报错信息：(empty list or set)
+
+  SUNION set [set ...]：计算并返回多个集合的并集计算结果
+  SUNIONSTORE target_set set [set ...]：对多个集合执行并集计算，并将结果储存到目标集合当中
+    并集运算时set集合可以为空或不存在。
+
+  SDIFFSTORE、SINTERSTORE、SUNIONSTORE运算后。目标集合无论是否存在或是否为空，都会清空，重新存放运算结果
 ```
 
 ---

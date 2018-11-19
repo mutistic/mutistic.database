@@ -16,6 +16,7 @@
 4. <a href="#a_hash">hash类型</a>
 5. <a href="#a_list">list类型</a>
 6. <a href="#a_set">set(集合)</a>
+7. <a href="#a_zset">zset(sorted set，有序集合)</a>
 97. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
@@ -384,6 +385,7 @@ List设计的非常简单精巧，既可以作为栈，又可以作为队列。
   LTRIM list start end：对列表进行截断，只保留指定索引范围内的元素。当指定索引不存在时，不会报错。
 ```
 
+---
 ### <a id="a_set">六、set(集合)：</a> <a href="#a_list">last</a> <a href="#a_zset">next</a>
 一、set(集合)：
 ```
@@ -415,7 +417,8 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
     如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。
     如果 count 大于等于集合长度，那么返回整个集合。
     如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次(当count的绝对值大于集合长度)，而数组的长度为count的绝对值。 
-  
+    因为set的底层是通过hashtable(哈希表)实现的，所以这些元素被分配到不同的hash桶中，SRANDMEMBER随机返回的元素可能是同一个
+
   SMEMBERS set：返回集合包含的所有元素。元素的顺序是无序的。如果set不存在或为空，则会报错
   SSCAN set cursor [MATCH pattern] [COUNT count]：以渐进的方式返回集合包含的元素。参上述hash的scan用法。
 ```
@@ -426,8 +429,6 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
     差集运算set集合为空或不存在时返回(empty list or set)。
     差集运算的首个set集合的长度小于或等于要比较的set集合的长度时返回(empty list or set)。
     
-    
-  
   SINTER set [set ...]：计算并返回多个集合的交集计算结果
   SINTERSTORE target_set set [set ...]：对多个集合执行交集计算，并将结果储存到目标集合当中
     交集运算时set集合不能为空或不存在。否则会报错，报错信息：(empty list or set)
@@ -437,6 +438,79 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
     并集运算时set集合可以为空或不存在。
 
   SDIFFSTORE、SINTERSTORE、SUNIONSTORE运算后。目标集合无论是否存在或是否为空，都会清空，重新存放运算结果
+```
+
+---
+### <a id="a_zset">七、zset(sorted set，有序集合)：</a> <a href="#a_set">last</a> <a href="#">next</a>
+一、set(集合)：
+```
+  Redis 有序集合和集合一样也是string类型元素的集合,且不允许重复的成员。
+不同的是每个元素都会关联一个double类型的分数。redis正是通过分数来为集合中的成员进行从小到大的排序。
+
+  有序集合的成员是唯一的,但分数(score)却可以重复。
+
+  集合中最大的成员数为 2的32次方-1 (4294967295, 每个集合可存储40多亿个成员)
+
+  在redis sorted sets里面当items内容大于64的时候同时使用了hash(哈希表)和skiplist(跳跃表)两种设计实现。这也会为了排序和查找性能做的优化。
+添加和删除都需要修改skiplist，所以复杂度为O(log(n))。 但是如果仅仅是查找元素的话可以直接使用hash，其复杂度为O(1) 
+其他的range操作复杂度一般为O(log(n))当然如果是小于64的时候，因为是采用了ziplist的设计，其时间复杂度为O(n)
+```
+二、元素的检测与管理：
+```
+  ZADD sorted_set score member [[score member] [score member] ...]：将给定的元素及其分值添加到有序集合，按照分数排序
+    score：分数值可以是整数值或双精度浮点数，如不是返回一个(ERR)错误：(error)ERR value is not a valid float
+    如果某个成员已经是有序集的成员，那么更新这个成员的分数值，并通过重新插入这个成员元素，来保证该成员在正确的位置上
+    如果有序集合 key 不存在，则创建一个空的有序集并执行 ZADD 操作。被成功添加的新成员的数量，不包括那些被更新的、已经存在的成员。
+    当 key 存在但不是有序集类型时，返回一个(WRONGNTYPE)错误：(error) WRONGNTYPE Opeartion against a key holding the wrong kind of value
+
+  ZINCRBY sorted_set increment member：为元素的分值加上指定的整数增量。
+    可以通过传递一个负数值 increment ，让分数减去相应的值，比如 ZINCRBY key -5 member ，就是让 member 的 score 值减去 5 。
+    当 key 不存在，或分数不是 key 的成员时， ZINCRBY key increment member 等同于 ZADD key increment member 。
+    当 key 不是有序集类型时，返回一个(WRONGNTYPE)错误。
+    分数值可以是整数值或双精度浮点数，如不是返回一个(ERR)错误。
+
+  ZSCORE sorted_set member：返回给定元素的分值。当key或元素不存在时，返回(nil)
+
+  ZCARD sorted_set：返回有序集合包含的元素数量。
+    当 key 存在且是有序集类型时，返回有序集的基数。 当 key 不存在时，返回 0。当key不是zset类型时，返回一个(WRONGNTYPE)错误。
+
+  ZRANK sorted_set member：返回有序集合元素在按照分值从小到大进行排列时，给定的元素在有序集合中所处的排名。当key不存在时返回(nil)
+  ZREVRANK sorted_set member：返回有序集合元素在按照分值从大到小进行排列时，给定的元素在有序集合中所处的排名。当key不存在时返回(nil)
+```
+
+三、批量处理多个元素：
+```
+  ZCOUNT sorted_set min max：返回有序集合中，分值介于指定区间之内的元素数量
+
+  ZRANGE sorted_set start end [WITHSCORES]：按照分值从小到大的顺序，返回指定索引范围之内的元素及其分值（可选）。
+    一个快速获取集合中的所有元素的用法：ZRANGE sorted_set 0 -1  。 0表示集合的第一个元素。-1表示集合的最后一个元素。 
+  ZREVRANGE sorted_set start end [WITHSCORES]：按照分值从大到小的顺序，返回指定索引范围之内的元素及其分值（可选）
+    具有相同分数值的成员按字典序(lexicographical order，该属性是有序集提供的，不需要额外的计算)来排列。
+    start end参数：从左往右索引从0开始。可以使用负数下标，从右往左索引从-1开始，eg：ZRANGE sorted_set -3 -1
+    [WITHSCORES]：可选参数，指定时，显示元素的分值
+
+  ZRANGEBYSCORE sorted_set min max [WITHSCORES] [LIMIT offset count]：按照分值从小到大的顺序，返回指定分值范围之内的元素
+  ZREVRANGEBYSCORE sorted_set max min [WITHSCORES] [LIMIT offset count]：按照分值从大到小的顺序，返回指定分值范围之内的元素
+    默认情况下，区间的取值使用闭区间 (小于等于或大于等于)，你也可以通过给参数前增加 ( 符号来使用可选的开区间 (小于或大于)，eg:
+      闭区间0 <= score <= 3：ZRANGEBYSCORE sorted_set 0 3。开区间0 < score < 3：ZRANGEBYSCORE sorted_set (0 (3 
+    [LIMIT offset count]：可选参数，指分页，offset表示第几页，count表示每页显示内容数
+
+  ZSCAN sorted_set cursor [MATCH pattern] [COUNT count]：以渐进的方式，返回有序集合包含的元素及其分值。参考list中的SCAN的用法
+  ZREM sorted_set member [member ...]：从有序集合中移除指定的一个或多个元素。返回被移除成员的数量。
+  ZREMRANGEBYRANK sorted_set start end：移除有序集合中，位于指定排名范围内的元素，其中元素按照分值从小到大进行排列。返回被移除成员的数量。
+  ZREMRANGEBYSCORE sorted_set min max：移除有序集合中，分值位于指定范围内的元素。返回被移除成员的数量。
+
+  注意：INF(infinite的缩写)表示无穷大，此处redis支持此特殊字符，使用分值或区间时，-INF表示负无穷大，+INF表示正无穷大。
+  eg： ZRANGEBYSCORE sorted_set -INF +INF：按照分值从小到大的顺序，返回所有的元素
+```
+
+四、集合运算：
+```
+  ZINTERSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]：对给定数量的有序集合执行交集计算，并将计算的结果储存到目标有序集合里面
+  ZUNIONSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]：对给定数量的有序集合执行并集计算，并将计算的结果储存到目标有序集合里面根据元素的大小对其进行处理
+  ZLEXCOUNT sorted_set min max：统计有序集合里面，位于指定大小范围内的元素的数量
+  ZRANGEBYLEX sorted_set min max [LIMIT offset count]：按照从小到大的顺序，返回有序集合里面位于指定大小范围之内的元素
+  ZREMRANGEBYLEX sorted_set min max：从有序集合里面，移除位于指定大小范围之内的元素
 ```
 
 ---

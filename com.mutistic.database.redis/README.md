@@ -519,7 +519,6 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
     MIN：结果集就是所有集合中元素按照分值排列的最小的元素
     MAX：结果集就是所有集合中元素按照分值排列的最大的元素
 
-
   ZLEXCOUNT sorted_set min max：统计有序集合里面，位于指定大小范围内的元素的数量
   ZRANGEBYLEX sorted_set min max [LIMIT offset count]：按照从小到大的顺序，返回有序集合里面位于指定大小范围之内的元素
   ZREMRANGEBYLEX sorted_set min max：从有序集合里面，移除位于指定大小范围之内的元素
@@ -531,7 +530,59 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 
 ---
 ### <a id="a_commont">八、常用操作命令：</a> <a href="#a_zse">last</a> <a href="#a_common">next</a>
-一、set(集合)：
+一、数据库管理：
+```
+  REDIS-SERVER [redis.config]：开启Redis服务端，redis.config指定配置文件及路径
+  AUTH password：使用给定的密码连接服务器
+  ECHO message：让服务器打印指定的消息，用于测试连接
+  PING：向服务器发送一条 PING 消息，用于测试连接或者测量延迟值
+  QUIT：请求服务器关闭与当前客户端的连接
+  SELECT number：切换至指定的数据库。默认16个数据库，索引从0开始，通过redis.conf的databases参数配置
+
+  CONFIG SET option value：为给定的配置选项设置值
+  CONFIG GET option：返回给定配置选项的值
+  CONFIG REWRITE：对服务器的配置选项文件进行重写，并将改写后的文件储存在硬盘里面
+  CONFIG RESETSTAT：重置服务器的某些统计数据
+  INFO [section]：返回与服务器相关的统计信息
+  TIME：返回服务器当前的 UNIX 时间戳
+  SHUTDOWN [SAVE|NOSAVE]：关闭服务器。
+    [SAVE|NOSAVE]：可选参数，是否备份数据。SAVE备份数据，NOSAVE不备份。
+```
+二、数据库键管理：
+```
+  KEYS pattern：从数据库里面获取所有符合给定模式的键
+  SCAN cursor [MATCH pattern] [COUNT count]：以渐进的方式获取数据库中的键
+  RANDOMKEY：从数据库里面随机地返回一个键
+  SORT key [BY pattern] [LIMIT offset count] [GET pattern [GET pattern ...]][ASC|DESC] [ALPHA] [STORE destination]：对给定的键进行排序
+  
+  EXISTS key：检查给定的键是否存在于数据库
+  DBSIZE：返回当前正在使用的数据库包含的键值对数量
+  TYPE key：返回给定键储存的值的类型。共五种：string、hash、list、set、zset
+  RENAME key new-key：为给定键设置一个新名字
+  RENAMENX key new-key：仅在新名字尚未被使用的情况下，为给定键设置一个新名字
+  MOVE key db：将当前数据库中的给定键移动到指定的数据库
+  DEL key [key ...]：从数据库中删除给定的一个或多个键
+  FLUSHDB：删除当前数据库中的所有键
+  FLUSHALL：删除服务器中，所有数据库的所有键
+```
+四、过期时间管理：
+```
+  EXPIRE key seconds：为键设置秒级精度的过期时间
+  PEXPIRE key milliseconds：为键设置毫秒级精度的过期时间
+  EXPIREAT key timestamp-in-seconds：为键设置秒级精度的过期 UNIX 时间戳
+  PEXPIREAT key timestamp-in-milliseconds：为键设置毫秒级精度的过期 UNIX 时间戳
+ 
+  TTL key：以秒级精度返回给定键的剩余存活时间
+  PTTL key：以毫秒级精度返回给定键的剩余存活时间移除过期时间
+  PERSIST key：移除键的过期时间
+```
+五、安全：
+```
+  1、在redis.conf配置文件，通过requirepass参数设置密码保护，那么slave在开始同步之前必须进行身份验证，否则它的同步请求会被拒绝
+  2、通过客户端CONFIG SET option value：为给定的配置选项设置值。来设置requirepass参数。
+  链接客户端命令也可以通过 -a password 追加密码登录。也可以通过 AUTH password：使用给定的密码连接服务器
+  3、可以通过过期时间+访问次数来限制访问。
+```
 
 ---
 ### <a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a> <a href="#">last</a> <a href="#a_notes">next</a>

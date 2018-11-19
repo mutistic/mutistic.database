@@ -17,6 +17,7 @@
 5. <a href="#a_list">list类型</a>
 6. <a href="#a_set">set(集合)</a>
 7. <a href="#a_zset">zset(sorted set，有序集合)</a>
+8. <a href="#a_common">常用操作命令</a>
 97. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
@@ -441,7 +442,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 ```
 
 ---
-### <a id="a_zset">七、zset(sorted set，有序集合)：</a> <a href="#a_set">last</a> <a href="#">next</a>
+### <a id="a_zset">七、zset(sorted set，有序集合)：</a> <a href="#a_set">last</a> <a href="#a_common">next</a>
 一、set(集合)：
 ```
   Redis 有序集合和集合一样也是string类型元素的集合,且不允许重复的成员。
@@ -491,8 +492,10 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 
   ZRANGEBYSCORE sorted_set min max [WITHSCORES] [LIMIT offset count]：按照分值从小到大的顺序，返回指定分值范围之内的元素
   ZREVRANGEBYSCORE sorted_set max min [WITHSCORES] [LIMIT offset count]：按照分值从大到小的顺序，返回指定分值范围之内的元素
-    默认情况下，区间的取值使用闭区间 (小于等于或大于等于)，你也可以通过给参数前增加 ( 符号来使用可选的开区间 (小于或大于)，eg:
-      闭区间0 <= score <= 3：ZRANGEBYSCORE sorted_set 0 3。开区间0 < score < 3：ZRANGEBYSCORE sorted_set (0 (3 
+    默认情况下，区间的取值使用闭区间 (小于等于或大于等于)，可以通过给参数前增加 ( 符号来使用可选的开区间 (小于或大于)，
+      但是不能使用闭区间 [ 符号。
+      eg: 闭区间0 <= score <= 3：ZRANGEBYSCORE sorted_set 0 3。
+      开区间0 < score < 3：ZRANGEBYSCORE sorted_set (0 (3 
     [LIMIT offset count]：可选参数，指分页，offset表示第几页，count表示每页显示内容数
 
   ZSCAN sorted_set cursor [MATCH pattern] [COUNT count]：以渐进的方式，返回有序集合包含的元素及其分值。参考list中的SCAN的用法
@@ -501,17 +504,34 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
   ZREMRANGEBYSCORE sorted_set min max：移除有序集合中，分值位于指定范围内的元素。返回被移除成员的数量。
 
   注意：INF(infinite的缩写)表示无穷大，此处redis支持此特殊字符，使用分值或区间时，-INF表示负无穷大，+INF表示正无穷大。
-  eg： ZRANGEBYSCORE sorted_set -INF +INF：按照分值从小到大的顺序，返回所有的元素
+  eg： ZRANGEBYSCORE sorted_set -INF +INF：按照分值从小到大的顺序，返回所有的元素。
+  -INF和+INF可以简写为 - +，eg：ZRANGEBYSCORE sorted_set - +
 ```
 
 四、集合运算：
 ```
-  ZINTERSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]：对给定数量的有序集合执行交集计算，并将计算的结果储存到目标有序集合里面
-  ZUNIONSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]：对给定数量的有序集合执行并集计算，并将计算的结果储存到目标有序集合里面根据元素的大小对其进行处理
+  ZINTERSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM|MIN|MAX]：对给定数量的有序集合执行交集计算，并将计算的结果储存到目标有序集合里面
+  ZUNIONSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM|MIN|MAX]：对给定数量的有序集合执行并集计算，并将计算的结果储存到目标有序集合里面根据元素的大小对其进行处理
+  [WEIGHTS]：可选参数，可以为每个给定的有序集指定一个乘法因子，每个给定有序集的所有成员的score值在传递给聚合函数之前都要先乘以该因子。
+如果WEIGHTS没有给定，默认就是1
+  [AGGREGATE]：可选参数，指定计算的结果集的聚合方式，默认使用的参数SUM。
+    SUM：可以将所有集合中某个成员的score值之和作为结果集中该成员的score值
+    MIN：结果集就是所有集合中元素按照分值排列的最小的元素
+    MAX：结果集就是所有集合中元素按照分值排列的最大的元素
+
+
   ZLEXCOUNT sorted_set min max：统计有序集合里面，位于指定大小范围内的元素的数量
   ZRANGEBYLEX sorted_set min max [LIMIT offset count]：按照从小到大的顺序，返回有序集合里面位于指定大小范围之内的元素
   ZREMRANGEBYLEX sorted_set min max：从有序集合里面，移除位于指定大小范围之内的元素
+    min：在有序集合中分数排名较小的成员
+    max：在有序集合中分数排名较大的成员
+    min和max特制成员，其名称前需要加 [ 符号(闭区间)或 ( 符号(开区间)作为开头, 符号与成员之间不能有空格
+    min 和 max 不能反, max 放前面 min放后面会导致返回结果为0， 可以使用 - 和 + 表示得分最小值和最大值
 ```
+
+---
+### <a id="a_commont">八、常用操作命令：</a> <a href="#a_zse">last</a> <a href="#a_common">next</a>
+一、set(集合)：
 
 ---
 ### <a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a> <a href="#">last</a> <a href="#a_notes">next</a>

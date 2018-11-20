@@ -36,10 +36,9 @@
   单位是对大小写不敏感的 1GB 1Gb 1gB 是相同的
 ```
 2、include参数：导入其他配置文件：
-- include /path/to/local.conf 
-- # include /path/to/other.conf
+- include /path/to/local.conf # include /path/to/other.conf
 ```
-  include参数可以配置一个或多个其他的配置文件。如果你有一个适用于所有Redis服务器的标准配置模板但也需要一些每个服务器自定义的设置，这个功能将很有用。
+  include：可以配置一个或多个其他的配置文件。如果你有一个适用于所有Redis服务器的标准配置模板但也需要一些每个服务器自定义的设置，这个功能将很有用。
 被包含的配置文件也可以包含其他配置文件，所以需要谨慎的使用这个功能。
   注意“inclue”选项不能被admin或Redis哨兵的"CONFIG REWRITE"命令重写。
 因为Redis总是使用最后解析的配置行最为配置指令的值, 你最好在这个文件的开头配置includes来 避免它在运行时重写配置。 
@@ -54,13 +53,10 @@
 
   pidfile：当以守护进程方式运行时，默认Redis会把进程ID写到 /var/run/redis.pid。可以在这个参数修改路径
 ```
-```Properties
-databases 16
-port 6379
-bind 192.168.16.113 
-# bind 192.168.1.100
-timeout 0
-```
+- databases 16
+- port 6379
+- bind 192.168.16.113 
+- timeout 0
 ```
   database：设置数据库个数。默认数据库是 DB 0，数据库索引从0开始，可以通过select <dbid>来为每个连接使用不同的数据库。
 
@@ -71,19 +67,15 @@ timeout 0
   
   timeout：一个客户端空闲多少秒后关闭连接。(0代表禁用，永不关闭)
 ```
-```Properties
-unixsocket /tmp/redis.sock
-unixsocketperm 755
-```
+- unixsocket /tmp/redis.sock
+- unixsocketperm 755
 ```
   unixsocket：指定用来监听Unix套套接字的路径。没有默认值，所以在没有指定的情况下Redis不会监听Unix套接字
   
   unixsocketperm：指定用来监听Unix套套接字大小
 ```
-```Properties
-tcp-backlog 511
-tcp-keepalive 0
-```
+- tcp-backlog 511
+- tcp-keepalive 0
 ```
   tcp-backlog：在高并发环境下你需要一个高backlog值来避免慢客户端连接问题。
     注意Linux内核默默地将这个值减小到/proc/sys/net/core/somaxconn的值，所以需要确认增大somaxconn和tcp_max_syn_backlog两个值来达到想要的效果。
@@ -94,10 +86,8 @@ tcp-keepalive 0
     在Linux上，这个指定的值(单位：秒)就是发送ACK的时间间隔。
     注意：要关闭这个连接需要两倍的这个时间值。在其他内核上这个时间间隔由内核配置决定。这个选项的一个合理值是60秒
 ```
-```Properties
-loglevel notice
-logfile "logs/redis.log"
-```
+- loglevel notice
+- logfile "logs/redis.log"
 ```
   logger：指定服务器调试等级：debug、verbose、notice、warning
     debug：大量信息，对开发/测试有用
@@ -108,11 +98,9 @@ logfile "logs/redis.log"
   logfile：指明日志文件名。也可以使用"stdout"来强制让Redis把日志信息写到标准输出上。
     注意:如果Redis以守护进程方式运行，而设置日志显示到标准输出的话，日志会发送到/dev/null
 ```
-```Properties
-syslog-enabled yes
-syslog-ident redis
-syslog-facility local0
-```
+- syslog-enabled yes
+- syslog-ident redis
+- syslog-facility local0
 ```
   ssyslog-enabled：要使用系统日志记录器，只要设置 "syslog-enabled" 为 "yes" 就可以了。
   
@@ -124,11 +112,9 @@ syslog-facility local0
 ---
 ### <a id="a_snapshotting">二、持久化：</a> <a href="#a_base">last</a> <a href="#a_hash">next</a>
 1、snapshotting（快照）持久化：
-```Properties
-save 900 1
-save 300 10
-save 60 10000
-```
+- save 900 1
+- save 300 10
+- save 60 10000
 ```
   save：snapshotting（快照）默认方式，将内存中以快照的方式写入到二进制文件中，默认文件名为dump.rdb。
   save <seconds> <changes>
@@ -140,12 +126,10 @@ save 60 10000
   注意：不写磁盘的话就把所有 "save" 设置注释掉就行了。
   通过添加一条带空字符串参数的save指令也能移除之前所有配置的save指令，像下面的例子： save "" 
 ```
-```Properties
-stop-writes-on-bgsave-error yes
-rdbchecksum yes
-dbfilename dump.rdb
-dir data/
-```
+- stop-writes-on-bgsave-error yes
+- rdbchecksum yes
+- dbfilename dump.rdb
+- dir data/
 ```
   stop-writes-on-bgsave-error：默认如果开启RDB快照(至少一条save指令)并且最新的后台保存失败，Redis将会停止接受写操作
 这将使用户知道数据没有正确的持久化到硬盘，否则可能没人注意到并且造成一些灾难。  如果后台保存进程能重新开始工作，Redis将自动允许写操作

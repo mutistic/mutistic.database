@@ -88,16 +88,14 @@ unixsocketperm 755
 tcp-backlog 511
 tcp-keepalive 0
 ```
-```
-  tcp-backlog：在高并发环境下你需要一个高backlog值来避免慢客户端连接问题。
+- tcp-backlog：在高并发环境下你需要一个高backlog值来避免慢客户端连接问题。
     注意Linux内核默默地将这个值减小到/proc/sys/net/core/somaxconn的值，所以需要确认增大somaxconn和tcp_max_syn_backlog两个值来达到想要的效果。
  
-  tcp-keepalive：如果非零，则设置SO_KEEPALIVE选项来向空闲连接的客户端发送ACK，由于以下两个原因这是很有用的：
+- tcp-keepalive：如果非零，则设置SO_KEEPALIVE选项来向空闲连接的客户端发送ACK，由于以下两个原因这是很有用的：
     1、能够检测无响应的对端。
     2、让该连接中间的网络设备知道这个连接还存活。
     在Linux上，这个指定的值(单位：秒)就是发送ACK的时间间隔。
     注意：要关闭这个连接需要两倍的这个时间值。在其他内核上这个时间间隔由内核配置决定。这个选项的一个合理值是60秒
-```
 ```Properties
 loglevel notice
 logfile "logs/redis.log"

@@ -168,7 +168,7 @@
     appendfsync always：每次写操作都立刻写入到aof文件。慢，但是最安全。
     appendfsync everysec：每秒写一次。折中方案。 
   默认的 "everysec" 通常来说能在速度和数据安全性之间取得比较好的平衡。根据的理解来决定，如果能放宽该配置为"no" 
-来获取更好的性能(但如果能忍受一些数据丢失，可以考虑使用默认的快照持久化模式)，或者相反，用“always”会比较慢但比everysec要更安全。
+来获取更好的性能(但如果能忍受一些数据丢失,可以考虑使用默认的快照持久化模式),或者相反,用always会比较慢但比everysec要更安全。
   参考：http://antirez.com/post/redis-persistence-demystified.html 如果不能确定，就用 "everysec"
 
   no-appendfsync-on-rewrite：如果AOF的同步策略设置成 "always" 或者 "everysec"，并且后台的存储进程
@@ -214,7 +214,7 @@
 ```
   slave-serve-stale-data：当一个slave失去和master的连接，或者同步正在进行中，slave的行为有两种可能：
     1、设置为 "yes" (默认值)，slave会继续响应客户端请求，可能是正常数据，也可能是还没获得值的空数据。
-    2、设置为 "no"，slave会回复"正在从master同步，SYNC with master in progress）"来处理各种请求，除了 INFO 和 SLAVEOF 命令。
+    2、设置为 "no"，slave会回复"正在从master同步，SYNC with master in progress）"来处理各种请求,除了INFO和SLAVEOF命令。
 
   slave-read-only：可以配置salve实例是否接受写操作。可写的slave实例可能对存储临时数据比较有用
 (因为写入salve的数据在同master同步之后将很容被删除)，但是如果客户端由于配置错误在写入时也可能产生一些问题。
@@ -266,7 +266,7 @@ Linux内核的默认配置会达到40毫秒
 - min-slaves-max-lag 10
 ```
   如果master少于N个延时小于等于M秒的已连接slave，就可以停止接收写操作。
-N个slave需要是“oneline”状态，延时是以秒为单位，并且必须小于等于指定值，是从最后一个从slave接收到的ping(通常每秒发送)开始计数。
+N个slave需要是“oneline”状态,延时是以秒为单位,并且必须小于等于指定值，是从最后一个从slave接收到的ping(通常每秒发送)开始计数
   
   例如至少需要3个延时小于等于10秒的slave用下面的指令：
     min-slaves-to-write 3
@@ -301,7 +301,7 @@ N个slave需要是“oneline”状态，延时是以秒为单位，并且必须�
 - maxmemory `<bytes>`
 - maxmemory-policy volatile-lru
 ```
-  maxmemory：不要用比设置的上限更多的内存。一旦内存使用达到上限，Redis会根据选定的回收策略(参见：maxmemmory-policy)删除key。
+  maxmemory：不要用比设置的上限更多的内存.一旦内存使用达到上限,Redis会根据选定的回收策略(参见：maxmemmory-policy)删除key
 如果因为删除策略Redis无法删除key，或者策略设置为 "noeviction"，Redis会回复需要更多内存的错误信息给命令。
   例如，SET,LPUSH等等，但是会继续响应像Get这样的只读命令。
   在使用Redis作为LRU缓存，或者为实例设置了硬性内存限制的时候（使用 "noeviction" 策略）的时候，这个选项通常事很有用的。

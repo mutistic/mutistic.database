@@ -18,7 +18,9 @@
 6. <a href="#a_set">set(集合)</a>
 7. <a href="#a_zset">zset(sorted set，有序集合)</a>
 8. <a href="#a_common">常用操作命令</a>
-97. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
+9. <a href="#a_transaction">事务(transaction)、持久化、发布与订阅(pub/sub)</a>
+96. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
+97. <a href="#a_appendix2">附录B：Redis配置文件说明</a>
 98. <a href="#a_notes">Notes</a>
 99. <a href="#a_down">down</a>
 
@@ -529,10 +531,11 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 ```
 
 ---
-### <a id="a_commont">八、常用操作命令：</a> <a href="#a_zse">last</a> <a href="#a_common">next</a>
+### <a id="a_commont">八、常用操作命令：</a> <a href="#a_zse">last</a> <a href="#a_transaction">next</a>
 一、数据库管理：
 ```
   REDIS-SERVER [redis.config]：开启Redis服务端，redis.config指定配置文件及路径
+  REDIS-CLI -h host -p port [-a password][--raw]：开启Redis客户端，-h指定ip地址，-p指定端口号，-a可选参数指定密码，--raw处理中文乱码
   AUTH password：使用给定的密码连接服务器
   ECHO message：让服务器打印指定的消息，用于测试连接
   PING：向服务器发送一条 PING 消息，用于测试连接或者测量延迟值
@@ -585,7 +588,86 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 ```
 
 ---
-### <a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a> <a href="#">last</a> <a href="#a_notes">next</a>
+### <a id="a_transaction">九、事务(transaction)、持久化、发布与订阅(pub/sub)：</a> <a href="#a_commont">last</a> <a href="#a_appendix">next</a>
+一、redis事务说明：
+```
+1、Redis 事务可以一次执行多个命令， 并且带有以下两个重要的保证：
+    批量操作在发送 EXEC 命令前被放入队列缓存。
+    收到 EXEC 命令后进入事务执行，事务中任意命令执行失败，其余的命令依然被执行。
+    在事务执行过程，其他客户端提交的命令请求不会插入到事务执行命令序列中。
+
+2、一个事务从开始到执行会经历以下三个阶段： 开始事务、命令入队、执行事务
+
+3、redis是的使用方法：
+  首先还是使用 multi方法打开事务，然后进行设置。这时设置的数据都会放入队列里进行保存，最后使用exec命令执行，把数据依次存储到redis中，
+使用discard方法取消事务。
+
+4、redis的事务不能保证同事成功或失败进行提交或回滚。
+
+5、单个 Redis 命令的执行是原子性的，但 Redis 没有在事务上增加任何维持原子性的机制，所以 Redis 事务的执行并不是原子性的。
+事务可以理解为一个打包的批量执行脚本，但批量指令并非原子化的操作，中间某条指令的失败不会导致前面已做指令的回滚，也不会造成后续的指令不做
+
+6、基本事务操作：
+  MULTI：开始一次事务。支持将插入不同的数据库。
+  EXEC：执行事务。执行exec命令后会取消对所有键的监控，如果不想执行事务中的命令
+    语法错误或执行时出错，抛出(EXECABORT)异常：(error) EXECABORT Transaction discarded because of previous errors.
+    没有事务时，抛出一个(ERR)异常：(error)ERR DISCARD without MULTI
+  
+  DISCARD：取消事务。没有事务时，抛出一个(ERR)异常：(error)ERR DISCARD without MULTI
+
+7、乐观锁事务操作：
+  WATCH key [key ...]：监视给定的键，看它们在事务执行之前是否已被修改
+  UNWATCH：取消对所有键的监视
+```
+二、持久化：
+```
+1、redis是一个支持持久化的内存数据库，也就是说redis需要经常见内存中的数据同步到硬盘来保证持久化
+
+2、redis持久化的方式：
+  2.1、snapshotting（快照）默认方式，将内存中以快照的方式写入到二进制文件中，默认文件名为dump.rdb。
+可以通过配置项dbfilename设置文件名，dir配置项指定持久化目录。如不想保存则注释所有的 save配置项。
+    snapshotting参数设置：save <seconds> <changes>：表示经过多少秒且数据变化次数之后，则发起快照保存，把数据库写到磁盘上
+    eg：save 900 1       # 900秒（15分钟）之后，且至少1次变更
+        save 300 10      # 300秒（5分钟）之后，且至少10次变更
+        save 60  10000   # 60秒之后，且至少10000次变更
+
+  2.2、append-only file（简写aof）的方式(类似于oracle的commit日志)由于快照方式时在一定时间间隔执行的，所以可能发生redis意外的down的情况，
+就会失去最后一次快照后的所有修改的数据、aof比快照方式有更好的持久化性，是由于redis会讲没一个收到的写命令都通过write函数追加到命令中，
+当redis重新启动是回重新执行文件中保存的写命令来在内存中重建这个数据库的内容，文件默认为：bin/appendonly.aof。通过dir和appendfilename参数修改。
+不是立即写到硬盘上，可以通过配置文件修改强制写到硬盘中。
+    aof参数配置：
+      appendonly no   # yes表示启动aof持久化，no表示不启动。默认情况下，Redis是异步的把数据导出到磁盘上
+      # appendfsync always # 收到写命令就立即写入到磁盘，效率最慢，但是保证完全的持久化
+      appendfsync everysec # 每隔一秒写入磁盘一次，在性能和持久化方面做了折中
+      # appendfsync no     # 完全依赖OS(Operating System，操作系统)性能最好，不立刻执行，只有在操作系统需要刷的时候再刷。比较快
+      appendfilename "appendonly.aof" # 纯累加文件名字（默认："appendonly.aof"）
+```
+三、发布与订阅(pub/sub)：
+```
+1、Redis 发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发送消息，订阅者(sub)接收消息。
+2、Redis 客户端可以订阅任意数量的频道。
+3、Redis 发布订阅在大数据量下会有性能瓶颈，所以一般用于小数据量的。
+4、发布消息：
+  PUBLISH channel message：向指定频道发布一条消息。发送成功返回(integer)1，不成功返回(integer)0
+
+5、订阅消息：
+  SUBSCRIBE channel [channel ...]：订阅给定的一个或多个频道
+  PSUBSCRIBE pattern [pattern ...]：订阅给定的一个或多个模式
+
+6、退订消息：
+  UNSUBSCRIBE [channel [channel ...]]：退订给定的一个或多个频道，如果没有给定频道则退订全部频道
+  PUNSUBSCRIBE [pattern [pattern ...]]：退订给定的一个或多个模式，如果没有给定模式则退订全部模式
+
+7、查看订阅信息：
+  PUBSUB CHANNELS [pattern]：列出当前被订阅的频道
+  PUBSUB NUMSUB [channel channel ...]：返回给定频道的订阅者数量
+  PUBSUB NUMPAT：返回当前被订阅模式的数量
+```
+
+---
+### <a id="a_appendix">附录：</a> <a href="#a_transaction">last</a> <a href="#a_notes">next</a>
+<a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a>
+<a id="a_appendix2">[附录B：Redis配置文件说明](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-conf.md)</a>
 
 ---
 ### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.hibernate/notes)</a> <a href="#a_appendix1">last</a> <a href="#a_catalogue">next</a>

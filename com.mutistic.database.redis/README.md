@@ -2,7 +2,11 @@
 [Redis中文网](http://www.Redis.cn)  
 [Redis操作命令详解](http://doc.redisfans.com)  
 [Redis文档](http://www.redis.cn/documentation.html)   
+[Redis持久化机制](https://www.cnblogs.com/xingzc/p/5988080.html)  
+[Redis文档-持久化](http://redis.io/topics/persistence)  
+[Redis文档-发布/通知](http://redis.io/topics/keyspace-events)  
 [附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)  
+[附录B：Redis配置文件说明](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-conf.md)   
 
 |作者|Mutistic|
 |---|---|
@@ -134,6 +138,15 @@
   10、关闭Redis服务：
     Windows下：客户端执行命令：shutdown
     Linux下（cli客户端 -h IP地址 -p 端口号[默认6379] shutdown）：/usr/local/redis/redis-cli -h 192.168.16.113 -p 6379 shutdown
+```
+```
+  守护进程（Daemon Process），也就是通常说的 Daemon 进程（精灵进程），
+是 Linux 中的后台服务进程。它是一个生存期较长的进程，通常独立于控制终端并且周期性地执行某种任务或等待处理某些发生的事件。
+
+  守护进程是个特殊的孤儿进程，这种进程脱离终端，为什么要脱离终端呢？
+之所以脱离于终端是为了避免进程被任何终端所产生的信息所打断，其在执行过程中的信息也不在任何终端上显示。
+由于在 linux 中，每一个系统与用户进行交流的界面称为终端，每一个从此终端开始运行的进程都会依附于这个终端，
+这个终端就称为这些进程的控制终端，当控制终端被关闭时，相应的进程都会自动关闭
 ```
 
 ---
@@ -619,7 +632,9 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
   WATCH key [key ...]：监视给定的键，看它们在事务执行之前是否已被修改
   UNWATCH：取消对所有键的监视
 ```
-二、持久化：
+二、持久化：  
+[Redis持久化机制](https://www.cnblogs.com/xingzc/p/5988080.html)  
+[Redis文档-持久化](http://redis.io/topics/persistence)
 ```
 1、redis是一个支持持久化的内存数据库，也就是说redis需要经常见内存中的数据同步到硬盘来保证持久化
 
@@ -642,7 +657,8 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
       # appendfsync no     # 完全依赖OS(Operating System，操作系统)性能最好，不立刻执行，只有在操作系统需要刷的时候再刷。比较快
       appendfilename "appendonly.aof" # 纯累加文件名字（默认："appendonly.aof"）
 ```
-三、发布与订阅(pub/sub)：
+三、发布与订阅(pub/sub)：  
+[Redis文档-发布/通知](http://redis.io/topics/keyspace-events)
 ```
 1、Redis 发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发送消息，订阅者(sub)接收消息。
 2、Redis 客户端可以订阅任意数量的频道。

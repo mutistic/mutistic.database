@@ -666,7 +666,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 
 ---
 ### <a id="a_appendix">附录：</a> <a href="#a_transaction">last</a> <a href="#a_notes">next</a>
-<a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a>
+<a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a>  
 <a id="a_appendix2">[附录B：Redis配置文件说明](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-conf.md)</a>
 
 ---

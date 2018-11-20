@@ -36,10 +36,8 @@
   单位是对大小写不敏感的 1GB 1Gb 1gB 是相同的
 ```
 2、include参数：导入其他配置文件：
-```Properties 
-include /path/to/local.conf 
-# include /path/to/other.conf
-```
+- include /path/to/local.conf 
+- # include /path/to/other.conf
 ```
   include参数可以配置一个或多个其他的配置文件。如果你有一个适用于所有Redis服务器的标准配置模板但也需要一些每个服务器自定义的设置，这个功能将很有用。
 被包含的配置文件也可以包含其他配置文件，所以需要谨慎的使用这个功能。
@@ -48,10 +46,8 @@ include /path/to/local.conf
 如果相反你想用includes的配置覆盖原来的配置，你最好在该文件的最后使用include
 ```
 3、基本参数：
-```Properties
-daemonize no 
-pidfile /var/run/redis.pid
-```
+- daemonize no 
+- pidfile /var/run/redis.pid
 ```
   daemonize：默认Rdis不会作为守护进程运行。如果需要的话配置成'yes'，
 注意配置成守护进程后Redis会将进程号写入文件/var/run/redis.pid
@@ -88,14 +84,16 @@ unixsocketperm 755
 tcp-backlog 511
 tcp-keepalive 0
 ```
-- tcp-backlog：在高并发环境下你需要一个高backlog值来避免慢客户端连接问题。
+```
+  tcp-backlog：在高并发环境下你需要一个高backlog值来避免慢客户端连接问题。
     注意Linux内核默默地将这个值减小到/proc/sys/net/core/somaxconn的值，所以需要确认增大somaxconn和tcp_max_syn_backlog两个值来达到想要的效果。
  
-- tcp-keepalive：如果非零，则设置SO_KEEPALIVE选项来向空闲连接的客户端发送ACK，由于以下两个原因这是很有用的：
+  tcp-keepalive：如果非零，则设置SO_KEEPALIVE选项来向空闲连接的客户端发送ACK，由于以下两个原因这是很有用的：
     1、能够检测无响应的对端。
     2、让该连接中间的网络设备知道这个连接还存活。
     在Linux上，这个指定的值(单位：秒)就是发送ACK的时间间隔。
     注意：要关闭这个连接需要两倍的这个时间值。在其他内核上这个时间间隔由内核配置决定。这个选项的一个合理值是60秒
+```
 ```Properties
 loglevel notice
 logfile "logs/redis.log"

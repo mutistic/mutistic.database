@@ -22,7 +22,8 @@
 6. <a href="#a_set">set(集合)</a>
 7. <a href="#a_zset">zset(sorted set，有序集合)</a>
 8. <a href="#a_common">常用操作命令</a>
-9. <a href="#a_transaction">事务(transaction)、持久化、发布与订阅(pub/sub)</a>
+9. <a href="#a_transaction">事务、持久化、发布订阅</a>
+10. <a href="#a_jedis">Jedis：Redis的Java版本的客户端实现</a>
 96. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 97. <a href="#a_appendix2">附录B：Redis配置文件说明</a>
 98. <a href="#a_notes">Notes</a>
@@ -601,8 +602,8 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 ```
 
 ---
-### <a id="a_transaction">九、事务(transaction)、持久化、发布与订阅(pub/sub)：</a> <a href="#a_commont">last</a> <a href="#a_appendix">next</a>
-一、redis事务说明：
+### <a id="a_transaction">九、事务、持久化、发布订阅：</a> <a href="#a_jedis">last</a> <a href="#a_appendix">next</a>
+一、redis事务(transaction)：
 ```
 1、Redis 事务可以一次执行多个命令， 并且带有以下两个重要的保证：
     批量操作在发送 EXEC 命令前被放入队列缓存。
@@ -657,7 +658,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
       # appendfsync no     # 完全依赖OS(Operating System，操作系统)性能最好，不立刻执行，只有在操作系统需要刷的时候再刷。比较快
       appendfilename "appendonly.aof" # 纯累加文件名字（默认："appendonly.aof"）
 ```
-三、发布与订阅(pub/sub)：  
+三、发布订阅(pub/sub)：  
 [Redis文档-发布/通知](http://redis.io/topics/keyspace-events)
 ```
 1、Redis 发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发送消息，订阅者(sub)接收消息。
@@ -679,6 +680,134 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
   PUBSUB NUMSUB [channel channel ...]：返回给定频道的订阅者数量
   PUBSUB NUMPAT：返回当前被订阅模式的数量
 ```
+
+---
+### <a id="a_jedis">十、Jedis：Redis的Java版本的客户端实现：</a> <a href="#a_transaction">last</a> <a href="#a_appendix">next</a>
+一、Jedis是什么：  
+[Jedis Git](https://github.com/xetorthio/jedis)  
+[Jedis Wiki](https://github.com/xetorthio/jedis/wiki)   
+```
+  Jedis是redis的java版本的客户端实现。jedis就是集成了redis的一些命令操作，封装了redis的java客户端。提供了连接池管理。
+一般不直接使用jedis，而是在其上在封装一层，作为业务的使用。如果用spring的话，可以看看spring 封装的 redis Spring Data Redis
+
+  Jedis与redis 2.8.x和3.xx完全兼容
+```
+二、使用Jedis所需要的jar包：  
+2.1、可以从[Sonatype](https://search.maven.org)上下载：
+[redis.clients:`jedis:2.9.0`](https://search.maven.org/search?q=g:redis.clients)  
+[org.apache.commons:`commons-pool2:2.6.0`](https://search.maven.org/search?q=g:org.apache.commons%20AND%20a:commons-pool2)  
+2.2、Maven依赖方式：redis.clients:jedis:2.9.0 的pom中包含org.apache.commons:commons-pool2:2.6.0 所以不用再添加commons-pool2的依赖
+```xml
+<dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+    <version>2.8.0</version>
+    <type>jar</type>
+    <scope>compile</scope>
+</dependency>
+```
+2.3、Spring boot依赖方式：
+```xml
+<dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+</dependency>
+```
+三、直接创建Jedis实例：
+ClientByJedis.java：
+```Java
+package com.mutistic.redis.java;
+import com.mutisitc.utils.PrintUtil;
+import redis.clients.jedis.Jedis;
+/**
+ * 直接创建Jedis实例
+ */
+public class ClientByJedis {
+  public static void main(String[] args) {
+    PrintUtil.one("直接创建Jedis实例：");
+    
+    String host = "192.168.16.113";
+    PrintUtil.two("1、定义redis的IP地址(和redis.conf的bind参数一致)：", host);
+    
+    int port = 6379;
+    PrintUtil.two("2、定义redis的端口号(和redis.conf的port参数一致，默认为：6379)：", port);
+    
+    Jedis jedis = null;
+    try {
+      jedis = new Jedis(host, port);
+      PrintUtil.two("3、通过构造函数创建redis.clients.jedis.Jedis实例对象", jedis);
+      
+      String ping = jedis.ping();
+      PrintUtil.two("4、通过Jedis.ping()测试连接redis服务", ping);
+      
+      String result = jedis.set("test", "hello Jedis!");
+      PrintUtil.two("5、通过Jedis.set(String key, String value)为字符串键设置值", result);
+      
+      String value = jedis.get("test");
+      PrintUtil.two("6、通过Jedis.get(String key)获取字符串键的值", value);
+    } catch (Exception e) {
+      PrintUtil.err("直接创建Jedis实例，出现异常，打印异常信息：");
+      e.printStackTrace();
+    } finally {
+      if (jedis != null) {
+        jedis.close();
+        PrintUtil.two("7、Jedis.close()", "关闭Jedis");
+      }
+    }
+  }
+}
+```
+四、使用JedisPool获取Jedis实例：
+ClientByJedisPool.java：
+```Java
+package com.mutistic.redis.java;
+import com.mutisitc.utils.PrintUtil;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+// 使用JedisPool获取Jedis实例
+public class ClientByJedisPool {
+  public static void main(String[] args) {
+    PrintUtil.one("使用JedisPool获取Jedis实例");
+    
+    JedisPoolConfig config = new JedisPoolConfig();
+    PrintUtil.two("1、创建redis.clients.jedis.JedisPoolConfig实例对象：", config);
+    
+    String host = "192.168.16.113";
+    PrintUtil.two("2、定义redis的IP地址(和redis.conf的bind参数一致)：", host);
+    
+    JedisPool pool = new JedisPool(config, host);
+    PrintUtil.two("3、创建redis.clients.jedis.JedisPool实例对象", pool);
+    
+    Jedis jedis = null;
+    try {
+      jedis = pool.getResource();
+      PrintUtil.two("4、通过JedisPool.getResource()获取redis.clients.jedis.Jedis实例对象", jedis);
+      
+      String ping = jedis.ping();
+      PrintUtil.two("5、通过Jedis.ping()测试连接redis服务", ping);
+      
+      String result = jedis.set("test", "hello JedisPool!");
+      PrintUtil.two("6、通过Jedis.set(String key, String value)为字符串键设置值", result);
+      
+      String value = jedis.get("test");
+      PrintUtil.two("7、通过Jedis.get(String key)获取字符串键的值", value);
+    } catch (Exception e) {
+      PrintUtil.err("使用JedisPool获取Jedis实例，出现异常，打印异常信息：");
+      e.printStackTrace();
+    } finally {
+      if (jedis != null) {
+        jedis.close();
+        PrintUtil.two("8、Jedis.close()", "关闭Jedis");
+      }
+      pool.close();
+      PrintUtil.two("9、JedisPool.close()", "关闭JedisPool");
+    }
+  }
+}
+```
+五、使用Spring boot自动注入
+
 
 ---
 ### <a id="a_appendix">附录：</a> <a href="#a_transaction">last</a> <a href="#a_notes">next</a>

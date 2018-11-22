@@ -602,7 +602,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 ```
 
 ---
-### <a id="a_transaction">九、事务、持久化、发布订阅：</a> <a href="#a_jedis">last</a> <a href="#a_appendix">next</a>
+### <a id="a_transaction">九、事务、持久化、发布订阅：</a> <a href="#a_commont">last</a> <a href="#a_jedis">next</a>
 一、redis事务(transaction)：
 ```
 1、Redis 事务可以一次执行多个命令， 并且带有以下两个重要的保证：
@@ -684,8 +684,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 ---
 ### <a id="a_jedis">十、Jedis：Redis的Java版本的客户端实现：</a> <a href="#a_transaction">last</a> <a href="#a_appendix">next</a>
 一、Jedis是什么：  
-[Jedis Git](https://github.com/xetorthio/jedis)  
-[Jedis Wiki](https://github.com/xetorthio/jedis/wiki)   
+[Jedis Git](https://github.com/xetorthio/jedis) [Jedis Wiki](https://github.com/xetorthio/jedis/wiki)   
 ```
   Jedis是redis的java版本的客户端实现。jedis就是集成了redis的一些命令操作，封装了redis的java客户端。提供了连接池管理。
 一般不直接使用jedis，而是在其上在封装一层，作为业务的使用。如果用spring的话，可以看看spring 封装的 redis Spring Data Redis
@@ -693,9 +692,9 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
   Jedis与redis 2.8.x和3.xx完全兼容
 ```
 二、使用Jedis所需要的jar包：  
-2.1、可以从[Sonatype](https://search.maven.org)上下载：
-[redis.clients:`jedis:2.9.0`](https://search.maven.org/search?q=g:redis.clients)  
-[org.apache.commons:`commons-pool2:2.6.0`](https://search.maven.org/search?q=g:org.apache.commons%20AND%20a:commons-pool2)  
+2.1、可以从[Sonatype](https://search.maven.org)上下载：  
+[redis.clients:jedis:2.9.0](https://search.maven.org/search?q=g:redis.clients) 
+[org.apache.commons:commons-pool2:2.6.0](https://search.maven.org/search?q=g:org.apache.commons%20AND%20a:commons-pool2)  
 2.2、Maven依赖方式：redis.clients:jedis:2.9.0 的pom中包含org.apache.commons:commons-pool2:2.6.0 所以不用再添加commons-pool2的依赖
 ```xml
 <dependency>
@@ -713,7 +712,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
     <artifactId>jedis</artifactId>
 </dependency>
 ```
-三、直接创建Jedis实例：
+三、直接创建Jedis实例：  
 ClientByJedis.java：
 ```Java
 package com.mutistic.redis.java;
@@ -757,7 +756,7 @@ public class ClientByJedis {
   }
 }
 ```
-四、使用JedisPool获取Jedis实例：
+四、使用JedisPool获取Jedis实例：  
 ClientByJedisPool.java：
 ```Java
 package com.mutistic.redis.java;
@@ -806,7 +805,7 @@ public class ClientByJedisPool {
   }
 }
 ```
-五、在spring boot run启动时使用redis：
+五、在spring boot run启动时使用redis：  
 pom.xml：redis相关依赖：
 ```xml
 <dependency>
@@ -871,7 +870,7 @@ public class ClientByApplication {
   }
 }
 ```
-六、在Controller中使用redis：
+六、在Controller中使用redis：  
 ClientByApplication.java：
 ```Java
 package com.mutistic.redis.connection;

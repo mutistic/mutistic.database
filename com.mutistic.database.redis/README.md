@@ -806,7 +806,113 @@ public class ClientByJedisPool {
   }
 }
 ```
-五、使用Spring boot自动注入
+五、在spring boot run启动时使用redis：
+pom.xml：redis相关依赖：
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+```
+application.properties：redis相关参数配置：
+```properties
+## Redis配置信息
+# Redis数据库索引（默认为0）
+spring.redis.database=0
+# Redis服务器地址
+spring.redis.host=192.168.16.113
+# Redis服务器连接端口
+spring.redis.port=6379
+# Redis服务器连接密码（默认为空）
+spring.redis.password=
+# Redis连接池最大连接数（使用负值表示没有限制）
+spring.redis.jedis.pool.max-active=8
+# Redis连接池最大阻塞等待时间（使用负值表示没有限制）
+spring.redis.jedis.pool.max-wait=-1
+# Redis连接池中的最大空闲连接
+spring.redis.jedis.pool.max-idle=8
+# Redis连接池中的最小空闲连接
+spring.redis.jedis.pool.min-idle=0
+# Redis连接超时时间（毫秒）：设置小于0会导致启动报错，设置为0会照成直接超时，
+#   与原本redis定义的timeout=0（永不过时）含义冲突，可以不设置此项，采用spring默认的超时时间
+#spring.redis.timeout=1000000
+```
+ClientByApplication.java：
+```Java
+package com.mutistic.redis.connection;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import com.mutisitc.utils.PrintUtil;
+// 在spring boot run启动时使用redis
+@SpringBootApplication
+public class ClientByApplication {
+  public static void main(String[] args) {
+    ConfigurableApplicationContext context  = SpringApplication.run(ClientByApplication.class, args);
+    PrintUtil.one("在spring boot run启动时使用redis：");
+    
+    PrintUtil.two("1、通过SpringApplication.run()获取ConfigurableApplicationContext实例：：", context);
+    
+    StringRedisTemplate stringRedisTemplate = context.getBean(StringRedisTemplate.class);
+    PrintUtil.two("2、通过ConfigurableApplicationContext.getBean(StringRedisTemplate.class)"
+        + "获取org.springframework.data.redis.core.StringRedisTemplate实例：：", stringRedisTemplate);
+    
+    stringRedisTemplate.opsForValue().set("testByRun", "Hello StringRedisTemplate By Run");
+    PrintUtil.two("3、通过StringRedisTemplate.opsForValue().set()：", "字符串键设置值");
+    
+    String value = stringRedisTemplate.opsForValue().get("testByRun");
+    PrintUtil.two("4、通过StringRedisTemplate.opsForValue().get(Object key)获取字符串键的值：", value);
+    
+    PrintUtil.two("注意：redis连接超时时间（单位毫秒）不能设置为小于等于0的数字，"
+        + "小于0会导致启动报错，等于0会照成直接超时，与原本redis定义的timeout=0（禁止含义冲突）。可以不设置或设置为：", "spring.redis.timeout=1000000");
+    
+    context.close();
+  }
+}
+```
+六、在Controller中使用redis：
+ClientByApplication.java：
+```Java
+package com.mutistic.redis.connection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+// 在Controller中使用redis
+@RestController
+@RequestMapping("/clientByController/")
+public class ClientByController {
+  /**
+   * 自动注入StringRedisTemplate实例
+   */
+  @Autowired
+  private StringRedisTemplate stringRedisTemplate;
+  /**
+   * 为字符串键设置值
+   * @param key 字符串键
+   * @param value 字符串值
+   * @return
+   */
+  @GetMapping("setString")
+  public String set(String key, String value) {
+    stringRedisTemplate.opsForValue().set(key, value);
+    return "SUCCESS";
+  }
+  
+  /**
+   * 获取字符串键的值
+   * @param key 字符串键
+   * @return 字符串值
+   */
+  @GetMapping("getString")
+  public String get(String key) {
+    return stringRedisTemplate.opsForValue().get(key);
+  }
+  
+}
+```
 
 
 ---

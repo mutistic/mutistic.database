@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @program 使用Controller使用redis
+ * @program 在Controller中使用redis
  * @description 
  * @author mutisitic
  * @date 2018年11月21日

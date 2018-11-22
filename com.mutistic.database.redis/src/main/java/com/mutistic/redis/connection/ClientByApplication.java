@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import com.mutisitc.utils.PrintUtil;
 
 /**
- * @program 使用run启动类使用redis
+ * @program 在spring boot run启动时使用redis
  * @description 
  * @author mutisitic
  * @date 2018年11月21日
@@ -18,7 +18,7 @@ public class ClientByApplication {
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context  = SpringApplication.run(ClientByApplication.class, args);
-		PrintUtil.one("使用run启动类使用redis：");
+		PrintUtil.one("在spring boot run启动时使用redis：");
 		
 		PrintUtil.two("1、通过SpringApplication.run()获取ConfigurableApplicationContext实例：：", context);
 		

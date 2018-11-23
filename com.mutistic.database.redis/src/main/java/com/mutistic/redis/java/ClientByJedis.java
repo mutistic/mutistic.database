@@ -33,6 +33,7 @@ public class ClientByJedis {
 			PrintUtil.two("5、通过Jedis.set(String key, String value)为字符串键设置值", result);
 			
 			String value = jedis.get("test");
+			
 			PrintUtil.two("6、通过Jedis.get(String key)获取字符串键的值", value);
 		} catch (Exception e) {
 			PrintUtil.err("直接创建Jedis实例，出现异常，打印异常信息：");

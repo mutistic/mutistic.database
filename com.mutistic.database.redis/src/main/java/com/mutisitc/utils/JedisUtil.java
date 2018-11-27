@@ -1,5 +1,7 @@
 package com.mutisitc.utils;
 
+import java.io.UnsupportedEncodingException;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -60,5 +62,14 @@ public class JedisUtil {
 		if(JEDIS_POOL != null) {
 			JEDIS_POOL.close();
 		}
+	}
+	
+	public static byte[] encode(String value) {
+		try {
+			return value.getBytes("utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

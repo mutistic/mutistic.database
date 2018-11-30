@@ -1,7 +1,5 @@
 package com.mutisitc.utils;
 
-import java.io.UnsupportedEncodingException;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -26,25 +24,26 @@ public class JedisUtil {
 	 * @date 2018年11月23日
 	 */
 	public static Jedis getJedis() {
-		PrintUtil.one("使用JedisPool获取Jedis实例");
+		PrintUtil.one("0、使用JedisPool获取Jedis实例");
 		
 		JedisPoolConfig config = new JedisPoolConfig();
-		PrintUtil.two("1、创建redis.clients.jedis.JedisPoolConfig实例对象：", config);
+		PrintUtil.two("0.1、创建redis.clients.jedis.JedisPoolConfig实例对象：", config);
 		
-		PrintUtil.two("2、获取配置的redis的IP地址和端口号", "host="+REDIS_HOST+",prot="+REDIS_PORT);
+		PrintUtil.two("0.2、获取配置的redis的IP地址和端口号", "host="+REDIS_HOST+",prot="+REDIS_PORT);
 		
 		if(JEDIS_POOL == null) {
 			 JEDIS_POOL = new JedisPool(config, REDIS_HOST, REDIS_PORT);
 		}
-		PrintUtil.two("3、创建redis.clients.jedis.JedisPool实例对象", JEDIS_POOL);
+		PrintUtil.two("0.3、创建redis.clients.jedis.JedisPool实例对象", JEDIS_POOL);
 		
 		Jedis jedis = null;
 		try {
 			jedis = JEDIS_POOL.getResource();
-			PrintUtil.two("4、通过JedisPool.getResource()获取redis.clients.jedis.Jedis实例对象", jedis);
+			PrintUtil.two("0.4、通过JedisPool.getResource()获取redis.clients.jedis.Jedis实例对象", jedis);
 		} catch (Exception e) {
 			PrintUtil.err("使用JedisPool获取Jedis实例，出现异常，打印异常信息：");
 			e.printStackTrace();
+			close(jedis);
 		} 
 		return jedis;
 	}
@@ -62,14 +61,5 @@ public class JedisUtil {
 		if(JEDIS_POOL != null) {
 			JEDIS_POOL.close();
 		}
-	}
-	
-	public static byte[] encode(String value) {
-		try {
-			return value.getBytes("utf-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 }

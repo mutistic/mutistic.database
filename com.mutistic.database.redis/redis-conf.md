@@ -61,6 +61,8 @@
 
   bind：默认Redis监听服务器上所有可用网络接口的连接。可以用"bind"配置指令跟一个或多个ip地址来实现。
     可以监听一个或多个网络接口，不建议配置为127.0.0.1或localhost
+    ps：当设置的ip地址于当前ip不一致时启动服务端会报错：
+      [12540] 30 Nov 15:56:39.223 # Creating Server TCP listening socket 192.168.16.113:6379: bind: No error
   
   timeout：一个客户端空闲多少秒后关闭连接。(0代表禁用，永不关闭)
 ```

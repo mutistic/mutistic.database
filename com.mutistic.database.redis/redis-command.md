@@ -107,7 +107,7 @@
 |LPOP list|移除并返回列表左端第一个元素|
 |RPOP list|移除并返回列表右端第一个元素|
 |BLPOP list [list ...] timeout|在指定的时限内，移除首个非空列表的最左端元素|
-|BRPOP list [list ...] timeout|在指定的时限内，移除首个非空列表的最右端元素移除元素然后添加元素|
+|BRPOP list [list ...] timeout|在指定的时限内，移除首个非空列表的最右端元素|
 |RPOPLPUSH source_list target_list|移除源列表的最右端元素，并将该元素添加到目标列表的左端|
 |BRPOPLPUSH source_list target_list timeout|在指定的时限内，尝试移除源列表的最右端元素，并将该元素添加到目标列表的左端|
 

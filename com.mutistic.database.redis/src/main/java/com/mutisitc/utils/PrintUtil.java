@@ -1,5 +1,7 @@
 package com.mutisitc.utils;
 
+import java.util.Map;
+
 /**
  * @program 打印工具类
  * @description
@@ -46,29 +48,18 @@ public class PrintUtil {
 		return val;
 	}
 
-	// public static String err(Object str) {
-	// String val = LINE_LONG_LN + (str == null ? "" : str);
-	// System.err.println(val);
-	// return val;
-	// }
-	//
-	// public static String one(Object str) {
-	// String val = LINE_LONG_LN + (str == null ? "" : str);
-	// System.out.println(val);
-	// return val;
-	// }
-	//
-	// public static String two(Object str, Object obj) {
-	// String val = LINE_SHORT_LN + (str == null ? "" : str) + (obj == null ? ""
-	// : T_LEFT + obj + T_RIGTH);
-	// System.out.println(val);
-	// return val;
-	// }
-	//
-	// public static String three(Object str, Object obj) {
-	// String val = LINE_SHORT + (str == null ? "" : str) + (obj == null ? "" :
-	// T_LEFT + obj + T_RIGTH);
-	// System.out.println(val);
-	// return val;
-	// }
+	@SuppressWarnings("rawtypes")
+	public static String toString(Map obj) {
+		if(obj == null) {
+			return "";
+		}
+		
+		StringBuffer str = new StringBuffer(64);
+		str.append("[");
+		for (Object key : obj.keySet()) {
+			str.append(key+":"+obj.get(key)+",");
+		}
+
+		return str.substring(0, str.length()-1)+"]";
+	}
 }

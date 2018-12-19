@@ -12,7 +12,7 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 public class JedisUtil {
 	/** redis IP地址 */
-	private static String REDIS_HOST = "192.168.16.113";
+	private static String REDIS_HOST = "192.168.16.170";
 	/** redis 端口号 */
 	private static int REDIS_PORT = 6379;
 	/** redis.clients.jedis.JedisPool实例 */

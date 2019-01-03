@@ -27,6 +27,7 @@
 11. <a href="#a_jString">使用Jedis API操作String数据类型</a>
 12. <a href="#a_jHash">使用Jedis API操作Hash数据类型</a>
 13. <a href="#a_jList">使用Jedis API操作List数据类型</a>
+14. <a href="#a_jSet">使用Jedis API操作Set数据类型</a>
 96. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 97. <a href="#a_appendix2">附录B：Redis配置文件说明</a>
 98. <a href="#a_notes">Notes</a>
@@ -1102,6 +1103,8 @@ import java.util.Set;
 import com.mutisitc.utils.JedisUtil;
 import com.mutisitc.utils.PrintUtil;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 // 使用Jedis API操作Hash数据类型
 public class HashCommand {
   public static void main(String[] args) {
@@ -1192,12 +1195,23 @@ public class HashCommand {
     Map<String, String> allMap = jedis.hgetAll("Hash:HMSET");
     PrintUtil.two("3.6、hgetAll(String key)：返回散列包含的所有键值对【HGETALL hash】",
         "key=Hash:MHSET, allMap=" + PrintUtil.toString(allMap));
+
+    ScanResult<Entry<String, String>> scanResult = jedis.hscan("Hash:HMSET", "0");
+    PrintUtil.two("3.7、hscan(String key, String cursor)：以渐进的方式返回散列包含的键值对【HSCAN hash cursor】",
+        "key=Hash:HMSET, scanResult=" + PrintUtil.toString(scanResult.getResult()));
+    
+    ScanParams scanParams = new ScanParams();
+    scanParams.match("key*");
+    scanParams.count(2);
+    ScanResult<Entry<String, String>> scanResult2 = jedis.hscan("Hash:HMSET", "2", scanParams);
+    PrintUtil.two("3.7.1、hscan(String key, String cursor, ScanParams params)：以渐进的方式返回散列包含的键值对【HSCAN hash cursor [MATCH pattern] [COUNT count]】",
+        "key=Hash:HMSET, scanParams={match:key*,count:2}, scanResult=" + PrintUtil.toString(scanResult2.getResult()));
   }
 }
 ```
 
 ---
-### <a id="a_jList">十三、使用Jedis API操作List数据类型：</a> <a href="#a_jHash">last</a> <a href="#">next</a>
+### <a id="a_jList">十三、使用Jedis API操作List数据类型：</a> <a href="#a_jHash">last</a> <a href="#a_jSet">next</a>
 ListCommand.java：
 ```Java
 package com.mutistic.redis.jedis;
@@ -1298,6 +1312,117 @@ public class ListCommand {
     PrintUtil.two("3.7、ltrim(String key, long start, long end)：对列表进行截断，只保留指定索引范围内的元素【LTRIM list start end】",
         "key=List:LPUSH, start=0, end=1, result=" + result4);
     
+  }
+}
+```
+
+---
+### <a id="a_jSet">十四、使用Jedis API操作Set数据类型：</a> <a href="#a_jList">last</a> <a href="#">next</a>
+SetCommand.java：
+```Java
+package com.mutistic.redis.jedis;
+import java.util.List;
+import java.util.Set;
+import com.mutisitc.utils.JedisUtil;
+import com.mutisitc.utils.PrintUtil;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
+// 使用Jedis API操作Set数据类型
+public class SetCommand {
+  public static void main(String[] args) {
+    PrintUtil.one("使用Jedis API操作Set数据类型：");
+
+    Jedis jedis = JedisUtil.getJedis();
+    jedis.flushDB();
+
+    showByAddAndPop(jedis);
+    showByGet(jedis);
+    showByOperation(jedis);
+
+    JedisUtil.close(jedis);
+  }
+
+  // 1、Set的元素的添加与移除
+  private static void showByAddAndPop(Jedis jedis) {
+    PrintUtil.one("1、Set的元素的添加与移除：");
+
+    Long size = jedis.sadd("Set:SADD", "将一个或多个元素添加到集合当中", "Hello", "Set", "!");
+    PrintUtil.two("1.1、sadd(String key, String... members)：将一个或多个元素添加到集合当中【SADD set element [element ...]】",
+        "key=Set:SADD, size=" + size);
+
+    String popValue = jedis.spop("Set:SADD");
+    PrintUtil.two("1.2、spop(String key)：随机地移除并返回集合中的某个元素【SPOP set】", "key=Set:SADD, popValue=" + popValue);
+
+    Long size2 = jedis.smove("Set:SADD", "Set:SMOVE", "Hello");
+    PrintUtil.two(
+        "1.3、smove(String srckey, String dstkey, String member)：将指定的元素从源集合移动到目标集合【SMOVE source_set target_set element】",
+        "srckey=Set:SADD, dstkey=Set:SMOVE, member=Hello, size=" + size2);
+
+    Long size3 = jedis.srem("Set:SADD", "Hello");
+    PrintUtil.two("1.4、srem(String key, String... members)：移除集合中的一个或多个元素【SREM set element [element ...]】",
+        "key=Set:SADD, member=Hello, size=" + size3);
+  }
+  // 2、Set的元素的获取与检测
+  private static void showByGet(Jedis jedis) {
+    PrintUtil.one("2、Set的元素的获取与检测：");
+
+    Long size = jedis.scard("Set:SADD");
+    PrintUtil.two("2.1、scard(String key)：返回集合包含的元素数量【SCARD set】", "key=Set:SADD, size=" + size);
+
+    Boolean exists = jedis.sismember("Set:SADD", "Set");
+    PrintUtil.two("2.2、sismember(String key, String member)：检查集合是否包含了给定的元素【SISMEMBER set element】",
+        "key=Set:SADD, member=Set, exists=" + exists);
+
+    String value = jedis.srandmember("Set:SADD");
+    PrintUtil.two("2.3、srandmember(String key)：随机地返回集合包含的元素【SRANDMEMBER set】", "key=Set:SADD, value=" + value);
+
+    List<String> valueList = jedis.srandmember("Set:SADD", 2);
+    PrintUtil.two("2.4、srandmember(String key, int count)：随机地返回集合包含的元素【SRANDMEMBER set [count]】",
+        "key=Set:SADD, count=2, valueList=" + valueList);
+
+    Set<String> valueSet = jedis.smembers("Set:SADD");
+    PrintUtil.two("2.5、smembers(String key)：返回集合包含的所有元素【SRANDMEMBER set】", "key=Set:SADD, valueSet=" + valueSet);
+
+    ScanResult<String> scanResult = jedis.sscan("Set:SADD", "0");
+    PrintUtil.two("2.6、sscan(String key, String cursor)：以渐进的方式返回集合包含的元素【SSCAN set cursor】",
+        "key=Set:SADD, scanResult=" + scanResult.getResult());
+
+    ScanParams scanParams = new ScanParams();
+    scanParams.match("*一*");
+    scanParams.count(2);
+    ScanResult<String> scanResult2 = jedis.sscan("Set:SADD", "0", scanParams);
+    PrintUtil.two(
+        "2.6.1、sscan(String key, String cursor, ScanParams params))：以渐进的方式返回集合包含的元素【SSCAN set cursor [MATCH pattern] [COUNT count]】",
+        "key=Set:SADD, scanParams={match:一*,count:2}, scanResult=" + scanResult2.getResult());
+  }
+  // 3、Set的集合运算
+  private static void showByOperation(Jedis jedis) {
+    PrintUtil.one("3、Set的集合运算：");
+
+    Set<String> result = jedis.sdiff("Set:SADD", "Set:SMOVE");
+    PrintUtil.two("3.1、sdiff(String... keys)：计算并返回多个集合的差集计算结果【SDIFF set [set ...]】",
+        "key1=Set:SADD, key2=Set:SMOVE, result=" + result);
+    
+    Long size = jedis.sdiffstore("Set:SDIFFSTORE", "Set:SADD", "Set:SMOVE");
+    PrintUtil.two("3.2、sdiffstore(String dstkey, String... keys)：对多个集合执行差集计算，并将结果储存到目标集合当中【SDIFFSTORE target_set set [set ...]】", 
+        "dstKey=Set:SDIFFSTORE, key1=Set:SADD, key2=Set:SMOVE, size=" + size);
+    
+    Set<String> result2 = jedis.sinter("Set:SADD", "Set:SDIFFSTORE");
+    PrintUtil.two("3.3、sinter(String... keys)：计算并返回多个集合的交集计算结果【SINTER set [set ...]】",
+        "key1=Set:SADD, key2=Set:SDIFFSTORE, result=" + result2);
+    
+    Long size2 = jedis.sdiffstore("Set:SINTERSTORE", "Set:SADD", "Set:SDIFFSTORE");
+    PrintUtil.two("3.4、sdiffstore(String dstkey, String... keys)：对多个集合执行交集计算，并将结果储存到目标集合当中【SDIFFSTORE target_set set [set ...]】", 
+        "dstKey=Set:SINTERSTORE, key1=Set:SADD, key2=Set:SDIFFSTORE, size=" + size2);
+    
+    Set<String> result3 = jedis.sunion("Set:SADD", "Set:SINTERSTORE");
+    PrintUtil.two("3.5、sinter(String... keys)：计算并返回多个集合的并集计算结果【SINTER set [set ...]】",
+        "key1=Set:SADD, key2=Set:SINTERSTORE, result=" + result3);
+    
+    Long size3 = jedis.sunionstore("Set:SUNIONSTORE", "Set:SADD", "Set:SINTERSTORE");
+    PrintUtil.two("3.6、sdiffstore(String dstkey, String... keys)：对多个集合执行并集计算，并将结果储存到目标集合当中【SDIFFSTORE target_set set [set ...]】", 
+        "dstKey=Set:SUNIONSTORE, key1=Set:SADD, key2=Set:SINTERSTORE, size=" + size3);
   }
 }
 ```

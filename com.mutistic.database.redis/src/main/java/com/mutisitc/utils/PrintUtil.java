@@ -1,6 +1,8 @@
 package com.mutisitc.utils;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @program 打印工具类
@@ -43,23 +45,37 @@ public class PrintUtil {
 	}
 
 	public static String three(Object str, Object obj) {
-		String val = "  "+(str == null ? "" : str) + (obj == null ? "" : T_LEFT + obj + T_RIGTH);
+		String val = "  " + (str == null ? "" : str) + (obj == null ? "" : T_LEFT + obj + T_RIGTH);
 		System.out.println(val);
 		return val;
 	}
 
 	@SuppressWarnings("rawtypes")
 	public static String toString(Map obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return "";
 		}
-		
+
 		StringBuffer str = new StringBuffer(64);
 		str.append("[");
 		for (Object key : obj.keySet()) {
-			str.append(key+":"+obj.get(key)+",");
+			str.append(key + ":" + obj.get(key) + ",");
 		}
 
-		return str.substring(0, str.length()-1)+"]";
+		return str.substring(0, str.length() - 1) + "]";
 	}
+
+	public static String toString(List<Entry<String, String>> obj) {
+		if (obj == null) {
+			return "";
+		}
+
+		StringBuffer str = new StringBuffer(64);
+		for (Entry<String, String> entry : obj) {
+			str.append("[key:" + entry.getKey() + ",value:" + entry.getValue() + "]");
+		}
+
+		return str.toString();
+	}
+	
 }

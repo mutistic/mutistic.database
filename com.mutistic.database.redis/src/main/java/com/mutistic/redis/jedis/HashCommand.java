@@ -130,11 +130,11 @@ public class HashCommand {
 		PrintUtil.two("3.7、hscan(String key, String cursor)：以渐进的方式返回散列包含的键值对【HSCAN hash cursor】",
 				"key=Hash:HMSET, scanResult=" + PrintUtil.toString(scanResult.getResult()));
 		
-		ScanParams params = new ScanParams();
-		params.match("key*");
-		params.count(2);
-		ScanResult<Entry<String, String>> scanResult2 = jedis.hscan("Hash:HMSET", "2", params);
+		ScanParams scanParams = new ScanParams();
+		scanParams.match("key*");
+		scanParams.count(2);
+		ScanResult<Entry<String, String>> scanResult2 = jedis.hscan("Hash:HMSET", "2", scanParams);
 		PrintUtil.two("3.7.1、hscan(String key, String cursor, ScanParams params)：以渐进的方式返回散列包含的键值对【HSCAN hash cursor [MATCH pattern] [COUNT count]】",
-				"key=Hash:HMSET, ScanParams={match:key*,count:2}, scanResult=" + PrintUtil.toString(scanResult2.getResult()));
+				"key=Hash:HMSET, scanParams={match:key*,count:2}, scanResult=" + PrintUtil.toString(scanResult2.getResult()));
 	}
 }

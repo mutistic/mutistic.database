@@ -188,9 +188,9 @@
 |---|---|
 |ZINTERSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]|对给定数量的有序集合执行交集计算，并将计算的结果储存到目标有序集合里面|
 |ZUNIONSTORE target number [sorted_set ...] [WEIGHTS weight [weight ...]][AGGREGATE SUM/MIN/MAX]|对给定数量的有序集合执行并集计算，并将计算的结果储存到目标有序集合里面根据元素的大小对其进行处理|
-|ZLEXCOUNT sorted_set min max|统计有序集合里面，位于指定大小范围内的元素的数量|
-|ZRANGEBYLEX sorted_set min max [LIMIT offset count]|按照从小到大的顺序，返回有序集合里面位于指定大小范围之内的元素|
-|ZREMRANGEBYLEX sorted_set min max|从有序集合里面，移除位于指定大小范围之内的元素|
+|ZLEXCOUNT sorted_set min max|统计有序集合里面，位于指定字典区间内的元素的数量|
+|ZRANGEBYLEX sorted_set min max [LIMIT offset count]|按照从小到大的顺序，返回有序集合里面位于指定字典区间之内的元素|
+|ZREMRANGEBYLEX sorted_set min max|从有序集合里面，移除位于指定字典区间之内的元素|
 
 ---
 ### <a id="a_bitmap">六、位图(bitmap)：</a> <a href="#a_zset">last</a> <a href="#a_log">next</a>

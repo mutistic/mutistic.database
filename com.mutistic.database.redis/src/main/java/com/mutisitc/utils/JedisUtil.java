@@ -49,6 +49,18 @@ public class JedisUtil {
 	}
 	
 	/**
+	 * @description 创建Jedis实例对象(清空当前数据库)
+	 * @author mutisitic
+	 * @date 2019年1月4日
+	 * @return
+	 */
+	public static Jedis newJedis() {
+		Jedis jedis = getJedis();
+		jedis.flushDB();
+		return jedis;
+	}
+	
+	/**
 	 * @description 关闭Jedis链接 
 	 * @author mutisitic
 	 * @date 2018年11月23日

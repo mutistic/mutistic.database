@@ -465,7 +465,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 ```
 
 ---
-### <a id="a_zset">七、zset(sorted set，有序集合)：</a> <a href="#a_set">last</a> <a href="#a_common">next</a>
+### <a id="a_zset">七、zset(sorted set，有序集合)：</a> <a href="#a_set">last</a> <a href="#a_commont">next</a>
 一、set(集合)：
 ```
   Redis 有序集合和集合一样也是string类型元素的集合,且不允许重复的成员。

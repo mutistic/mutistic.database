@@ -361,7 +361,7 @@ hash特别适合用于存储对象。
 ```
 
 ---
-### <a id="a_list">五、list类型：</a> <a href="#a_hash">last</a> <a href="#">next</a>
+### <a id="a_list">五、list类型：</a> <a href="#a_hash">last</a> <a href="#a_set">next</a>
 一、List（列表）：
 ```
   Redis列表是一个双向链表结构的集合。简单的字符串列表，按照插入顺序排序。可以添加一个元素到列表的头部（左边）或者尾部（右边）
@@ -553,7 +553,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 ```
 
 ---
-### <a id="a_commont">八、常用操作命令：</a> <a href="#a_zse">last</a> <a href="#a_transaction">next</a>
+### <a id="a_commont">八、常用操作命令：</a> <a href="#a_zset">last</a> <a href="#a_transaction">next</a>
 一、数据库管理：
 ```
   REDIS-SERVER [redis.config]：开启Redis服务端，redis.config指定配置文件及路径

@@ -29,6 +29,7 @@
 13. <a href="#a_jList">使用Jedis API操作List数据类型</a>
 14. <a href="#a_jSet">使用Jedis API操作Set数据类型</a>
 15. <a href="#a_jZSet">使用Jedis API操作ZSet数据类型</a>
+16. <a href="a_jDatabase">使用Jedis API操作数据库</a>
 96. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 97. <a href="#a_appendix2">附录B：Redis配置文件说明</a>
 98. <a href="#a_notes">Notes</a>
@@ -554,7 +555,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
 
 ---
 ### <a id="a_commont">八、常用操作命令：</a> <a href="#a_zset">last</a> <a href="#a_transaction">next</a>
-一、数据库管理：
+一、常用命令：
 ```
   REDIS-SERVER [redis.config]：开启Redis服务端，redis.config指定配置文件及路径
   REDIS-CLI -h host -p port [-a password][--raw]：开启Redis客户端，-h指定ip地址，-p指定端口号，-a可选参数指定密码，--raw处理中文乱码
@@ -564,7 +565,7 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
   QUIT：请求服务器关闭与当前客户端的连接
   SELECT number：切换至指定的数据库。默认16个数据库，索引从0开始，通过redis.conf的databases参数配置
 
-  CONFIG SET option value：为给定的配置选项设置值
+  CONFIG SET option value：为给定的配置选项设置值。来设置requirepass参数。
   CONFIG GET option：返回给定配置选项的值
   CONFIG REWRITE：对服务器的配置选项文件进行重写，并将改写后的文件储存在硬盘里面
   CONFIG RESETSTAT：重置服务器的某些统计数据
@@ -573,12 +574,23 @@ Redis 中集合是通过hashtable(哈希表)实现的，所以添加，删除，
   SHUTDOWN [SAVE|NOSAVE]：关闭服务器。
     [SAVE|NOSAVE]：可选参数，是否备份数据。SAVE备份数据，NOSAVE不备份。
 ```
-二、数据库键管理：
+二、数据库键管理：  
+[SORT命令参考](http://doc.redisfans.com/key/sort.html)
 ```
   KEYS pattern：从数据库里面获取所有符合给定模式的键
   SCAN cursor [MATCH pattern] [COUNT count]：以渐进的方式获取数据库中的键
   RANDOMKEY：从数据库里面随机地返回一个键
   SORT key [BY pattern] [LIMIT offset count] [GET pattern [GET pattern ...]][ASC|DESC] [ALPHA] [STORE destination]：对给定的键进行排序
+    BY pattern：通过使用 BY 选项，可以让 uid 按其他键的元素来排序（默认情况下， SORT uid 直接按 uid 中的值排序），
+ 通过将一个不存在的键作为参数传给 BY 选项， 可以让 SORT 跳过排序操作
+    LIMIT offset count：使用 LIMIT 修饰符限制返回结果
+	  offset 指定要跳过的元素数量。
+	  count 指定跳过 offset 个指定的元素之后，要返回多少个对象
+	GET pattern [GET pattern ...]：使用 GET 选项， 可以根据排序的结果来取出相应的键值。
+通过组合使用 BY 和 GET ， 可以让排序结果以更直观的方式显示出来。除了可以将字符串键之外， 哈希表也可以作为 GET 或 BY 选项的参数来使用
+	ASC|DESC： 返回键值按照升序或降序排序的结果，默认ASC升序
+	ALPHA：使用 ALPHA 修饰符对字符串进行排序。SORT 命令默认排序对象为数字， 当需要对字符串进行排序时， 需要显式地在 SORT 命令之后添加 ALPHA 修饰符
+    STORE destination：通过给 STORE 选项指定一个 key 参数，可以将排序结果保存到给定的键上，如果被指定的 key 已存在，那么原有的值将被排序结果覆盖
   
   EXISTS key：检查给定的键是否存在于数据库
   DBSIZE：返回当前正在使用的数据库包含的键值对数量
@@ -1430,7 +1442,7 @@ public class SetCommand {
 ```
 
 ---
-### <a id="a_jZSet">十五、使用Jedis API操作ZSet数据类型：</a> <a href="#a_jSet">last</a> <a href="#">next</a>
+### <a id="a_jZSet">十五、使用Jedis API操作ZSet数据类型：</a> <a href="#a_jSet">last</a> <a href="#a_jDatabase">next</a>
 ZSetCommand.java：
 ```Java
 package com.mutistic.redis.jedis;
@@ -1642,6 +1654,177 @@ public class ZSetCommand {
         + "【ZREMRANGEBYLEX sorted_set min max】",
         "key=ZSet:ZINTERSTORE, min=[a, max=[d, remSize=" + remSize);
   }
+}
+```
+
+---
+### <a id="a_jDatabase">十六、使用Jedis API操作数据库：</a> <a href="#a_jZSet">last</a> <a href="#">next</a>
+DatabaseCommand.java：
+```Java
+package com.mutistic.redis.jedis;
+import java.util.List;
+import java.util.Set;
+import com.mutisitc.utils.JedisUtil;
+import com.mutisitc.utils.PrintUtil;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
+import redis.clients.jedis.SortingParams;
+// 使用Jedis API操作数据库
+public class DatabaseCommand {
+	public static void main(String[] args) {
+		PrintUtil.one("使用Jedis API操作ZSet数据类型：");
+
+		Jedis jedis = JedisUtil.getJedis();
+		
+		prepareTestData(jedis);
+		showByGet(jedis);
+		showByDetection(jedis);
+		showByManager(jedis);
+		showByCommon(jedis);
+		
+		JedisUtil.close(jedis);
+	}
+	// 准备测试数据 
+	private static void prepareTestData(Jedis jedis) {
+		if(!jedis.exists("test")) {
+			jedis.lpush("test", "1", "2", "3", "4");
+		}
+	}
+	// 1、数据库的获取命令
+	private static void showByGet(Jedis jedis) {
+		PrintUtil.one("1、数据库的获取命令：");
+		
+		Set<String> keySet = jedis.keys("*e*");
+		PrintUtil.two("1.1、keys(String pattern)：从数据库里面获取所有符合给定模式的键【KEYS pattern】",
+				"pattern=*e*, keySet=" + keySet);
+		
+		ScanResult<String> scanKey = jedis.scan("0");
+		PrintUtil.two("1.2、scan(String cursor)：以渐进的方式获取数据库中的键【SCAN cursor】",
+				"cursor=0, scanKey=" + scanKey.getResult());
+
+		ScanParams scanParams = new ScanParams();
+		scanParams.match("*e*");
+		scanParams.count(2);
+		ScanResult<String> scanKey2 = jedis.scan("0", scanParams);
+		PrintUtil.two("1.2.1、scan(String key, String cursor, ScanParams params)：以渐进的方式获取数据库中的键"
+				+ "【SCAN cursor [MATCH pattern] [COUNT count]】",
+				"cursor=0, scanParams={match:一*,count:2}, scanKey=" + scanKey2.getResult());
+		
+		String key = jedis.randomKey();
+		PrintUtil.two("1.3、randomKey()：从数据库里面随机地返回一个键【RANDOMKEY】", "key=" + key);
+		
+		List<String> sortValueList = jedis.sort("test");
+		PrintUtil.two("1.4、sort(String key)：对给定的键进行排序【SORT key】", "key=test, sortValueList=" + sortValueList);
+		
+		Long sortSize = jedis.sort("test", "SORT:test");
+		PrintUtil.two("1.4.1、sort(String key, String dstkey)：对给定的键进行排序【SORT key】", "key=test, dstkey=SORT:test, sortSize=" + sortSize);
+		
+		// SORT命令参考：http://doc.redisfans.com/key/sort.html
+		SortingParams sortingParams = new SortingParams();
+		// BY：通过使用 BY 选项，可以让 uid 按其他键的元素来排序（默认情况下， SORT uid 直接按 uid 中的值排序）
+		sortingParams.by("*e*");
+		// [LIMIT offset count]：使用 LIMIT 修饰符限制返回结果
+		//   offset 指定要跳过的元素数量。
+		//   count 指定跳过 offset 个指定的元素之后，要返回多少个对象
+		sortingParams.limit(0, 10);
+		// [ASC/DESC]：升序降序
+		sortingParams.desc(); 
+		// [ALPHA]：使用 ALPHA 修饰符对字符串进行排序(SORT命令默认排序对象为数字)
+		sortingParams.alpha(); 
+		
+		List<String> sortValueList2 = jedis.sort("ZSet:ZADD", sortingParams);
+		PrintUtil.two("1.4.2、sort(String key, SortingParams sortingParameters)：对给定的键进行排序"
+				+ "【SORT key [BY pattern] [LIMIT offset count] [GET pattern [GET pattern ...]][ASC/DESC] [ALPHA] [STORE destination]】", 
+				"key=ZSet:ZADD,sortingParams={[BY pattern=*e*],[LIMIT:offset=0,count=10], DESC, ALPHA}, sortValueList=" + sortValueList2);
+	}
+	// 2、数据库的检测命令
+	private static void showByDetection(Jedis jedis) {
+		PrintUtil.one("2、数据库的检测命令：");
+		
+		Boolean exists = jedis.exists("test");
+		PrintUtil.two("2.1、exists(String key)：检查给定的键是否存在于数据库【EXISTS key】",
+				"key=test, exists=" + exists);
+		
+		Long dbSize = jedis.dbSize();
+		PrintUtil.two("2.2、dbSize()：返回当前正在使用的数据库包含的键值对数量【DBSIZE】",
+				"DBIndex=0, dbSize=" + dbSize);
+		
+		String type = jedis.type("ZSet:ZADD");
+		PrintUtil.two("2.3、type(String key)：返回给定键储存的值的类型【TYPE key】",
+				"key=ZSet:ZADD, type=" + type);
+	}
+	// 3、数据库的管理命令
+	private static void showByManager(Jedis jedis) {
+		PrintUtil.one("3、数据库的管理命令：");
+		
+		String oldKey = jedis.rename("test", "RENAME:Test");
+		PrintUtil.two("3.1、rename(String oldkey, String newkey)：为给定键设置一个新名字【RENAME key new-key】",
+				"oldKey=test, newKey=RENAME:Test, oldKey=" + oldKey);
+		
+		Long result = jedis.renamenx("RENAME:Test", "RENAMENX:Test");
+		PrintUtil.two("3.2、renamenx(String oldkey, String newkey)：仅在新名字尚未被使用的情况下，为给定键设置一个新名字【RENAMENX key new-key】",
+				"oldkey=RENAME:Test, newKey=RENAMENX:Test, result=" + result);
+		
+		Long result2 =jedis.move("RENAMENX:Test", 1);
+		PrintUtil.two("3.3、move(String key, int dbIndex)：将当前数据库中的给定键移动到指定的数据库【MOVE key db】",
+				"key=RENAMENX:Test, dbIndex=1, result=" + result2);
+		
+		Long dbIndex = jedis.getDB();
+		PrintUtil.two("3.4、getDB()：获取当前数据库索引", "dbIndex=" + dbIndex);
+		
+		String result3 = jedis.select(1);
+		PrintUtil.two("3.5、select(int index)：切换至指定的数据库【SELECT number】", "index=1, result=" + result3);
+		
+		Long result4 = jedis.del("RENAMENX:Test", "test");
+		PrintUtil.two("3.6、del(String key)：从数据库中删除给定的一个或多个键【DEL key [key ...]】", "key=[RENAMENX:Test, test], result=" + result4);
+		
+		String result5 = jedis.flushDB();
+		PrintUtil.two("3.7、flushDB()：删除当前数据库中的所有键【FLUSHDB】", "dbIndex=1, result=" + result5);
+		
+		String result6 = jedis.flushAll();
+		PrintUtil.two("3.7、flushAll()：删除服务器中，所有数据库的所有键【FLUSHALL】", "result=" + result6);
+	}
+	// 4、 数据库的常用命令
+	private static void showByCommon(Jedis jedis) {
+		PrintUtil.one("4、数据库的常用命令：");
+		
+		String result = jedis.echo("测试连接");
+		PrintUtil.two("4.1、echo(String string)：让服务器打印指定的消息，用于测试连接【ECHO message】", "string=测试连接, result=" + result);
+		
+		String result2 = jedis.ping();
+		PrintUtil.two("4.2、ping()：向服务器发送一条 PING 消息，用于测试连接或者测量延迟值【PING】", "result=" + result2);
+		
+		String result3 = jedis.configSet("timeout", "10000");
+		PrintUtil.two("4.3、configSet(String parameter, String value)：为给定的配置选项设置值【CONFIG SET option value】", 
+				"parameter=timeout, value=10000, result=" + result3);
+		
+//		String result4 = jedis.auth(null);
+		PrintUtil.two("4.4、auth(String password)：使用给定的密码连接服务器【AUTH password】", "password=null");
+		
+		List<String> parameterValueList = jedis.configGet("bind");
+		PrintUtil.two("4.5、configGet(String pattern)：返回给定配置选项的值【CONFIG GET option】", 
+				"parameter=timeout, parameterValueList=" + parameterValueList);
+		
+		// CONFIG REWRITE：对服务器的配置选项文件进行重写，并将改写后的文件储存在硬盘里面
+		
+		String result5 = jedis.configResetStat();
+		PrintUtil.two("4.5、configResetStat()：重置服务器的某些统计数据【CONFIG RESETSTAT】", "result=" + result5);
+
+		List<String> time = jedis.time();
+		PrintUtil.two("4.6、time()：返回服务器当前的 UNIX 时间戳【TIME】", "time=" + time);
+		
+//		String info = jedis.info("redis.conf");
+		String info = jedis.info();
+		PrintUtil.two("4.7、info()：返回与服务器相关的统计信息【INFO [section]】", "info=" + info);
+
+		String quit = jedis.quit();
+		PrintUtil.two("4.8、quit()：请求服务器关闭与当前客户端的连接【QUIT】", "quit=" + quit);
+		
+		// SHUTDOWN [SAVE|NOSAVE]：关闭服务器 [SAVE|NOSAVE]：可选参数，是否备份数据。SAVE备份数据，NOSAVE不备份。
+//		String shutdown = jedis.shutdown();
+		PrintUtil.two("4.9、shutdown()：关闭服务器【SHUTDOWN [SAVE|NOSAVE]】", "shutdown");
+	}
 }
 ```
 

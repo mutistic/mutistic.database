@@ -1979,7 +1979,7 @@ public class PubSubCommand {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					// 使用subscriber订阅CHANNEL_NAME上的消息，这一句之后，线程进入订阅模式，阻塞。
+					// 使用subscriber订阅channels上的消息，这一句之后，线程进入订阅模式，阻塞。
 					subJedis.subscribe(subscriber, "CHANNEL_1");
 					PrintUtil.two("2.1、Jedis.subscribe(JedisPubSub jedisPubSub, String... channels)：订阅给定的一个或多个频道"
 							+ "【SUBSCRIBE channel [channel ...]】",

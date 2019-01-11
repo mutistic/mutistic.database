@@ -32,6 +32,7 @@
 16. <a href="a_jDatabase">使用Jedis API操作数据库</a>
 17. <a href="a_jExpiration">使用Jedis API管理过期时间</a>
 18. <a href="a_jTransaction">使用Jedis API管理事务</a>
+19. <a href="a_jPubSub">使用Jedis API管理发布与订阅</a>>
 96. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 97. <a href="#a_appendix2">附录B：Redis配置文件说明</a>
 98. <a href="#a_notes">Notes</a>
@@ -1896,7 +1897,7 @@ public class ExpirationCommand {
 ```
 
 ---
-### <a id="a_jTransaction">十八、使用Jedis API管理事务：</a> <a href="#a_jExpiration">last</a> <a href="#">next</a>
+### <a id="a_jTransaction">十八、使用Jedis API管理事务：</a> <a href="#a_jExpiration">last</a> <a href="#a_jPubSub">next</a>
 TransactionCommand.java：
 ```Java
 package com.mutistic.redis.jedis;
@@ -1953,6 +1954,202 @@ public class TransactionCommand {
 }
 ```
 
+---
+### <a id="a_jPubSub">十九、使用Jedis API管理发布与订阅：</a> <a href="#a_jTransaction">last</a> <a href="#">next</a>
+PubSubCommand.java：
+```Java
+package com.mutistic.redis.jedis;
+import java.util.List;
+import java.util.Map;
+import com.mutisitc.utils.JedisUtil;
+import com.mutisitc.utils.PrintUtil;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+// 使用Jedis API管理发布与订阅
+public class PubSubCommand {
+	//  程序主入口
+	public static void main(String[] args) {
+		PrintUtil.one("使用Jedis API管理发布与订阅：");
+
+		JedisPool jedisPool = JedisUtil.getJedisPool();
+
+		// 订阅线程：接收消息
+		final Jedis subJedis = jedisPool.getResource();
+		Subscriber subscriber = new Subscriber();
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					// 使用subscriber订阅CHANNEL_NAME上的消息，这一句之后，线程进入订阅模式，阻塞。
+					subJedis.subscribe(subscriber, "CHANNEL_1");
+					PrintUtil.two("2.1、Jedis.subscribe(JedisPubSub jedisPubSub, String... channels)：订阅给定的一个或多个频道"
+							+ "【SUBSCRIBE channel [channel ...]】",
+							"jedisPubSub=" + subscriber + ", channels=CHANNEL_1");
+					subJedis.psubscribe(subscriber, "*C*");
+					PrintUtil.two("2.2、Jedis.psubscribe(JedisPubSub jedisPubSub, String... patterns)：订阅给定的一个或多个模式"
+							+ "【PSUBSCRIBE pattern [pattern ...]】",
+							"jedisPubSub=" + subscriber + ", patterns=*C*");
+				} catch (Exception e) {
+					PrintUtil.err(e.getMessage());
+				}
+			}
+		}).start();
+
+		// 主线程：发布消息到频道上
+		Jedis pubJedis = jedisPool.getResource();
+		showByLook(pubJedis);
+		Publisher publisher = new Publisher(pubJedis, "CHANNEL_1");
+//		 publisher.publish();
+		publisher.publishByInput();
+		
+		subscriber.unsubscribe();
+		PrintUtil.two("3.1、JedisPubSub.unsubscribe()：退订给定的一个或多个频道，如果没有给定频道则退订全部频道",
+				"UNSUBSCRIBE [channel [channel ...]]");
+		subscriber.punsubscribe();
+		PrintUtil.two("3.2、JedisPubSub.punsubscribe()：退订给定的一个或多个模式，如果没有给定模式则退订全部模式",
+				"PUNSUBSCRIBE [pattern [pattern ...]]");
+	}
+	//  4、查看订阅信息
+	private static void showByLook(Jedis pubJedis) {
+		PrintUtil.one("4、查看订阅信息：");
+		List<String> patternList = pubJedis.pubsubChannels("*C*");
+		PrintUtil.two("4.1、Jedis.pubsubChannels(String pattern)：列出当前被订阅的频道【PUBSUB CHANNELS [pattern]】",
+				"pattern=*C*, patternList="+patternList);
+		
+		Map<String, String> channelMap = pubJedis.pubsubNumSub("CHANNEL_1");
+		PrintUtil.two("4.2、Jedis.pubsubNumSub(String... channels)：返回给定频道的订阅者数量【PUBSUB NUMSUB [channel channel ...]】",
+				"channels=CHANNEL_1, channelMap="+PrintUtil.toString(channelMap));
+		
+		Long numPat = pubJedis.pubsubNumPat();
+		PrintUtil.two("4.3、Jedis.pubsubNumPat()：返回当前被订阅模式的数量【PUBSUB NUMPAT】",
+				"numPat="+numPat);
+	}
+
+}
+```
+Publisher.java：
+```Java
+package com.mutistic.redis.jedis;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import com.mutisitc.utils.JedisUtil;
+import com.mutisitc.utils.PrintUtil;
+import redis.clients.jedis.Jedis;
+// 使用Jedis API管理发布与订阅
+// 发布者：向频道推送消息
+public class Publisher {
+	private Jedis jedis;
+	/** 发布频道 */
+	private String channelName;
+	public Publisher(Jedis jedis, String channelName) {
+		this.jedis = jedis;  
+		this.channelName = channelName;
+	}
+	public void publish() {
+		PrintUtil.one("1、直接发布消息 ：");
+		Long publishResult = jedis.publish(channelName, "测试消息");
+		PrintUtil.two("1.1、(发布者)Jedis.publish(String channel, String message)：向指定频道发布一条消息【PUBLISH channel message】",
+				"channel=" + channelName + ", message=测试消息, publishResult=" + publishResult);
+		JedisUtil.close(jedis);
+	}
+	public void publishByInput() {
+		PrintUtil.one("2、从控制台输入发布消息：");
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+			while (true) {
+				PrintUtil.one("请输入需要推送的消息：");
+				String message = reader.readLine();
+				if (!"quit".equals(message)) {
+					Long publishResult = jedis.publish(channelName, message);
+					PrintUtil.two("1.1、(发布者)Jedis.publish(String channel, String message)：向指定频道发布一条消息【PUBLISH channel message】",
+							"channel=" + channelName + ", message=" + message + ", publishResult=" + publishResult);
+				} else {
+					JedisUtil.close(jedis);
+					break;
+				}
+			}
+		} catch (IOException e) {
+			PrintUtil.err(e.getMessage());
+		}
+	}
+}
+```
+Subscriber.java：
+```Java
+package com.mutistic.redis.jedis;
+import com.mutisitc.utils.PrintUtil;
+import redis.clients.jedis.JedisPubSub;
+// 使用Jedis API管理发布与订阅
+// 订阅者：实现订阅抽象JedisPubSub，重写订阅、接收、退订方法
+public class Subscriber extends JedisPubSub {
+	/**
+	 * 重写onSubscribe：订阅频道
+	 * @param channel
+	 * @param subscribedChannels
+	 * @see redis.clients.jedis.JedisPubSub#onSubscribe(java.lang.String, int)
+	 */
+	@Override
+	public void onSubscribe(String channel, int subscribedChannels) {
+		PrintUtil.two("\n订阅者：Subscriber.onSubscribe()：订阅频道",
+				"channel=" + channel + ", subscribedChannels=" + subscribedChannels);
+	}
+	/**
+	 * 重写onMessage：接收到频道消息
+	 * @param channel
+	 * @param message
+	 * @see redis.clients.jedis.JedisPubSub#onMessage(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void onMessage(String channel, String message) {
+		PrintUtil.two("订阅者：Subscriber.onMessage()：接收到频道消息", "channel=" + channel + ", message=" + message);
+	}
+	/**
+	 * 重写onUnsubscribe：退订频道
+	 * @param channel
+	 * @param subscribedChannels
+	 * @see redis.clients.jedis.JedisPubSub#onUnsubscribe(java.lang.String, int)
+	 */
+	@Override
+	public void onUnsubscribe(String channel, int subscribedChannels) {
+		PrintUtil.two("\n订阅者：Subscriber.onUnsubscribe()：退订频道",
+				"channel=" + channel + ", subscribedChannels=" + subscribedChannels);
+	}
+	/**
+	 * 重写onPSubscribe：订阅模式
+	 * @param pattern
+	 * @param subscribedChannels
+	 * @see redis.clients.jedis.JedisPubSub#onPSubscribe(java.lang.String, int)
+	 */
+	@Override
+	public void onPSubscribe(String pattern, int subscribedChannels) {
+		PrintUtil.two("\n订阅者：Subscriber.onPSubscribe()：订阅模式",
+				"pattern=" + pattern + ", subscribedChannels=" + subscribedChannels);
+	}
+	/**
+	 * 重写onPMessage：接收到模式消息
+	 * @param pattern
+	 * @param channel
+	 * @param message
+	 * @see redis.clients.jedis.JedisPubSub#onPMessage(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void onPMessage(String pattern, String channel, String message) {
+		PrintUtil.two("订阅者：Subscriber.onPMessage()：接收到模式消息",
+				"pattern=" + pattern + ", channel=" + channel + ", message=" + message);
+	}
+	/**
+	 * 重写onPUnsubscribe：退订模式
+	 * @param pattern
+	 * @param subscribedChannels
+	 * @see redis.clients.jedis.JedisPubSub#onPUnsubscribe(java.lang.String, int)
+	 */
+	@Override
+	public void onPUnsubscribe(String pattern, int subscribedChannels) {
+		PrintUtil.two("\n订阅者：Subscriber.onPUnsubscribe()：退订模式",
+				"pattern=" + pattern + ", subscribedChannels=" + subscribedChannels);
+	}
+}
+```
 
 ---
 ### <a id="a_appendix">附录：</a> <a href="#a_transaction">last</a> <a href="#a_notes">next</a>

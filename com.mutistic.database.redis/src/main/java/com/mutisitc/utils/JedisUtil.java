@@ -19,6 +19,28 @@ public class JedisUtil {
 	private static JedisPool JEDIS_POOL = null;
 	
 	/**
+	 * @description 获取JedisPool实例
+	 * @author mutisitic
+	 * @date 2019年1月11日
+	 * @return
+	 */
+	public static JedisPool getJedisPool() {
+		PrintUtil.one("0、获取JedisPool实例");
+		
+		JedisPoolConfig config = new JedisPoolConfig();
+		PrintUtil.two("0.1、创建redis.clients.jedis.JedisPoolConfig实例对象：", config);
+		
+		PrintUtil.two("0.2、获取配置的redis的IP地址和端口号", "host="+REDIS_HOST+",prot="+REDIS_PORT);
+		
+		if(JEDIS_POOL == null) {
+			 JEDIS_POOL = new JedisPool(config, REDIS_HOST, REDIS_PORT);
+		}
+		PrintUtil.two("0.3、创建redis.clients.jedis.JedisPool实例对象", JEDIS_POOL);
+
+		return JEDIS_POOL;
+	}
+	
+	/**
 	 * @description 获取Jedis实例对象 
 	 * @author mutisitic
 	 * @date 2018年11月23日

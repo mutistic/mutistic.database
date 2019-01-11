@@ -31,6 +31,7 @@
 15. <a href="#a_jZSet">使用Jedis API操作ZSet数据类型</a>
 16. <a href="a_jDatabase">使用Jedis API操作数据库</a>
 17. <a href="a_jExpiration">使用Jedis API管理过期时间</a>
+18. <a href="a_jTransaction">使用Jedis API管理事务</a>
 96. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 97. <a href="#a_appendix2">附录B：Redis配置文件说明</a>
 98. <a href="#a_notes">Notes</a>
@@ -1830,7 +1831,7 @@ public class DatabaseCommand {
 ```
 
 ---
-### <a id="a_jExpiration">十七、使用Jedis API管理过期时间：</a> <a href="#a_jDatabase">last</a> <a href="#">next</a>
+### <a id="a_jExpiration">十七、使用Jedis API管理过期时间：</a> <a href="#a_jDatabase">last</a> <a href="#a_jTransaction">next</a>
 ExpirationCommand.java：
 ```Java
 package com.mutistic.redis.jedis;
@@ -1893,6 +1894,65 @@ public class ExpirationCommand {
 	}
 }
 ```
+
+---
+### <a id="a_jTransaction">十八、使用Jedis API管理事务：</a> <a href="#a_jExpiration">last</a> <a href="#">next</a>
+TransactionCommand.java：
+```Java
+package com.mutistic.redis.jedis;
+import java.util.List;
+import com.mutisitc.utils.JedisUtil;
+import com.mutisitc.utils.PrintUtil;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Response;
+import redis.clients.jedis.Transaction;
+// 使用Jedis API管理事务
+public class TransactionCommand {
+	public static void main(String[] args) {
+		PrintUtil.one("使用Jedis API管理事务：");
+
+		Jedis jedis = JedisUtil.newJedis();
+		
+		jedis.set("t1", "a");
+		
+		showByBase(jedis);
+		showByWath(jedis);
+		
+		JedisUtil.close(jedis);
+	}
+	private static void showByBase(Jedis jedis) {
+		PrintUtil.one("1、基本事务操作：");
+
+		Transaction transaction = jedis.multi();
+		PrintUtil.two("1.1、multi()：开始一次事务【MULTI】", "transaction=" + transaction);
+
+		Response<String> response = transaction.set("t1", "a");
+		transaction.set("t2", "b");
+		PrintUtil.two("1.1.1、Transaction.set(String key, String value)：使用Transaction方法操作Redis", 
+				"key=t1, value=a, response=" + response);
+		
+		List<Object> execResult = transaction.exec();
+		PrintUtil.two("1.2、Transaction.exec()：执行事务【EXEC】", "execResult=" + execResult);
+
+		transaction = jedis.multi();
+		String discardResult = transaction.discard();
+		PrintUtil.two("1.2、Transaction.discard()：取消事务【DISCARD】", "discardResult=" + discardResult);
+		
+	}
+	private static void showByWath(Jedis jedis) {
+		PrintUtil.one("2、乐观锁事务操作：");
+		
+		String watchResult = jedis.watch("t1");
+		PrintUtil.two("2.1、watch(String... keys)：监视给定的键，看它们在事务执行之前是否已被修改【WATCH key [key ...]】", 
+				"watchResult=" + watchResult);
+		
+		String unwatchResult = jedis.unwatch();
+		PrintUtil.two("2.2、unwatch()：取消对所有键的监视【UNWATCH】", 
+				"unwatchResult=" + unwatchResult);
+	}
+}
+```
+
 
 ---
 ### <a id="a_appendix">附录：</a> <a href="#a_transaction">last</a> <a href="#a_notes">next</a>

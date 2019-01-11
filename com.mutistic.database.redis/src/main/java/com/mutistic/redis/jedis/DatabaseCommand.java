@@ -19,7 +19,7 @@ import redis.clients.jedis.SortingParams;
  */
 public class DatabaseCommand {
 	public static void main(String[] args) {
-		PrintUtil.one("使用Jedis API操作ZSet数据类型：");
+		PrintUtil.one("使用Jedis API操作数据库：");
 
 		Jedis jedis = JedisUtil.getJedis();
 		

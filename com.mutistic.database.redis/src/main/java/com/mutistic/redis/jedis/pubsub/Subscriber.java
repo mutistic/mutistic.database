@@ -1,4 +1,4 @@
-package com.mutistic.redis.jedis;
+package com.mutistic.redis.jedis.pubsub;
 
 import com.mutisitc.utils.PrintUtil;
 

@@ -1958,7 +1958,7 @@ public class TransactionCommand {
 ### <a id="a_jPubSub">十九、使用Jedis API管理发布与订阅：</a> <a href="#a_jTransaction">last</a> <a href="#">next</a>
 PubSubCommand.java：
 ```Java
-package com.mutistic.redis.jedis;
+package com.mutistic.redis.jedis.pubsub;
 import java.util.List;
 import java.util.Map;
 import com.mutisitc.utils.JedisUtil;
@@ -2028,7 +2028,7 @@ public class PubSubCommand {
 ```
 Publisher.java：
 ```Java
-package com.mutistic.redis.jedis;
+package com.mutistic.redis.jedis.pubsub;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -2076,7 +2076,7 @@ public class Publisher {
 ```
 Subscriber.java：
 ```Java
-package com.mutistic.redis.jedis;
+package com.mutistic.redis.jedis.pubsub;
 import com.mutisitc.utils.PrintUtil;
 import redis.clients.jedis.JedisPubSub;
 // 使用Jedis API管理发布与订阅

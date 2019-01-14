@@ -33,7 +33,8 @@
 17. <a href="a_jExpiration">使用Jedis API管理过期时间</a>
 18. <a href="a_jTransaction">使用Jedis API管理事务</a>
 19. <a href="a_jPubSub">使用Jedis API管理发布与订阅</a>
-20. <a href="a_junit">使用SpringBoot API+JUnit操作简单操作Redis</a>
+20. <a href="a_junit">使用JUnit简单操作Redis</a>
+20. <a href="a_springboot">使用SpringBoot中使用Redis</a>
 96. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 97. <a href="#a_appendix2">附录B：Redis配置文件说明</a>
 98. <a href="#a_notes">Notes</a>
@@ -2153,7 +2154,7 @@ public class Subscriber extends JedisPubSub {
 ```
 
 ---
-### <a id="a_junit">二十、使用SpringBoot API+JUnit操作简单操作Redis：</a> <a href="#a_jPubSub">last</a> <a href="#">next</a>
+### <a id="a_junit">二十、使用JUnit简单操作Redis：</a> <a href="#a_jPubSub">last</a> <a href="#a_springboot">next</a>
 [org.springframework.data.redis.core](https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/package-summary.html)  
 RedisTemplateCommandByJUnit.java：
 ```Java
@@ -2182,7 +2183,7 @@ import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.mutisitc.utils.PrintUtil;
 import com.mutistic.redis.Application;
-// 使用RedisTemplate API+JUnit操作简单操作Redis
+// 使用RedisTemplate API+JUnit简单操作Redis
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Application.class)
 public class RedisTemplateCommandByJUnit {
@@ -2192,7 +2193,7 @@ public class RedisTemplateCommandByJUnit {
 
 	@Test
 	public void test() throws Exception {
-		PrintUtil.one("1、使用RedisTemplate API+JUnit操作简单操作Redis：");
+		PrintUtil.one("1、使用RedisTemplate API+JUnit简单操作Redis：");
 		PrintUtil.two("1.1、通过@Autowired自动注入org.springframework.data.redis.core.RedisTemplate<Object, Object>实例：", redisTemplate);
 		
 		operationString(redisTemplate.opsForValue());
@@ -2383,7 +2384,7 @@ import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.mutisitc.utils.PrintUtil;
 import com.mutistic.redis.Application;
-// 使用StringRedisTemplate API+JUnit操作简单操作Redis
+// 使用StringRedisTemplate API+JUnit简单操作Redis
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Application.class)
 public class StringRedisTemplateCommandByJUnit {
@@ -2392,7 +2393,7 @@ public class StringRedisTemplateCommandByJUnit {
 
 	@Test
 	public void test() throws Exception {
-		PrintUtil.one("1、使用StringRedisTemplate API+JUnit操作简单操作Redis：");
+		PrintUtil.one("1、使用StringRedisTemplate API+JUnit简单操作Redis：");
 		PrintUtil.two("1.1、通过@Autowired自动注入org.springframework.data.redis.core.StringRedisTemplate实例：", template);
 		
 		operationString(template.opsForValue());
@@ -2565,7 +2566,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.mutisitc.utils.PrintUtil;
 import com.mutistic.redis.Application;
-// 使用StringRedisTemplate API+JUnit操作简单操作Redis事物
+// 使用StringRedisTemplate API+JUnit简单操作Redis事物
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Application.class)
 public class TransactionCommandByJUnit {
@@ -2575,7 +2576,7 @@ public class TransactionCommandByJUnit {
 
 	@Test
 	public void test() throws Exception {
-		PrintUtil.one("1、使用StringRedisTemplate API+JUnit操作简单操作Redis：");
+		PrintUtil.one("1、使用StringRedisTemplate API+JUnit简单操作Redis：");
 		PrintUtil.two("1.1、通过@Autowired自动注入org.springframework.data.redis.core.StringRedisTemplate实例：", template);
 		
 		template.setEnableTransactionSupport(true);
@@ -2597,6 +2598,83 @@ public class TransactionCommandByJUnit {
 }
 ```
 
+---
+### <a id="a_springboot">二十一、使用SpringBoot中使用Redis：</a> <a href="#a_junit">last</a> <a href="#a_appendix">next</a>
+1、在SpringBoot Run启动时使用redis：  
+ApplicationByRedis.java：
+```Java
+package com.mutistic.redis.connection;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import com.mutisitc.utils.PrintUtil;
+// 在SpringBoot Run启动时使用redis
+@SpringBootApplication
+public class ApplicationByRedis {
+
+	public static void main(String[] args) {
+		ConfigurableApplicationContext context  = SpringApplication.run(ApplicationByRedis.class, args);
+		PrintUtil.one("在spring boot run启动时使用redis：");
+		
+		PrintUtil.two("1、通过SpringApplication.run()获取ConfigurableApplicationContext实例：：", context);
+		
+		StringRedisTemplate stringRedisTemplate = context.getBean(StringRedisTemplate.class);
+		PrintUtil.two("2、通过ConfigurableApplicationContext.getBean(StringRedisTemplate.class)"
+				+ "获取org.springframework.data.redis.core.StringRedisTemplate实例：：", stringRedisTemplate);
+		
+		stringRedisTemplate.opsForValue().set("String:Run", "Hello StringRedisTemplate By Run");
+		PrintUtil.two("3、通过StringRedisTemplate.opsForValue().set()：", "字符串键设置值");
+		
+		String value = stringRedisTemplate.opsForValue().get("String:Run");
+		PrintUtil.two("4、通过StringRedisTemplate.opsForValue().get(Object key)获取字符串键的值：", value);
+		
+		PrintUtil.two("注意：redis连接超时时间（单位毫秒）不能设置为小于等于0的数字，"
+				+ "小于0会导致启动报错，等于0会照成直接超时，与原本redis定义的timeout=0（禁止含义冲突）。可以不设置或设置为：", "spring.redis.timeout=1000000");
+		
+		context.close();
+	}
+}
+```
+2、在Controller中使用Redis：  
+ApplicationByRedis.java：
+```Java
+package com.mutistic.redis.connection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+// 在Controller中使用Redis
+@RestController
+@RequestMapping("/redisController/")
+public class RedisController {
+	// 自动注入StringRedisTemplate实例
+	@Autowired
+	private StringRedisTemplate stringRedisTemplate;
+	
+	/**
+	 * 为字符串键设置值
+	 * @param key 字符串键
+	 * @param value 字符串值
+	 * @return
+	 */
+	@GetMapping("setString")
+	public String set(String key, String value) {
+		stringRedisTemplate.opsForValue().set(key, value);
+		return "SUCCESS";
+	}
+	/**
+	 * 获取字符串键的值
+	 * @param key 字符串键
+	 * @return 字符串值
+	 */
+	@GetMapping("getString")
+	public String get(String key) {
+		return stringRedisTemplate.opsForValue().get(key);
+	}
+}
+```
 
 ---
 ### <a id="a_appendix">附录：</a> <a href="#a_transaction">last</a> <a href="#a_notes">next</a>

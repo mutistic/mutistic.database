@@ -29,12 +29,12 @@
 13. <a href="#a_jList">使用Jedis API操作List数据类型</a>
 14. <a href="#a_jSet">使用Jedis API操作Set数据类型</a>
 15. <a href="#a_jZSet">使用Jedis API操作ZSet数据类型</a>
-16. <a href="a_jDatabase">使用Jedis API操作数据库</a>
-17. <a href="a_jExpiration">使用Jedis API管理过期时间</a>
-18. <a href="a_jTransaction">使用Jedis API管理事务</a>
-19. <a href="a_jPubSub">使用Jedis API管理发布与订阅</a>
-20. <a href="a_junit">使用JUnit简单操作Redis</a>
-20. <a href="a_springboot">使用SpringBoot中使用Redis</a>
+16. <a href="#a_jDatabase">使用Jedis API操作数据库</a>
+17. <a href="#a_jExpiration">使用Jedis API管理过期时间</a>
+18. <a href="#a_jTransaction">使用Jedis API管理事务</a>
+19. <a href="#a_jPubSub">使用Jedis API管理发布与订阅</a>
+20. <a href="#a_junit">使用JUnit简单操作Redis</a>
+20. <a href="#a_springboot">使用SpringBoot中使用Redis</a>
 96. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 97. <a href="#a_appendix2">附录B：Redis配置文件说明</a>
 98. <a href="#a_notes">Notes</a>
@@ -2677,7 +2677,7 @@ public class RedisController {
 ```
 
 ---
-### <a id="a_appendix">附录：</a> <a href="#a_transaction">last</a> <a href="#a_notes">next</a>
+### <a id="a_appendix">附录：</a> <a href="#a_springboot">last</a> <a href="#a_notes">next</a>
 <a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a>  
 <a id="a_appendix2">[附录B：Redis配置文件说明](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-conf.md)</a>
 

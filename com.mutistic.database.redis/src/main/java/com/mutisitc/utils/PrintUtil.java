@@ -3,6 +3,9 @@ package com.mutisitc.utils;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 
 /**
  * @program 打印工具类
@@ -77,5 +80,18 @@ public class PrintUtil {
 
 		return str.toString();
 	}
-	
+
+	public static <E> String toString(Set<TypedTuple<E>> obj) {
+		if (obj == null) {
+			return "";
+		}
+
+		StringBuffer str = new StringBuffer(64);
+		for (TypedTuple<E> tuple : obj) {
+			str.append("[value:" + tuple.getValue() + ",score:" + tuple.getScore() + "]");
+		}
+
+		return str.toString();
+	}
+
 }

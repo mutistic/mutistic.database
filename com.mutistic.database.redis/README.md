@@ -34,7 +34,6 @@
 18. <a href="#a_jTransaction">使用Jedis API管理事务</a>
 19. <a href="#a_jPubSub">使用Jedis API管理发布与订阅</a>
 20. <a href="#a_junit">使用JUnit简单操作Redis</a>
-20. <a href="#a_springboot">使用SpringBoot中使用Redis</a>
 96. <a href="#a_appendix1">附录A：Redis操作命令速查表</a>
 97. <a href="#a_appendix2">附录B：Redis配置文件说明</a>
 98. <a href="#a_notes">Notes</a>
@@ -838,7 +837,7 @@ pom.xml：redis相关依赖：
   <artifactId>spring-boot-starter-data-redis</artifactId>
 </dependency>
 ```
-application.properties：redis相关参数配置：
+application.properties：redis相关参数配置：  
 ```properties
 ## Redis配置信息
 # Redis数据库索引（默认为0）
@@ -861,6 +860,32 @@ spring.redis.jedis.pool.min-idle=0
 #   与原本redis定义的timeout=0（永不过时）含义冲突，可以不设置此项，采用spring默认的超时时间
 #spring.redis.timeout=1000000
 ```
+
+[Spring boot 常用应用属性说明](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
+
+|参数配置|参数含义|
+|---|---|
+|spring.redis.cluster.max-redirects=|在群集中执行命令时要遵循的最大重定向数|
+|spring.redis.cluster.nodes=|逗号分隔的“host：port”对列表引导|
+|spring.redis.database=0|连接工厂使用的数据库索引|
+|spring.redis.url=|连接URL覆盖主机，端口和密码用户被忽略示例：redis：//user：password|
+|spring.redis.host=localhost|Redis服务器主机|
+|spring.redis.jedis.pool.max-active=8|池在给定时间可以分配的最大连接数使用负值无限制|
+|spring.redis.jedis.pool.max-idle=8|池中“空闲”连接的最大数量使用负值表示无限数量的空闲连接|
+|spring.redis.jedis.pool.max-wait=-1ms|在池耗尽时，在抛出异常之前连接分配应该阻塞的最长时间使用负值无限期阻止|
+|spring.redis.jedis.pool.min-idle=0|目标是池中维护的最小空闲连接数此设置仅在其为正时才有效|
+|spring.redis.lettuce.pool.max-active=8|池在给定时间可以分配的最大连接数使用负值无限制|
+|spring.redis.lettuce.pool.max-idle=8|池中“空闲”连接的最大数量使用负值表示无限数量的空闲连接|
+|spring.redis.lettuce.pool.max-wait=-1ms|在池耗尽时，在抛出异常之前连接分配应阻塞的最长时间使用负值无限期阻止|
+|spring.redis.lettuce.pool.min-idle=0|目标是池中维护的最小空闲连接数此设置仅在其为正时才有效|
+|spring.redis.lettuce.shutdown-timeout=100ms|关机超时|
+|spring.redis.password=|redis服务器的登录密码|
+|spring.redis.port=6379|Redis服务器端口|
+|spring.redis.sentinel.master=|Redis服务器的名称|
+|spring.redis.sentinel.nodes=|逗号分隔的“host：port”对列表|
+|spring.redis.ssl=false|是否启用SSL支持|
+|spring.redis.timeout=|连接超时|
+
 ClientByApplication.java：
 ```Java
 package com.mutistic.redis.connection;
@@ -869,11 +894,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import com.mutisitc.utils.PrintUtil;
-// 在spring boot run启动时使用redis
+// 在SpringBoot Run启动时使用redis
 @SpringBootApplication
 public class ClientByApplication {
+
   public static void main(String[] args) {
-    ConfigurableApplicationContext context  = SpringApplication.run(ClientByApplication.class, args);
+    ConfigurableApplicationContext context  = SpringApplication.run(ApplicationByRedis.class, args);
     PrintUtil.one("在spring boot run启动时使用redis：");
     
     PrintUtil.two("1、通过SpringApplication.run()获取ConfigurableApplicationContext实例：：", context);
@@ -882,10 +908,10 @@ public class ClientByApplication {
     PrintUtil.two("2、通过ConfigurableApplicationContext.getBean(StringRedisTemplate.class)"
         + "获取org.springframework.data.redis.core.StringRedisTemplate实例：：", stringRedisTemplate);
     
-    stringRedisTemplate.opsForValue().set("testByRun", "Hello StringRedisTemplate By Run");
+    stringRedisTemplate.opsForValue().set("String:Run", "Hello StringRedisTemplate By Run");
     PrintUtil.two("3、通过StringRedisTemplate.opsForValue().set()：", "字符串键设置值");
     
-    String value = stringRedisTemplate.opsForValue().get("testByRun");
+    String value = stringRedisTemplate.opsForValue().get("String:Run");
     PrintUtil.two("4、通过StringRedisTemplate.opsForValue().get(Object key)获取字符串键的值：", value);
     
     PrintUtil.two("注意：redis连接超时时间（单位毫秒）不能设置为小于等于0的数字，"
@@ -2599,85 +2625,7 @@ public class TransactionCommandByJUnit {
 ```
 
 ---
-### <a id="a_springboot">二十一、使用SpringBoot中使用Redis：</a> <a href="#a_junit">last</a> <a href="#a_appendix">next</a>
-1、在SpringBoot Run启动时使用redis：  
-ApplicationByRedis.java：
-```Java
-package com.mutistic.redis.connection;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import com.mutisitc.utils.PrintUtil;
-// 在SpringBoot Run启动时使用redis
-@SpringBootApplication
-public class ApplicationByRedis {
-
-	public static void main(String[] args) {
-		ConfigurableApplicationContext context  = SpringApplication.run(ApplicationByRedis.class, args);
-		PrintUtil.one("在spring boot run启动时使用redis：");
-		
-		PrintUtil.two("1、通过SpringApplication.run()获取ConfigurableApplicationContext实例：：", context);
-		
-		StringRedisTemplate stringRedisTemplate = context.getBean(StringRedisTemplate.class);
-		PrintUtil.two("2、通过ConfigurableApplicationContext.getBean(StringRedisTemplate.class)"
-				+ "获取org.springframework.data.redis.core.StringRedisTemplate实例：：", stringRedisTemplate);
-		
-		stringRedisTemplate.opsForValue().set("String:Run", "Hello StringRedisTemplate By Run");
-		PrintUtil.two("3、通过StringRedisTemplate.opsForValue().set()：", "字符串键设置值");
-		
-		String value = stringRedisTemplate.opsForValue().get("String:Run");
-		PrintUtil.two("4、通过StringRedisTemplate.opsForValue().get(Object key)获取字符串键的值：", value);
-		
-		PrintUtil.two("注意：redis连接超时时间（单位毫秒）不能设置为小于等于0的数字，"
-				+ "小于0会导致启动报错，等于0会照成直接超时，与原本redis定义的timeout=0（禁止含义冲突）。可以不设置或设置为：", "spring.redis.timeout=1000000");
-		
-		context.close();
-	}
-}
-```
-2、在Controller中使用Redis：  
-ApplicationByRedis.java：
-```Java
-package com.mutistic.redis.connection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-// 在Controller中使用Redis
-@RestController
-@RequestMapping("/redisController/")
-public class RedisController {
-	// 自动注入StringRedisTemplate实例
-	@Autowired
-	private StringRedisTemplate stringRedisTemplate;
-	
-	/**
-	 * 为字符串键设置值
-	 * @param key 字符串键
-	 * @param value 字符串值
-	 * @return
-	 */
-	@GetMapping("setString")
-	public String set(String key, String value) {
-		stringRedisTemplate.opsForValue().set(key, value);
-		return "SUCCESS";
-	}
-	/**
-	 * 获取字符串键的值
-	 * @param key 字符串键
-	 * @return 字符串值
-	 */
-	@GetMapping("getString")
-	public String get(String key) {
-		return stringRedisTemplate.opsForValue().get(key);
-	}
-}
-```
-
----
-### <a id="a_appendix">附录：</a> <a href="#a_springboot">last</a> <a href="#a_notes">next</a>
+### <a id="a_appendix">附录：</a> <a href="#a_junit">last</a> <a href="#a_notes">next</a>
 <a id="a_appendix1">[附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-command.md)</a>  
 <a id="a_appendix2">[附录B：Redis配置文件说明](https://github.com/mutistic/mutistic.database/blob/master/com.mutistic.database.redis/redis-conf.md)</a>
 

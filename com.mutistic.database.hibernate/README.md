@@ -3,7 +3,7 @@
 [Hibernate 百度百科](https://baike.baidu.com/item/Hibernate/206989)  
 [Hibernate 5.3 文档](http://hibernate.org/orm/documentation/5.3)  
 [Hibernate 5.3 用户指南](http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html)  
-[Hibernate 5.3 JavaDoc](http://docs.jboss.org/hibernate/orm/5.3/javadocs/overview-summary.html)  
+[Hibernate 5.3 JavaDoc](https://docs.jboss.org/hibernate/stable/orm/javadocs/overview-summary.html)  
 [Hibernate Git开源](https://github.com/hibernate/)  
 [Hibernate Tool](http://hibernate.org/tools/)  
 [Hibernate5:hibernate-core-5.2.17.Final.jar](https://search.maven.org/artifact/org.hibernate/hibernate-core/5.2.17.Final/jar)  
@@ -140,13 +140,8 @@ Query经常被用来绑定查询参数、限制查询记录数量，并最终执
 
 ---
 ### <a id="a_integration">二、集成Hibernate框架：</a> <a href="#a_hibernate">last</a> <a href="#a_step">next</a>
-1、Java Project直接集成Hibernate框架
+1、Spring Boot项目集成Hibernate框架：
 
-2、Maven项目集成Hibernate框架
-
-3、Spring项目集成Hibernate框架
-
-4、Spring Boot项目集成Hibernate框架
 
 ---
 ### <a id="a_notes">[Notes](https://github.com/mutistic/mutistic.database/blob/master/com.mutisitc.database.hibernate/notes)</a> <a href="#a_transaction">last</a> <a href="#a_catalogue">next</a>

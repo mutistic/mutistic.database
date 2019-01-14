@@ -75,7 +75,6 @@
 18. [使用Jedis API管理事务](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.redis#a_jTransaction)
 19. [使用Jedis API管理发布与订阅](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.redis#a_jPubSub)
 20. [使用JUnit简单操作Redis](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.redis#a_junit)
-21. [使用SpringBoot中使用Redis](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.redis#a_springboot)
-22. [附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.redis#a_appendix1)
-23. [附录B：Redis配置文件说明](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.redis#a_appendix2)
+21. [附录A：Redis操作命令速查表](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.redis#a_appendix1)
+22. [附录B：Redis配置文件说明](https://github.com/mutistic/mutistic.database/tree/master/com.mutistic.database.redis#a_appendix2)
 
